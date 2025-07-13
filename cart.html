@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LADAMART</title>
+    <link rel="icon" href="LADAMART LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="content.css">
+</head>
+
+<body>
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index copy.html" class="logo"><img src="LADAMART LOGO.png"><span></span></a>
+        <nav class="nav-bar">
+
+            <a href="wishlist.html" id="navWish">
+                <img src="heart outline.jpg">
+            </a>
+            <a href="cart.html" id="navCart">Cart</a>
+            <a href="index copy.html">home</a>
+            <a href="product.html">products</a>
+            <a href="contact.html">contact</a>
+            <a href="index.html">log out</a>
+            <a href="profile.html" id="profileBtn">
+                <img src="profile.jpg">
+            </a>
+        </nav>
+    </header>
+
+    <section class="cart" id="cart">
+        <h1>Your Cart</h1>
+        <div id="cartWrapper">
+            <div class="content">
+                <section id="cartSection" class="pSection"></section>
+            </div>
+        </div>
+    </section>
+
+    <h2 id="totalPriceDisplay"></h2>
+    <div class="checkout">
+        <button id="checkoutBtn">Checkout</button><br>
+    </div>
+    <div class="checkout">
+        <p id="thankYouMessage">Thank you for your purchase!</p>
+        <a href="index copy.html"><button id="homeBtn">Home</button></a>
+    </div>
+
+    <script src="cart.js"></script>
+
+
+    <div id="addressModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" id="closeAddressModal">&times;</span>
+            <h2>Enter Shipping Address</h2>
+            <form id="addressForm">
+                <label for="savedAddresses">Choose a saved address:</label>
+                <select id="savedAddresses">
+                    <option value="">-- Select an address --</option>
+                </select>
+
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required>
+
+                <label for="addressLine">Address Line:</label>
+                <input type="text" id="addressLine" name="addressLine" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="postalCode">Postal Code:</label>
+                <input type="text" id="postalCode" name="postalCode" required>
+
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+                <button type="submit">Submit</button>
+                <label>
+                    <input type="checkbox" id="saveAddress" name="saveAddress">
+                    Save this address for future purchases
+                </label>
+
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

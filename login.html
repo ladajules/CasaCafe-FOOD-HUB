@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" href="LADAMART LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index copy.html" class="logo"><img src="LADAMART LOGO.png"><span></span></a>
+
+        <nav class="nav-bar">
+            <a href="index.html">home</a>
+        </nav>
+
+ 
+
+    </header>
+<body style="background-color: #e9d36c; background-image: url('loginbackground.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+    <div id="loginContainer">
+    <form action="check_login.php" class="form" method="POST">
+        <h2 id="title">User Login</h2>
+        <div>
+            <label for="username" class="details" id="usernameLabel" style="margin-right: 6px;">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+        </div>
+        
+        <div>
+            <label for="password" class="details">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+        </div>  
+        <input type="submit" value="Login" id="login">
+        <p id="register">Don't have an account? <a href="register.html">Register here</a></p>
+        <p style="color:rgb(72, 72, 233)">Forgot Password?</p>
+    </form>
+    <img src="LADAMART POSTER.png" id="ontheside">
+    </div>
+
+
+<div id="errorModal" style="display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    background-color: white; padding: 20px; border: 2px solid #f00; z-index: 1000;">
+    <p style="color: red;">Invalid username or password.</p>
+    <button onclick="document.getElementById('errorModal').style.display='none'">Close</button>
+</div>
+    
+
+<script>
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        document.getElementById('errorModal').style.display = 'block';
+    }
+}
+</script>
+</body>
+</html>

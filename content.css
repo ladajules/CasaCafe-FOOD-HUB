@@ -1,0 +1,70 @@
+#cartWrapper {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+#cartWrapper.fade-out {
+  opacity: 0;
+}
+
+/* Thank you message appearance */
+#thankYouMessage {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  font-size: 40px;
+  font-weight: 1000;
+}
+
+#thankYouMessage.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#homeBtn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#homeBtn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#homeBtn.show:hover {
+  background-color: #dac155;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Optional: smooth fade-out for checkout button */
+#checkoutBtn {
+  transition: opacity 0.5s ease;
+}
+
+#checkoutBtn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+}
+
+.wishlistImg {
+    width: 30px;
+}
+
+.wishlistImg:hover {
+    width: 30px;
+}
+
+#addressForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}

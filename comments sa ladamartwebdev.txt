@@ -1,0 +1,80 @@
+
+  // //merged wishlist and cart
+
+  // document.addEventListener("DOMContentLoaded", () => {
+  //     // POPUP FUNCTIONS
+  //     function showPopup(message) {
+  //       const popup = document.getElementById("popupNotification");
+  //       const popupMessage = document.getElementById("popupMessage");
+
+  //       popupMessage.textContent = message;
+  //       popup.style.display = "flex"; // Use flex if your CSS uses justify/align
+  //     }
+
+  //     function closePopup() {
+  //       const popup = document.getElementById("popupNotification");
+  //       popup.style.display = "none";
+  //     }
+
+  //     // CLOSE BUTTON + OUTSIDE CLICK
+  //     const popup = document.getElementById("popupNotification");
+  //     const closeBtn = document.getElementById("popupCloseBtn");
+
+  //     if (closeBtn) {
+  //       closeBtn.addEventListener("click", closePopup);
+  //     }
+
+  //     window.addEventListener("click", (e) => {
+  //       if (e.target === popup) {
+  //         closePopup();
+  //       }
+  //     });
+
+  //     // MODAL BUTTONS
+  //     const modalCartBtn = document.getElementById("modalCartBtn");
+  //     const modalWishlistBtn = document.getElementById("modalWishlistBtn");
+
+  //     if (modalCartBtn) {
+  //       modalCartBtn.addEventListener("click", () => {
+  //         const title = document.getElementById("modalTitle").textContent;
+  //         const img = document.getElementById("modalImg").src;
+  //         const priceText = document.getElementById("modalPrice").textContent;
+  //         const price = parseFloat(priceText.replace("$", ""));
+
+  //         const product = { title, img, price };
+
+  //         let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  //         const alreadyInCart = cart.some(item => item.title === title);
+
+  //         if (!alreadyInCart) {
+  //           cart.push(product);
+  //           localStorage.setItem("cart", JSON.stringify(cart));
+  //           showPopup(`${title} has been added to your cart.`);
+  //         } else {
+  //           showPopup("Already in cart.");
+  //         }
+  //       });
+  //     }
+
+  //     if (modalWishlistBtn) {
+  //       modalWishlistBtn.addEventListener("click", () => {
+  //         if (currentModalProduct) {
+  //           const title = currentModalProduct.title;
+  //           let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  //           const exists = wishlist.some(item => item.title === title);
+
+  //           if (!exists) {
+  //             wishlist.push(currentModalProduct);
+  //             localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  //             showPopup(`${title} has been added to your wishlist.`);
+  //           } else {
+  //             showPopup("Already in wishlist.");
+  //           }
+  //         }
+  //       });
+  //     }
+
+  //     // display products when everything is ready
+  //     displayProducts();
+  //   });
+  //   way lami

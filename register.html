@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" href="LADAMART LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index.html" class="logo"><img src="LADAMART LOGO.png"><span></span></a>
+
+        <nav class="nav-bar">
+            <a href="index.html">home</a>
+        </nav>
+
+ 
+
+    </header>
+<body style="background-color: #e9d36c; background-image: url('loginbackground.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+    <div id="loginContainer">
+    <form action="register.php" class="form" method="POST">
+        <h2 id="title">Register</h2>
+        <div>
+            <label for="username" id="details">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+        </div>
+        
+        <div>
+            <label for="password" id="details">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+        </div>  
+        <input type="submit" value="Register" id="rg">
+        <p id="register">Do you have an account? <a href="login.html">Log in</a></p>
+    </form>
+    <img src="LADAMART POSTER.png" id="ontheside">
+    </div>
+
+    
+</body>
+</html>

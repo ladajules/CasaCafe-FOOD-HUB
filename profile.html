@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LADAMART</title>
+    <link rel="icon" href="LADAMART LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index copy.html" class="logo"><img src="LADAMART LOGO.png"><span></span></a>
+
+        <nav class="nav-bar">
+            <a href="wishlist.html" id="navWish">
+                <img src="heart outline.jpg">
+            </a>
+            <a href="cart.html" id="navCart">Cart</a>
+            <a href="index copy.html">home</a>
+            <a href="product.html">products</a>
+            <a href="contact.html">contact</a>
+            <a href="index.html">log out</a>
+            <a href="profile.html" id="profileBtn">
+                <img src="profile.jpg">
+            </a>
+        </nav>
+    </header>
+
+    <div class="profileAndOrders">
+    <section class="profileDetail">
+        <h1>Profile</h1>
+
+        <div class="prof">
+            <img src="profile.jpg" id="profImg">
+            <div class="text-content">
+                <h2 id="usernameDisplay"></h2>
+                <p>Edit Profile</p>
+            </div>
+        </div>
+
+    <div class="profileOptions">
+        <div class="profileOptionItem">
+            <a href="profile.html">
+                <img src="account.jpg" class="accImg">
+            </a>
+            <a href="profile.html">My Account</a>
+        </div>
+    </div>
+    </section>
+    <!--a href="cart.html">My Purchase</a-->
+
+    <section class="orderHistory">
+  <div>
+    <h2>History</h2>
+    <hr style="border: none; height: 2px; background-color: black; margin: 10px auto; width: 100%;">
+    <section id="purchasedSection">
+      <div id="purchasedItemsContainer"></div>
+    </section>
+  </div>
+</section>
+
+
+</div>
+
+  <section class="footer">
+
+    <div class="credit"> created by <span> Althea Telmo ,Lana Leila Pasculado, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+  </section>
+  <script src="script.js"></script>
+  <script src="profile.js"></script>
+
+</body>
+
+</html>
