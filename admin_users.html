@@ -261,7 +261,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-  fetch('admin_get_user.php')
+  fetch('admin_get_users.php')
     .then(res => res.json())
     .then(users => {
       const tbody = document.getElementById('userTableBody');
