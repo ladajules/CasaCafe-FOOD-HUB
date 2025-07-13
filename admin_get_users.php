@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'db_connection.php'; 
 
 $sql = "SELECT UserID, Username FROM login ORDER BY UserID DESC";
