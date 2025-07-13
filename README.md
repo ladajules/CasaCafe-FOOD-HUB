@@ -1,5 +1,3 @@
-helu guys
-
 Project: LadaMart
 
 Description: LadaMart is an e-commerce website / online store inspired by Adrian Lada. The products from LadaMart are essential for everyday use, like garments, accessories, and appliances. The goal of LadaMart is to ensure easier access to their store for consumers, especially those who reside far from their physical store, which is located at Talamban, Cebu City.
