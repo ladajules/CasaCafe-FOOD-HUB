@@ -39,58 +39,58 @@ input[type="search"] {
 }
 
 
-   .dropdown {
-  position: relative;
-  display: inline-block;
+.dropdown {
+    position: relative;
+    display: inline-block;
 }
 
 #dropdownIcon {
-  font-size: 2.5rem;
-  color: white;
-  cursor: pointer;
+    font-size: 2.5rem;
+    color: white;
+    cursor: pointer;
 }
 
 .dropdown-icon {
-  margin-left: auto;
-  font-size: 12px;
+    margin-left: auto;
+    font-size: 12px;
 }
 
 .dropdown-menu {
-  display: none;
-  position: absolute;
-  right: 0;
-  background-color: white;
-  min-width: 150px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  z-index: 1000;
-  border-radius: 5px;
-  overflow: hidden;
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .dropdown-menu a {
-  text-decoration: none;
-  display: block;
+    text-decoration: none;
+    display: block;
 }
 
 .dropdown-menu a:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 
 #dropdownToggle {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
 #dropdownToggle i {
-  margin-left: 8px;
-  font-size: 2.3rem;
-  color: white;
-  transition: transform 0.3s ease;
+    margin-left: 8px;
+    font-size: 2.3rem;
+    color: white;
+    transition: transform 0.3s ease;
 }
 
 #dropdownToggle.open #dropdownArrow {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 
@@ -412,7 +412,7 @@ label {
 
 #modalWishlistBtn img {
     width: 4rem;
-    
+
 }
 
 #modalWishlistBtn:hover {
@@ -1108,8 +1108,8 @@ button:hover, button:active {
     align-items: center;
     margin-top: 20px;
     margin-left: 30px;
-    gap: 10px; 
-    width: auto; 
+    gap: 10px;
+    width: auto;
 }
 
 .profileOptionItem {
@@ -1172,62 +1172,65 @@ hr {
 }
 
 #purchasedSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
 }
 
 #purchasedItemsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  width: 100%;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    align-items: center;
 }
 
 .product-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 
-  width: 520px;             /* fixed width for consistent container */
-  /* Removed fixed height so it adjusts based on image */
-  overflow: hidden;
+    width: 520px;
+    /* fixed width for consistent container */
+    /* Removed fixed height so it adjusts based on image */
+    overflow: hidden;
 
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {
-  /* Keep original photo width & height */
-  max-height: 23rem;
-  max-width: 25rem;     /* limit max width to container */
-  height: auto;             /* keep natural height */
-  margin-bottom: 15px;
-  object-fit: contain;     
+    /* Keep original photo width & height */
+    max-height: 23rem;
+    max-width: 25rem;
+    /* limit max width to container */
+    height: auto;
+    /* keep natural height */
+    margin-bottom: 15px;
+    object-fit: contain;
 }
 
 .product-name {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  padding: 0 10px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding: 0 10px;
 }
 
 .product-price {
-  font-size: 18px;
-  margin-bottom: 5px;
+    font-size: 18px;
+    margin-bottom: 5px;
 }
 
 .product-quantity {
-  font-size: 14px;
-  color: #555;
+    font-size: 14px;
+    color: #555;
 }
 
 
@@ -1249,12 +1252,32 @@ hr {
 } */
 
 .menu-item {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px;
-  text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    width: 200px;
+    height: 300px;
 }
+
 .menu-item img {
-  max-width: 100%;
-  border-radius: 10px;
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.menu-item h3 {
+    color: red
+}
+
+#menuContainer {
+    padding: 50px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
