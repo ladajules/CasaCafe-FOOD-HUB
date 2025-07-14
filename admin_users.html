@@ -358,7 +358,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${user.UserID}</td>
-        <td>${user.Username}</td>
+        <td style="text-transform: none;">${user.Username}</td>
         <td>
           <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
           <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
