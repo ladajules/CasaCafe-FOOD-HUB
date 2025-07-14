@@ -185,6 +185,10 @@
       align-items: center;
       z-index: 2000;
     }
+    
+    .modal.active {
+      display: flex;
+    }
 
     .modal-content {
       background: white;
@@ -210,7 +214,6 @@
 
     .confirm-btn { background-color: #4CAF50; color: white; }
     .cancel-btn { background-color: #f44336; color: white; }
-
   </style>
 </head>
 <body>
@@ -325,11 +328,11 @@
     let selectedUserId = null;
 
     function openModal(id) {
-      document.getElementById(id).style.display = "flex";
+      document.getElementById(id).classList.add("active");
     }
 
     function closeModal(id) {
-      document.getElementById(id).style.display = "none";
+      document.getElementById(id).classList.remove("active");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -351,37 +354,40 @@
         `;
         tbody.appendChild(tr);
       });
+
+      document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', e => {
+        selectedUserId = e.currentTarget.getAttribute('data-id');
+        const username = e.currentTarget.getAttribute('data-username');
+        editUsernameInput.value = username;
+        openModal('editModal');
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', e => {
+        selectedUserId = e.currentTarget.getAttribute('data-id');
+        openModal('deleteModal');
+        });
+      });
     })
     .catch(error => {
       console.error('Error loading users:', error);
     });
 });
 
-    function editUser(id, username) {
-      selectedUserId = id;
-      editUsernameInput.value = username;
-      openModal('editModal');
-    }
-
     document.getElementById('saveEditBtn').addEventListener('click', () => {
       const newUsername = editUsernameInput.value.trim();
       if (newUsername && selectedUserId) {
         console.log(`Update user ${selectedUserId} to ${newUsername}`);
         closeModal('editModal');
-        location.reload();
       }
     });
-
-    function confirmDelete(id) {
-      selectedUserId = id;
-      openModal('deleteModal');
-    }
 
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
       if (selectedUserId) {
         console.log(`Delete user ${selectedUserId}`);
         closeModal('deleteModal');
-        location.reload();
       }
     });
 
