@@ -25,10 +25,16 @@
             <a href="index copy.html">home</a>
             <a href="product.html">Menu</a>
             <a href="contact.html">contact</a>
-            <a href="index.html">log out</a>
-            <a href="profile.html" id="profileBtn">
-                <img src="profile.png">
-            </a>
+            <div class="dropdown" id="profileDropdown">
+            <div id="dropdownToggle">
+                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="profile.html" id="profileBtn" style="color: black;">My Profile</a>
+                <a href="index.html" style="color: black;">Log out</a>
+            </div>
+            </div>
         </nav>
     </header>
 

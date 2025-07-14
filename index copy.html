@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,96 +10,109 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
 
     <header>
         <input type="checkbox" name="" id="toggler">
         <label for="toggler" class="fas fa-bars"></label>
         <a href="index copy.html" class="logo"><img src="temp casaLogo.png"><span></span></a>
-        
+
         <nav class="nav-bar">
             <a href="wishlist.html" id="navWish">
                 <!-- <img src="heart outline.jpg"> -->
                 <i class="fa-regular fa-heart wishlist-icon"></i>
-            </a>    
+            </a>
             <a href="cart.html" id="navCart">Cart</a>
             <a href="#home" id="navHome">home</a>
             <a href="#about-shop">about us</a>
             <a href="product.html">Menu</a>
             <a href="contact.html">contact</a>
-            <a href="index.html">log out</a>
-            <a href="profile.html" id="profileBtn">
-                <img src="profile.png">
-            </a>
+            <div class="dropdown" id="profileDropdown">
+                <div id="dropdownToggle">
+                    <i class="fas fa-user-circle"></i>
+                    <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" id="profileBtn" style="color: black;">My Profile</a>
+                    <a href="index.html" style="color: black;">Log out</a>
+                </div>
+            </div>
         </nav>
 
     </header>
 
-<!-- home section -->
- <section class="home" id="home">
-    <div class="content">
-       <h3 style="color: #fff">CASACAFE <br> FOOD HUB</h3>
-        <span style="color: #333">All you need in just a <strong>click</strong></span>
-        <p style="text-transform: none;">Welcome to <strong>CasaCafe Food Hub</strong>, your one-stop online shop for everything you need! 
-            Explore our wide selection of quality products, enjoy seamless shopping, and experience fast, reliable service. 
-            We're here to make your shopping easy, fun, and hassle-free. Happy shopping!</p>
-        <a href="product.html" class="btn" id="shopBtn">Shop Now</a>
-    </div>
-</section>
-
- <!-- home section -->
-
- <!-- abt shop section -->
-  <section class="about-shop" id="about-shop">
-
-    <h1 class="heading"> <span> about </span> us </h1>
-
-    <div class="row">
-        <div class="video-container">
-            <video src="about us.mp4" loop autoplay muted></video>
-        </div>
-
+    <!-- home section -->
+    <section class="home" id="home">
         <div class="content">
-            <h3 style="color: #e9d36c">At CASACAFE FOOD HUB</h3>
-            <p style="text-transform: none;">We are committed to delivering only the best service to our customers. 
-                From the moment you visit our site to the time your order arrives at your doorstep, 
-                we strive to make every step smooth, reliable, and enjoyable</p>
-            <p style="text-transform: none;">Our dedicated team works tirelessly to ensure fast shipping, secure payments, and responsive customer support. 
-                We listen to your feedback and continuously improve to meet and exceed your expectations. 
-                Your satisfaction is our top priority, and we take pride in offering a shopping experience that is trustworthy, convenient, and tailored just for you.</p>
-            <!-- <a href="#" class="btn">learn more</a> -->
+            <h3 style="color: #fff">CASACAFE <br> FOOD HUB</h3>
+            <span style="color: #333">All you need in just a <strong>click</strong></span>
+            <p style="text-transform: none;">Welcome to <strong>CasaCafe Food Hub</strong>, your one-stop online shop
+                for everything you need!
+                Explore our wide selection of quality products, enjoy seamless shopping, and experience fast, reliable
+                service.
+                We're here to make your shopping easy, fun, and hassle-free. Happy shopping!</p>
+            <a href="product.html" class="btn" id="shopBtn">Shop Now</a>
         </div>
-    </div>
+    </section>
 
-  </section>
- <!-- abt shop section -->
+    <!-- home section -->
 
-  <section class="footer">
+    <!-- abt shop section -->
+    <section class="about-shop" id="about-shop">
 
-    <div class="box-container">
-        <div class="box">
-            <h3>quick links</h3>
-            <a href="index.html">home</a>
-            <a href="#about-shop">about us</a>
-            <a href="product.html">Menu</a>
-            <a href="contact.html">contact</a>
+        <h1 class="heading"> <span> about </span> us </h1>
+
+        <div class="row">
+            <div class="video-container">
+                <video src="about us.mp4" loop autoplay muted></video>
             </div>
 
-        <div class="box">
-            <h3>location</h3>
-            <a>Barangay Bankal, Lapu-Lapu City</a>
+            <div class="content">
+                <h3 style="color: #e9d36c">At CASACAFE FOOD HUB</h3>
+                <p style="text-transform: none;">We are committed to delivering only the best service to our customers.
+                    From the moment you visit our site to the time your order arrives at your doorstep,
+                    we strive to make every step smooth, reliable, and enjoyable</p>
+                <p style="text-transform: none;">Our dedicated team works tirelessly to ensure fast shipping, secure
+                    payments, and responsive customer support.
+                    We listen to your feedback and continuously improve to meet and exceed your expectations.
+                    Your satisfaction is our top priority, and we take pride in offering a shopping experience that is
+                    trustworthy, convenient, and tailored just for you.</p>
+                <!-- <a href="#" class="btn">learn more</a> -->
+            </div>
         </div>
 
-        <div class="box">
-            <h3>contact info</h3>
-            <a href="#">+63 9177787609</a>
-            <a href="#">CasaCafe@gmail.com</a>
-            <a href="#">cebu, philippines - 6015</a>
+    </section>
+    <!-- abt shop section -->
+
+    <section class="footer">
+
+        <div class="box-container">
+            <div class="box">
+                <h3>quick links</h3>
+                <a href="index.html">home</a>
+                <a href="#about-shop">about us</a>
+                <a href="product.html">Menu</a>
+                <a href="contact.html">contact</a>
+            </div>
+
+            <div class="box">
+                <h3>location</h3>
+                <a>Barangay Bankal, Lapu-Lapu City</a>
+            </div>
+
+            <div class="box">
+                <h3>contact info</h3>
+                <a href="#">+63 9177787609</a>
+                <a href="#">CasaCafe@gmail.com</a>
+                <a href="#">cebu, philippines - 6015</a>
+            </div>
         </div>
-    </div>
-    <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
-  </section>
-  <script src="script.js"></script>
+        <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir
+                Ballesteros</span></div>
+    </section>
+    <script src="script.js"></script>
+    <script src="dropdown.js"></script>
 
 </body>
 

@@ -34,6 +34,63 @@ input[type="search"] {
     border-radius: 2rem 0 0 2rem;
 }
 
+
+   .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+#dropdownIcon {
+  font-size: 2.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+.dropdown-icon {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dropdown-menu a {
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+#dropdownToggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#dropdownToggle i {
+  margin-left: 8px;
+  font-size: 2.3rem;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+#dropdownToggle.open #dropdownArrow {
+  transform: rotate(180deg);
+}
+
+
+
 .srchButton {
     padding: 15px;
     border: 1px solid #ccc;
