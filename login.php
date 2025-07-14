@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'] ?? '';
 
     //if admin then redirect to dashboard admin_dashboard.html
-    if ($username === "Casacafe_admin" && $password === "123") {
+    if ($user === "Casacafe_admin" && $password === "123") {
         header("Location: admin_dashboard.html");
         exit;
     } 
