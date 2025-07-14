@@ -45,6 +45,45 @@ const fetchProducts = async () => {
   }
 }
 
+fetch('menu_api.php')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data); // to see the structure in the console
+    displayItems(data); // custom function to render on the page
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+
+
+function displayItems(items) {
+  const container = document.getElementById('menuContainer');
+  container.innerHTML = ''; // clear existing content
+
+  items.forEach(item => {
+    const itemCard = document.createElement('div');
+    itemCard.classList.add('menu-item');
+
+    const variants = item.variants.map(v =>
+      `<li>${v.variant_name} - ₱${v.variant_price}</li>`
+    ).join('');
+
+    itemCard.innerHTML = `
+      <img src="${item.item_image}" alt="${item.item_name}" width="150">
+      <h3>${item.item_name}</h3>
+      <p>${item.item_description}</p>
+      <p>Base Price: ₱${item.item_price}</p>
+      <ul>${variants}</ul>
+    `;
+
+    container.appendChild(itemCard);
+  });
+}
+
+
+
+
+
 const createProduct = (id, title, description, category, price, img, rate) => {
   // himuon ug variable
   const productContainer = document.createElement("div");
