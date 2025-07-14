@@ -23,23 +23,39 @@
  
 
     </header>
-<body style="background-color: #e9d36c; background-image: url('loginbackground.jpg'); background-repeat: no-repeat; background-size: cover;">
+<body style="background-color: white">
 
     <div id="loginContainer">
+        
     <form action="login.php" class="form" method="POST">
-        <h2 id="title">User Login</h2>
+        <h2 id="title">Login</h2>
         <div>
             <label for="username" class="details" id="usernameLabel" style="margin-right: 6px;">Username:</label>
-            <input type="text" id="username" name="username" required autocapitalize="off"><br><br>
+            <input type="text" id="username" name="username" required autocapitalize="off" autocomplete="username" placeholder="Type your username"><br><br>
         </div>
         
         <div>
             <label for="password" class="details">Password:</label>
-            <input type="password" id="password" name="password" required autocapitalize="off"><br><br>
+            <input type="password" id="password" name="password" required autocapitalize="off" autocomplete="current-password" placeholder="Type your password"><br><br>
         </div>  
+        <a href="forgot.html" style="color:rgb(72, 72, 233)">Forgot Password?</a>
         <input type="submit" value="Login" id="login">
+        
+        
         <p id="register">Don't have an account? <a href="register.html">Register here</a></p>
-        <p style="color:rgb(72, 72, 233)">Forgot Password?</p>
+        
+        <!-- to integrate google and other sign up options in the future -->
+        <!-- <div class="divider">
+            <span>or continue with</span>
+        </div>
+        
+        <div class="social-login">
+            <button class="google-btn">
+                <i class="fab fa-google"></i> Google
+            </button>
+        </div> -->
+
+        
     </form>
     </div>
 
