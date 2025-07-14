@@ -2,36 +2,34 @@
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Connect to the database
-    $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+     // Connect to the database
+     $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
+     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Get input values
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+     // Get input values
+     $username = $_POST['username'] ?? '';
+     $password = $_POST['password'] ?? '';
 
-    // Look for the user in the database
-    $stmt = $pdo->prepare("SELECT * FROM Users WHERE Username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+     // Look for the user in the database
+     $stmt = $pdo->prepare("SELECT * FROM Users WHERE Username = ?");
+     $stmt->execute([$username]);
+     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    //if admin then redirect to dashboard admin_dashboard.html
-    if ($user === "casacafe_admin" && password_verify($password, "123")) {
-        header("Location: admin_users.html");
-        exit;
+     if ($user && password_verify($password, $user['Password'])) {
+         // Store session info
+         $_SESSION['UserID'] = $user['UserID'];
+         $_SESSION['Username'] = $user['Username'];
+         $_SESSION['role'] = $user['role']; 
+
+         // Redirect based on role
+         if ($_SESSION['role'] === 'Admin') {
+            header("Location: index copy.html");
+         } else {
+            header("Location: admin_dashboard.html");
+         }
+         exit;
     } else {
-        echo "Invalid username or password.";
-    }
-
-    // Check if user exists and password matches
-    if ($user && password_verify($password, $user['Password'])) {
-        $_SESSION['UserID'] = $user['UserID']; // store user ID
-        $_SESSION['Username'] = $user['Username']; // store username ✅
-
-        header("Location: index.php"); // redirect after login
-        exit;
-    } else {
-        echo "Invalid username or password.";
+         echo "Invalid username or password.";
     }
 }
 ?>
