@@ -1,14 +1,6 @@
 <?php
-header('Content-Type: application/json');
-session_start();
-require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
-    echo json_encode(["error" => "User not logged in."]);
-    exit;
-}
-
-$userId = $_SESSION['UserID'];
+$pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart", "s24100966_LadaMart", "ciscocisco");
 
 $sql = "SELECT i.*, v.variant_id, v.variant_name, v.variant_price
         FROM item_table i
@@ -46,5 +38,3 @@ foreach ($rows as $row) {
 
 header('Content-Type: application/json');
 echo json_encode(array_values($grouped));
-
-?>
