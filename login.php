@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+//if admin then redirect to dashboard admin_dashboard.html
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Connect to the database
     $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
