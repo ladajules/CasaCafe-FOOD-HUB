@@ -14,6 +14,10 @@
     }
 }
 
+input {
+    text-transform: none;
+}
+
 body {
     opacity: 0;
     animation: fadeIn 2s forwards;
