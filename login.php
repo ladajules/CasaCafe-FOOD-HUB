@@ -10,17 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Look for the user in the database
-    $stmt = $pdo->prepare("SELECT * FROM Users WHERE Username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
     //if admin then redirect to dashboard admin_dashboard.html
     if ($username === "Casacafe_admin" && $password === "123") {
         header("Location: admin_dashboard.html");
         exit;
     } 
-    
+
+    // Look for the user in the database
+    $stmt = $pdo->prepare("SELECT * FROM Users WHERE Username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
     // Check if user exists and password matches
     if ($user && password_verify($password, $user['Password'])) {
          $_SESSION['UserID'] = $user['UserID']; // store user ID
