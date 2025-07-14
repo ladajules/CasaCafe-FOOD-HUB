@@ -1,7 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Poppins);
 
 :root {
-    --pink: rgb(9, 86, 86);
+    --pink: #E26C05;
 }
 
 @keyframes fadeIn {
@@ -473,7 +473,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: #1F1C1C;
     padding: 2rem 9%;
     display: flex;
     align-items: center;
@@ -497,7 +497,7 @@ header .logo span {
 header .nav-bar a {
     font-size: 2rem;
     padding: 0 1.5rem;
-    color: black;
+    color: white;
     align-items: center;
 }
 
@@ -907,7 +907,7 @@ POP UP WISHLIST AND CART   */
 
 .cart h1 {
     font-size: 5rem;
-    color: #e9d36c;
+    color: #1F1C1C;
     text-align: center;
     font-weight: bold;
     margin: 2rem 0 1rem;
@@ -917,7 +917,7 @@ POP UP WISHLIST AND CART   */
 .checkout-btn,
 #checkoutBtn,
 #homeBtn {
-    background-color: #5fa36f;
+    background-color: #E26C05;
     color: white;
     border: none;
     padding: 10px 15px;
