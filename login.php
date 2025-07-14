@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      $password = $_POST['password'] ?? '';
 
      // Look for the user in the database
-     $stmt = $pdo->prepare("SELECT * FROM Users WHERE Username = ?");
-     $stmt->execute([$username]);
+     $stmt = $pdo->prepare("SELECT UserID, Password, role FROM login WHERE Username = :username");
+     $stmt->execute([':username' => $username]);
      $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
      if ($user && password_verify($password, $user['Password'])) {
