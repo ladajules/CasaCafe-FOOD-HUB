@@ -379,7 +379,7 @@
     document.getElementById('saveEditBtn').addEventListener('click', () => {
       const newUsername = editUsernameInput.value.trim();
       if (newUsername && selectedUserId) {
-        fetch('edit_user.php', {
+        fetch('admin_edit_users.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -400,7 +400,7 @@
 
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
       if (selectedUserId) {
-        fetch('delete_user.php', {
+        fetch('admin_delete_users.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
