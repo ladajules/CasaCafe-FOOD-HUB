@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
     if (wishlist.length === 0) {
-        wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
+        wishlistSection.innerHTML = "<p>You currently have no favorites</p><a href='product.html' class='btn' id='shopBtn'>Shop Now</a>";
         return;
     }
 
@@ -127,7 +127,7 @@ function removeFromWishlistByTitle(title, container) {
             container.remove();
 
             if (wishlist.length === 0) {
-                document.getElementById("wishlistSection").innerHTML = "<p>Your wishlist is empty.</p>";
+                document.getElementById("wishlistSection").innerHTML = "<p>You currently have no favorites</p><a href='product.html' class='btn' id='shopBtn'>Shop Now</a>";
             }
         });
 }
