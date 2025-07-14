@@ -31,289 +31,298 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-const fetchProducts = async () => {
-  try {
-    const response = await fetch("https://fakestoreapi.com/products");
-    if (!response.ok) {
-      throw new Error("Something wrong occured");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
 
-fetch('menu_api.php')
-  .then(response => response.json())
-  .then(data => {
-    console.log(data); // to see the structure in the console
-    displayItems(data); // custom function to render on the page
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-  });
-
-
-function displayItems(items) {
+document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
-  container.innerHTML = ''; // clear existing content
 
-  items.forEach(item => {
-    const itemCard = document.createElement('div');
-    itemCard.classList.add('menu-item');
-
-    const variants = item.variants.map(v =>
-      `<li>${v.variant_name} - ₱${v.variant_price}</li>`
-    ).join('');
-
-    itemCard.innerHTML = `
-      <img src="${item.item_image}" alt="${item.item_name}" width="150">
-      <h3>${item.item_name}</h3>
-      <p>${item.item_description}</p>
-      <p>Base Price: ₱${item.item_price}</p>
-      <ul>${variants}</ul>
-    `;
-
-    container.appendChild(itemCard);
-  });
-}
-
-
-
-
-
-const createProduct = (id, title, description, category, price, img, rate) => {
-  // himuon ug variable
-  const productContainer = document.createElement("div");
-  productContainer.setAttribute("data-id", id);
-  const titleContainer = document.createElement("div");
-  const titleP = document.createElement("p");
-
-  const descContainer = document.createElement("div");
-  const descP = document.createElement("p");
-
-  const categContainer = document.createElement("div");
-  const categP = document.createElement("p");
-
-  const priceContainer = document.createElement("div");
-  const priceP = document.createElement("p");
-
-  const imgDiv = document.createElement("button");
-  const imgP = document.createElement("img");
-
-  const rateContainer = document.createElement("div");
-  const rateP = document.createElement("p");
-  const rateStar = document.createElement("p");
-
-  const buttonCont = document.createElement("section");
-  const newCont = document.createElement("Section");
-  const cartBtn = document.createElement("button");
-  const wishlistBtn = document.createElement("button");
-  const wishlistImg = document.createElement("img");
-
-  const infoContainer = document.createElement("section");
-  const heartIcon = document.getElementById('heartIcon');
-  let isFilled = false;
-
-  // const wishlistIcon = document.createElement("i");
-
-
-
-  // textContent
-  titleP.textContent = title;
-  descP.textContent = description;
-  categP.textContent = category;
-  priceP.textContent = `$${price.toFixed(2)}`;
-  rateP.textContent = rate;
-  rateStar.textContent = "⭐";
-  imgP.src = img;
-  imgP.alt = title;
-  wishlistImg.src = "heart outline.jpg"
-  wishlistImg.alt = "heart Button";
-  // wishlistIcon.classList.add("fa-regular", "fa-heart"); // outline heart
-  cartBtn.textContent = "Add to Cart";
-  wishlistBtn.textContent = " ";
-
-  //   wishlistBtn.addEventListener("click", () => {
-  //   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  //   const exists = wishlist.some(item => item.title === title);
-  //   const icon = wishlistBtn.querySelector("i");
-
-  //   if (!exists) {
-  //     wishlist.push({ title, price, img });
-  //     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  //     icon.classList.remove("fa-regular");
-  //     icon.classList.add("fa-solid");
-  //   } else {
-  //     wishlist = wishlist.filter(item => item.title !== title);
-  //     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  //     icon.classList.remove("fa-solid");
-  //     icon.classList.add("fa-regular");
-  //   }
-  // });
-
-
-
-  // pang himo ug class sa each details
-  wishlistImg.classList = "wishlistImg";
-  titleP.classList = "titleP";
-  descP.classList = "descP";
-  categP.classList = "categP";
-  priceP.classList = "priceP";
-  rateP.classList = "rateP";
-  rateStar.classList = "rateStar";
-  imgDiv.classList = "imgDiv";
-  imgP.classList = "imgP";
-  cartBtn.classList = "cartBtn";
-  wishlistBtn.classList = "wishlistBtn";
-
-  //class sa containers
-  titleContainer.classList = "titleContainer";
-  descContainer.classList = "descContainer";
-  categContainer.classList = "categContainer";
-  priceContainer.classList = "priceContainer";
-  rateContainer.classList = "rateContainer";
-  productContainer.classList = "productContainer";
-  infoContainer.classList = "infoContainer";
-  newCont.classList = "newCont";
-  buttonCont.classList = "buttonCont";
-
-
-
-
-  //eventlistener nga mogawas ang specific product
-
-  imgDiv.addEventListener("click", () => {
-    currentModalProduct = { title, price, img };
-    const modal = document.getElementById("productModal");
-    const modalBox = document.getElementById("productModal");
-
-    document.getElementById("modalImg").src = img;
-    document.getElementById("modalImg").alt = title;
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalDesc").textContent = description;
-    document.getElementById("modalRate").textContent = rate;
-    document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
-
-
-    modalBox.dataset.id = id;
-    modal.classList.remove("hidden");
-
-    fetch("save_recently_viewed.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        product_id: id
-      })
-    });
-  });
-
-
-  // WISHLIST AND CART!!!!!!
-
-  const popup = document.getElementById("popupNotification");
-  const closeBtn = document.getElementById("popupCloseBtn");
-
-  if (closeBtn) {
-    closeBtn.addEventListener("click", closePopup);
-  }
-
-  window.addEventListener("click", (e) => {
-    if (e.target === popup) {
-      closePopup();
-    }
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const popup = document.getElementById("popupNotification");
-    const closeBtn = document.getElementById("popupCloseBtn");
-
-    closeBtn.addEventListener("click", () => {
-      closePopup();
-    });
-
-    window.addEventListener("click", (e) => {
-      if (e.target === popup) {
-        closePopup();
+  fetch('menu_api.php')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('API error');
       }
-    });
-  });
+      return response.json();
+    })
+    .then(data => {
+      container.innerHTML = ''; // clear old content
 
-  wishlistBtn.addEventListener("click", () => {
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const exists = wishlist.some(item => item.title === title);
-    if (!exists) {
-      wishlist.push({ title, price, img });
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-      addToWishlist(title, price, img);
-      showPopup(`${title} has been added to your Favorites.`);
-      const product = { title, price, img };
-      fetch("add_to_wishlist.php", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(product)
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('menu-item');
+
+        const img = document.createElement('img');
+        img.src = item.item_image || 'fallback.png';
+        img.alt = item.item_name;
+        img.width = 150;
+
+        const name = document.createElement('h3');
+        name.textContent = item.item_name;
+
+        const desc = document.createElement('p');
+        desc.textContent = item.item_description;
+
+        const price = document.createElement('p');
+        price.textContent = `Base Price: ₱${item.item_price}`;
+
+        const variantList = document.createElement('ul');
+        if (item.variants && item.variants.length > 0) {
+          item.variants.forEach(variant => {
+            const li = document.createElement('li');
+            li.textContent = `${variant.variant_name} - ₱${variant.variant_price}`;
+            variantList.appendChild(li);
+          });
+        }
+
+        card.appendChild(img);
+        card.appendChild(name);
+        card.appendChild(desc);
+        card.appendChild(price);
+        card.appendChild(variantList);
+
+        container.appendChild(card);
       });
-
-    } else {
-      showPopup("Already in Favorites.");
-    }
-  });
-
-  cartBtn.addEventListener("click", () => {
-    const product = { title, price, img };
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const alreadyInCart = cart.some(item => item.title === title);
-    if (!alreadyInCart) {
-      cart.push(product);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      showPopup(`${title} has been added to your cart.`);
-
-      // Call backend function to add to DB
-      addToCart(title, 1, price);
-    } else {
-      showPopup("Already in cart.");
-    }
-  });
+    })
+    .catch(error => {
+      console.error('Fetch failed:', error);
+      container.innerHTML = '<p style="color:red;">Failed to load menu.</p>';
+    });
+});
 
 
 
 
 
-  // ibutang sa ang details to their containers
-
-  imgDiv.appendChild(imgP);
-
-  titleContainer.appendChild(titleP);
-  categContainer.appendChild(categP);
-  rateContainer.appendChild(rateP);
-  rateContainer.appendChild(rateStar);
-  priceContainer.appendChild(priceP);
 
 
-  //ibutang ang detail containers sa product container
-  infoContainer.appendChild(imgDiv);
-  infoContainer.appendChild(titleContainer);
-  infoContainer.appendChild(categContainer);
-  infoContainer.appendChild(rateContainer);
-  buttonCont.appendChild(priceContainer);
-  newCont.appendChild(cartBtn);
-  wishlistBtn.appendChild(wishlistImg);
-  newCont.appendChild(wishlistBtn);
-  buttonCont.appendChild(newCont);
-  productContainer.appendChild(infoContainer);
-  productContainer.appendChild(buttonCont);
+// const createProduct = (id, title, description, category, price, img, rate) => {
+//   // himuon ug variable
+//   const productContainer = document.createElement("div");
+//   productContainer.setAttribute("data-id", id);
+//   const titleContainer = document.createElement("div");
+//   const titleP = document.createElement("p");
 
-  // return ang product container
-  return productContainer;
-}
+//   const descContainer = document.createElement("div");
+//   const descP = document.createElement("p");
+
+//   const categContainer = document.createElement("div");
+//   const categP = document.createElement("p");
+
+//   const priceContainer = document.createElement("div");
+//   const priceP = document.createElement("p");
+
+//   const imgDiv = document.createElement("button");
+//   const imgP = document.createElement("img");
+
+//   const rateContainer = document.createElement("div");
+//   const rateP = document.createElement("p");
+//   const rateStar = document.createElement("p");
+
+//   const buttonCont = document.createElement("section");
+//   const newCont = document.createElement("Section");
+//   const cartBtn = document.createElement("button");
+//   const wishlistBtn = document.createElement("button");
+//   const wishlistImg = document.createElement("img");
+
+//   const infoContainer = document.createElement("section");
+//   const heartIcon = document.getElementById('heartIcon');
+//   let isFilled = false;
+
+//   // const wishlistIcon = document.createElement("i");
+
+
+
+//   // textContent
+//   titleP.textContent = title;
+//   descP.textContent = description;
+//   categP.textContent = category;
+//   priceP.textContent = `$${price.toFixed(2)}`;
+//   rateP.textContent = rate;
+//   rateStar.textContent = "⭐";
+//   imgP.src = img;
+//   imgP.alt = title;
+//   wishlistImg.src = "heart outline.jpg"
+//   wishlistImg.alt = "heart Button";
+//   // wishlistIcon.classList.add("fa-regular", "fa-heart"); // outline heart
+//   cartBtn.textContent = "Add to Cart";
+//   wishlistBtn.textContent = " ";
+
+//   //   wishlistBtn.addEventListener("click", () => {
+//   //   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+//   //   const exists = wishlist.some(item => item.title === title);
+//   //   const icon = wishlistBtn.querySelector("i");
+
+//   //   if (!exists) {
+//   //     wishlist.push({ title, price, img });
+//   //     localStorage.setItem("wishlist", JSON.stringify(wishlist));
+//   //     icon.classList.remove("fa-regular");
+//   //     icon.classList.add("fa-solid");
+//   //   } else {
+//   //     wishlist = wishlist.filter(item => item.title !== title);
+//   //     localStorage.setItem("wishlist", JSON.stringify(wishlist));
+//   //     icon.classList.remove("fa-solid");
+//   //     icon.classList.add("fa-regular");
+//   //   }
+//   // });
+
+
+
+//   // pang himo ug class sa each details
+//   wishlistImg.classList = "wishlistImg";
+//   titleP.classList = "titleP";
+//   descP.classList = "descP";
+//   categP.classList = "categP";
+//   priceP.classList = "priceP";
+//   rateP.classList = "rateP";
+//   rateStar.classList = "rateStar";
+//   imgDiv.classList = "imgDiv";
+//   imgP.classList = "imgP";
+//   cartBtn.classList = "cartBtn";
+//   wishlistBtn.classList = "wishlistBtn";
+
+//   //class sa containers
+//   titleContainer.classList = "titleContainer";
+//   descContainer.classList = "descContainer";
+//   categContainer.classList = "categContainer";
+//   priceContainer.classList = "priceContainer";
+//   rateContainer.classList = "rateContainer";
+//   productContainer.classList = "productContainer";
+//   infoContainer.classList = "infoContainer";
+//   newCont.classList = "newCont";
+//   buttonCont.classList = "buttonCont";
+
+
+
+
+//   //eventlistener nga mogawas ang specific product
+
+//   imgDiv.addEventListener("click", () => {
+//     currentModalProduct = { title, price, img };
+//     const modal = document.getElementById("productModal");
+//     const modalBox = document.getElementById("productModal");
+
+//     document.getElementById("modalImg").src = img;
+//     document.getElementById("modalImg").alt = title;
+//     document.getElementById("modalTitle").textContent = title;
+//     document.getElementById("modalDesc").textContent = description;
+//     document.getElementById("modalRate").textContent = rate;
+//     document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
+
+
+//     modalBox.dataset.id = id;
+//     modal.classList.remove("hidden");
+
+//     fetch("save_recently_viewed.php", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify({
+//         product_id: id
+//       })
+//     });
+//   });
+
+
+//   // WISHLIST AND CART!!!!!!
+
+//   const popup = document.getElementById("popupNotification");
+//   const closeBtn = document.getElementById("popupCloseBtn");
+
+//   if (closeBtn) {
+//     closeBtn.addEventListener("click", closePopup);
+//   }
+
+//   window.addEventListener("click", (e) => {
+//     if (e.target === popup) {
+//       closePopup();
+//     }
+//   });
+
+//   document.addEventListener("DOMContentLoaded", () => {
+//     const popup = document.getElementById("popupNotification");
+//     const closeBtn = document.getElementById("popupCloseBtn");
+
+//     closeBtn.addEventListener("click", () => {
+//       closePopup();
+//     });
+
+//     window.addEventListener("click", (e) => {
+//       if (e.target === popup) {
+//         closePopup();
+//       }
+//     });
+//   });
+
+//   wishlistBtn.addEventListener("click", () => {
+//     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+//     const exists = wishlist.some(item => item.title === title);
+//     if (!exists) {
+//       wishlist.push({ title, price, img });
+//       localStorage.setItem("wishlist", JSON.stringify(wishlist));
+//       addToWishlist(title, price, img);
+//       showPopup(`${title} has been added to your Favorites.`);
+//       const product = { title, price, img };
+//       fetch("add_to_wishlist.php", {
+//         method: "POST",
+//         credentials: "include",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify(product)
+//       });
+
+//     } else {
+//       showPopup("Already in Favorites.");
+//     }
+//   });
+
+//   cartBtn.addEventListener("click", () => {
+//     const product = { title, price, img };
+//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+//     const alreadyInCart = cart.some(item => item.title === title);
+//     if (!alreadyInCart) {
+//       cart.push(product);
+//       localStorage.setItem("cart", JSON.stringify(cart));
+//       showPopup(`${title} has been added to your cart.`);
+
+//       // Call backend function to add to DB
+//       addToCart(title, 1, price);
+//     } else {
+//       showPopup("Already in cart.");
+//     }
+//   });
+
+
+
+
+
+//   // ibutang sa ang details to their containers
+
+//   imgDiv.appendChild(imgP);
+
+//   titleContainer.appendChild(titleP);
+//   categContainer.appendChild(categP);
+//   rateContainer.appendChild(rateP);
+//   rateContainer.appendChild(rateStar);
+//   priceContainer.appendChild(priceP);
+
+
+//   //ibutang ang detail containers sa product container
+//   infoContainer.appendChild(imgDiv);
+//   infoContainer.appendChild(titleContainer);
+//   infoContainer.appendChild(categContainer);
+//   infoContainer.appendChild(rateContainer);
+//   buttonCont.appendChild(priceContainer);
+//   newCont.appendChild(cartBtn);
+//   wishlistBtn.appendChild(wishlistImg);
+//   newCont.appendChild(wishlistBtn);
+//   buttonCont.appendChild(newCont);
+//   productContainer.appendChild(infoContainer);
+//   productContainer.appendChild(buttonCont);
+
+//   // return ang product container
+//   return productContainer;
+// }
 
 function handleSearch() {
   const searchTerm = document.getElementById("searchBar").value.toLowerCase();
