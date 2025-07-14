@@ -41,7 +41,7 @@ if (!$stmt->bind_param("is", $userId, $title)) {
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
-        echo json_encode(["success" => true, "message" => "Item removed from wishlist."]);
+        echo json_encode(["success" => true, "message" => "Item removed from Favorites."]);
     }
 } else {
     echo json_encode(["success" => false, "message" => "Execute failed: " . $stmt->error]);
