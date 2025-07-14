@@ -15,6 +15,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute([$username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    //if admin then redirect to dashboard admin_dashboard.html
+    if ($user === "casacafe_admin" && password_verify($password, "123")) {
+        header("Location: admin_users.html");
+        exit;
+    } else {
+        echo "Invalid username or password.";
+    }
+
     // Check if user exists and password matches
     if ($user && password_verify($password, $user['Password'])) {
         $_SESSION['UserID'] = $user['UserID']; // store user ID
