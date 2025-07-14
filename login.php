@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     //if admin then redirect to dashboard admin_dashboard.html
-    if ($user === "casacafe_admin" && password_verify($password, "123")) {
+    if ($user === "Casacafe_admin" && password_verify($password, "123")) {
         header("Location: admin_users.html");
         exit;
     } else {
