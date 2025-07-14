@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
     if (wishlist.length === 0) {
-        wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
+        wishlistSection.innerHTML = "<div style='flex-direction: column; align-items: center;'><p>You currently have no favorites</p><a href='product.html' class='btn' id='shopBtn'>Shop Now</a></div>";
         return;
     }
 
@@ -127,7 +127,26 @@ function removeFromWishlistByTitle(title, container) {
             container.remove();
 
             if (wishlist.length === 0) {
-                document.getElementById("wishlistSection").innerHTML = "<p>Your wishlist is empty.</p>";
+                document.getElementById("wishlistSection").innerHTML = "<div style='flex-direction: column; align-items: center;'><p>You currently have no favorites</p><a href='product.html' class='btn' id='shopBtn'>Shop Now</a></div>";
             }
         });
 }
+
+
+
+const toggle = document.getElementById("dropdownToggle");
+  const menu = document.getElementById("dropdownMenu");
+  const arrow = document.getElementById("dropdownArrow");
+
+  toggle.addEventListener("click", () => {
+    const isVisible = menu.style.display === "block";
+    menu.style.display = isVisible ? "none" : "block";
+    toggle.classList.toggle("open", !isVisible);
+  });
+
+  window.addEventListener("click", (e) => {
+    if (!document.getElementById("profileDropdown").contains(e.target)) {
+      menu.style.display = "none";
+      toggle.classList.remove("open");
+    }
+  });

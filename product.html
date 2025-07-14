@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="index.css">
     <script src="cscript.js"></script>
+    
 </head>
 
 <body style="margin-top: 88px;">
@@ -28,16 +29,23 @@
         <nav class="nav-bar">
             <a href="wishlist.html" id="navWish">
                 <!-- <img src="heart outline.jpg"> -->
-                 <i class="fa-regular fa-heart wishlist-icon"></i>
+                <i class="fa-regular fa-heart wishlist-icon"></i>
             </a>
             <a href="cart.html" id="navCart">Cart</a>
-            <a href="index copy.html">home</a>
+            <a href="#home" id="navHome">home</a>
+            <a href="#about-shop">about us</a>
             <a href="product.html">Menu</a>
             <a href="contact.html">contact</a>
-            <a href="index.html">log out</a>
-            <a href="profile.html" id="profileBtn">
-                <img src="profile.png">
-            </a>
+            <div class="dropdown" id="profileDropdown">
+                <div id="dropdownToggle">
+                    <i class="fas fa-user-circle"></i>
+                    <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" id="profileBtn" style="color: black;">My Profile</a>
+                    <a href="index.html" style="color: black;">Log out</a>
+                </div>
+            </div>
         </nav>
 
     </header>
@@ -120,5 +128,5 @@
 
 
 </body>
-
+<script src="dropdown.js"></script>
 </html>

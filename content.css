@@ -16,6 +16,11 @@
   font-weight: 1000;
 }
 
+.btn {
+  padding: 9px 35px;
+  width: 157px;
+}
+
 #thankYouMessage.show {
   opacity: 1;
   visibility: visible;
