@@ -19,13 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          // Store session info
          $_SESSION['UserID'] = $user['UserID'];
          $_SESSION['Username'] = $user['Username'];
-         $_SESSION['role'] = $user['role'] ?? 'user'; 
+         $_SESSION['role'] = $user['role']; 
 
          // Redirect based on role
          if ($_SESSION['role'] === 'Admin') {
-            header("Location: admin_dashboard.html");
-         } else {
             header("Location: index copy.html");
+         } else {
+            header("Location: admin_dashboard.html");
          }
          exit;
     } else {
