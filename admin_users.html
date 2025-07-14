@@ -262,6 +262,10 @@
     </div>
 
     <div class="main-content">
+        <div class="search-container" style="padding: 20px; margin-top: 100px;">
+          <input type="text" id="searchInput" placeholder="Search by UserID or Username..." style="width: 300px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+
         <table class="user-table">
             <thead>
                 <tr>
@@ -301,25 +305,25 @@
 
     <script>
     const toggle = document.getElementById("dropdownToggle");
-  const menu = document.getElementById("dropdownMenu");
-  const arrow = document.getElementById("dropdownArrow");
+    const menu = document.getElementById("dropdownMenu");
+    const arrow = document.getElementById("dropdownArrow");
 
-  toggle.addEventListener("click", () => {
-    const isVisible = menu.style.display === "block";
-    menu.style.display = isVisible ? "none" : "block";
-    toggle.classList.toggle("open", !isVisible);
-  });
+    toggle.addEventListener("click", () => {
+      const isVisible = menu.style.display === "block";
+      menu.style.display = isVisible ? "none" : "block";
+      toggle.classList.toggle("open", !isVisible);
+    });
 
-  window.addEventListener("click", (e) => {
-    if (!document.getElementById("profileDropdown").contains(e.target)) {
-      menu.style.display = "none";
-      toggle.classList.remove("open");
-    }
-  });
+    window.addEventListener("click", (e) => {
+      if (!document.getElementById("profileDropdown").contains(e.target)) {
+        menu.style.display = "none";
+        toggle.classList.remove("open");
+      }
+    });
 
     document.querySelector('.menu-toggle').addEventListener('click', () => {
-        const submenu = document.querySelector('.submenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+      const submenu = document.querySelector('.submenu');
+      submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
     });
 
     const editModal = document.getElementById("editModal");
@@ -336,31 +340,31 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-  fetch('admin_get_users.php')
-    .then(res => res.json())
-    .then(users => {
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
+    fetch('admin_get_users.php')
+      .then(res => res.json())
+      .then(users => {
+        const tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
 
-      users.forEach(user => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${user.UserID}</td>
-          <td>${user.Username}</td>
-          <td>
-            <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
-            <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+        users.forEach(user => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${user.UserID}</td>
+            <td>${user.Username}</td>
+            <td>
+              <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+              <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
 
-      document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', e => {
-        selectedUserId = e.currentTarget.getAttribute('data-id');
-        const username = e.currentTarget.getAttribute('data-username');
-        editUsernameInput.value = username;
-        openModal('editModal');
+        document.querySelectorAll('.edit-btn').forEach(button => {
+          button.addEventListener('click', e => {
+          selectedUserId = e.currentTarget.getAttribute('data-id');
+          const username = e.currentTarget.getAttribute('data-username');
+          editUsernameInput.value = username;
+          openModal('editModal');
         });
       });
 
@@ -375,6 +379,15 @@
       console.error('Error loading users:', error);
     });
 });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+    const keyword = e.target.value.toLowerCase();
+    const filtered = allUsers.filter(user =>
+      user.UserID.toString().includes(keyword) ||
+      user.Username.toLowerCase().includes(keyword)
+    );
+    renderUsers(filtered);
+  });
 
     document.getElementById('saveEditBtn').addEventListener('click', () => {
       const newUsername = editUsernameInput.value.trim();
