@@ -330,6 +330,7 @@
     const deleteModal = document.getElementById("deleteModal");
     const editUsernameInput = document.getElementById("editUsernameInput");
     let selectedUserId = null;
+    let allUsers = [];
 
     function openModal(id) {
       document.getElementById(id).classList.add("active");
@@ -339,46 +340,51 @@
       document.getElementById(id).classList.remove("active");
     }
 
+    function renderUsers(users) {
+    const tbody = document.getElementById('userTableBody');
+    tbody.innerHTML = '';
+
+    users.forEach(user => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${user.UserID}</td>
+        <td>${user.Username}</td>
+        <td>
+          <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+          <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', e => {
+        selectedUserId = e.currentTarget.getAttribute('data-id');
+        const username = e.currentTarget.getAttribute('data-username');
+        editUsernameInput.value = username;
+        openModal('editModal');
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', e => {
+        selectedUserId = e.currentTarget.getAttribute('data-id');
+        openModal('deleteModal');
+      });
+    });
+  }
+
     document.addEventListener('DOMContentLoaded', () => {
     fetch('admin_get_users.php')
       .then(res => res.json())
       .then(users => {
-        const tbody = document.getElementById('userTableBody');
-        tbody.innerHTML = '';
-
-        users.forEach(user => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${user.UserID}</td>
-            <td>${user.Username}</td>
-            <td>
-              <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
-              <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-        document.querySelectorAll('.edit-btn').forEach(button => {
-          button.addEventListener('click', e => {
-          selectedUserId = e.currentTarget.getAttribute('data-id');
-          const username = e.currentTarget.getAttribute('data-username');
-          editUsernameInput.value = username;
-          openModal('editModal');
-        });
+        allUsers = users;
+        renderUsers(users);
+      })
+      .catch(error => {
+        console.error('Error loading users:', error);
       });
-
-      document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', e => {
-        selectedUserId = e.currentTarget.getAttribute('data-id');
-        openModal('deleteModal');
-        });
-      });
-    })
-    .catch(error => {
-      console.error('Error loading users:', error);
-    });
-});
+  });
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase();
