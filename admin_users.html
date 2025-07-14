@@ -173,6 +173,44 @@
   color: #e53935;
 }
 
+  .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .modal-content button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm-btn { background-color: #4CAF50; color: white; }
+    .cancel-btn { background-color: #f44336; color: white; }
+
   </style>
 </head>
 <body>
@@ -235,6 +273,29 @@
         </table>
     </div>
 
+    <!-- Edit -->
+    <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h3>Edit Username</h3>
+      <input type="text" id="editUsernameInput" />
+      <div>
+        <button class="confirm-btn" id="saveEditBtn">Save</button>
+        <button class="cancel-btn" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Delete -->
+    <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <h3 id="deleteMessage">Are you sure you want to delete this user?</h3>
+      <div>
+        <button class="confirm-btn" id="confirmDeleteBtn">Yes</button>
+        <button class="cancel-btn" onclick="closeModal('deleteModal')">No</button>
+      </div>
+    </div>
+  </div>
+
     <script>
     const toggle = document.getElementById("dropdownToggle");
   const menu = document.getElementById("dropdownMenu");
@@ -257,6 +318,19 @@
         const submenu = document.querySelector('.submenu');
         submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
     });
+
+    const editModal = document.getElementById("editModal");
+    const deleteModal = document.getElementById("deleteModal");
+    const editUsernameInput = document.getElementById("editUsernameInput");
+    let selectedUserId = null;
+
+    function openModal(id) {
+      document.getElementById(id).style.display = "flex";
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
   fetch('admin_get_users.php')
@@ -282,6 +356,35 @@
       console.error('Error loading users:', error);
     });
 });
+
+    function editUser(id, username) {
+      selectedUserId = id;
+      editUsernameInput.value = username;
+      openModal('editModal');
+    }
+
+    document.getElementById('saveEditBtn').addEventListener('click', () => {
+      const newUsername = editUsernameInput.value.trim();
+      if (newUsername && selectedUserId) {
+        console.log(`Update user ${selectedUserId} to ${newUsername}`);
+        closeModal('editModal');
+        location.reload();
+      }
+    });
+
+    function confirmDelete(id) {
+      selectedUserId = id;
+      openModal('deleteModal');
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+      if (selectedUserId) {
+        console.log(`Delete user ${selectedUserId}`);
+        closeModal('deleteModal');
+        location.reload();
+      }
+    });
+
     </script>
     <script src="admin.js"></script>
 </body>
