@@ -211,7 +211,7 @@ const createProduct = (id, title, description, category, price, img, rate) => {
       wishlist.push({ title, price, img });
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
       addToWishlist(title, price, img);
-      showPopup(`${title} has been added to your wishlist.`);
+      showPopup(`${title} has been added to your Favorites.`);
       const product = { title, price, img };
       fetch("add_to_wishlist.php", {
         method: "POST",
@@ -223,7 +223,7 @@ const createProduct = (id, title, description, category, price, img, rate) => {
       });
 
     } else {
-      showPopup("Already in wishlist.");
+      showPopup("Already in Favorites.");
     }
   });
 
@@ -427,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
       wishlist.push({ title, price, img });
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
       addToWishlist(title, price, img);
-      showPopup(`${title} has been added to your wishlist.`);
+      showPopup(`${title} has been added to your Favorites.`);
       fetch("add_to_wishlist.php", {
         method: "POST",
         credentials: "include",
@@ -437,7 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ title, price, img })
       });
     } else {
-      showPopup("Already in wishlist.");
+      showPopup("Already in Favorites.");
     }
   });
 
@@ -571,7 +571,7 @@ async function fetchCartFromDB() {
 async function fetchWishlistFromDB() {
   try {
     const response = await fetch('get_wishlist.php', { credentials: 'include' });
-    if (!response.ok) throw new Error('Failed to fetch wishlist');
+    if (!response.ok) throw new Error('Failed to fetch Favorites');
     const wishlist = await response.json();
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
     return wishlist;
@@ -592,14 +592,14 @@ function addToWishlist(title, price, img) {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        showPopup(`${title} has been added to your wishlist.`);
+        showPopup(`${title} has been added to your Favorites.`);
       } else {
-        showPopup(`Failed to add to wishlist: ${data.error || 'Unknown error'}`);
+        showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
       }
     })
     .catch(error => {
-      console.error('Error adding to wishlist:', error);
-      showPopup('Failed to add to wishlist.');
+      console.error('Error adding to Favorites:', error);
+      showPopup('Failed to add to Favorites.');
     });
 }
 
