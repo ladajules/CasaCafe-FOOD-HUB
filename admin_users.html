@@ -377,34 +377,47 @@
 });
 
     document.getElementById('saveEditBtn').addEventListener('click', () => {
-  const newUsername = editUsernameInput.value.trim();
-  if (newUsername && selectedUserId) {
-    fetch('edit_user.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `UserID=${selectedUserId}&Username=${encodeURIComponent(newUsername)}`
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        closeModal('editModal');
-        location.reload();
-      } else {
-        alert('Edit failed: ' + data.error);
+      const newUsername = editUsernameInput.value.trim();
+      if (newUsername && selectedUserId) {
+        fetch('edit_user.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `UserID=${selectedUserId}&Username=${encodeURIComponent(newUsername)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeModal('editModal');
+            location.reload();
+          } else {
+            alert('Edit failed: ' + data.error);
+          }
+        });
       }
     });
-  }
-});
 
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
       if (selectedUserId) {
-        console.log(`Delete user ${selectedUserId}`);
-        closeModal('deleteModal');
+        fetch('delete_user.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `UserID=${selectedUserId}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeModal('deleteModal');
+            location.reload();
+          } else {
+            alert('Delete failed: ' + data.error);
+          }
+        });
       }
     });
-
     </script>
     <script src="admin.js"></script>
 </body>
