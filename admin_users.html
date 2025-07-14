@@ -348,8 +348,8 @@
           <td>${user.UserID}</td>
           <td>${user.Username}</td>
           <td>
-            <button class="edit-btn"><i class="fas fa-pen"></i></button>
-            <button class="delete-btn"><i class="fas fa-trash"></i></button>
+            <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+            <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
           </td>
         `;
         tbody.appendChild(tr);
