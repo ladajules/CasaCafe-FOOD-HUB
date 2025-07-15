@@ -61,13 +61,14 @@
     margin: 10px;
     font-size: 15px;
     color: #fff;
-    background-color: #4F959D;
-    width: 92%;
+    background-color: #353535;
+    width: 282px;
 }
+
 
 #login:hover, #rg:hover {
     cursor: pointer;
-    background-color: #417379;
+    background-color: #000000;
 }
 
 

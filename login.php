@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-$error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // Connect to the database
@@ -31,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-         echo "Error: " . $e->getMessage();
+      header("Location: login.html?error=1");
     }
 }
 ?>
