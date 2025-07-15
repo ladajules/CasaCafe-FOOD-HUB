@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     title.classList = "titleP";
 
                     const price = document.createElement("p");
-                    price.textContent = `$${product.price.toFixed(2)}`;
+                    price.textContent = `₱${product.price.toFixed(2)}`;
                     price.classList = "priceP";
 
                     const quantity = document.createElement("input");
@@ -293,7 +293,7 @@ function updateTotalPrice(cart) {
         const qty = item.quantity || 1;
         return sum + (item.price * qty);
     }, 0);
-    totalPriceDisplay.textContent = `Total: $${total.toFixed(2)}`;
+    totalPriceDisplay.textContent = `Total: ₱${total.toFixed(2)}`;
 }
 
 function updateCartQuantity(product_name, quantity) {

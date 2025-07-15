@@ -206,6 +206,12 @@
     flex-direction: column;
   }
 
+  .modal-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
   .modal-header {
     display: flex;
     justify-content: space-between;
@@ -275,6 +281,7 @@
     transition: border-color 0.3s, box-shadow 0.3s;
     font-family: inherit;
     box-sizing: border-box;
+    text-transform: none;
   }
 
   .form-textarea {
@@ -288,6 +295,7 @@
     resize: vertical;
     min-height: 80px;
     box-sizing: border-box;
+    text-transform: none;
   }
 
   .button-group {
@@ -329,6 +337,17 @@
     background-color: #e0e0e0;
     transform: translateY(-1px);
   }
+
+  .modal-content button {
+    margin: 5px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .confirm-btn { background-color: #4CAF50; color: white; }
+  .cancel-btn { background-color: #f44336; color: white; }
   </style>
 </head>
 <body>
@@ -456,6 +475,16 @@
         </div>
     </div>
 
+    <div class="modal" id="deleteConfirmModal">
+    <div class="modal-content">
+      <h3 id="deleteMessage">Are you sure you want to delete this item?</h3>
+      <div>
+        <button class="confirm-btn" id="confirmDeleteBtn">Yes</button>
+        <button class="cancel-btn" onclick="closeModal('deleteConfirmModal')">No</button>
+      </div>
+    </div>
+  </div>
+
       <script>
             const toggle = document.getElementById("dropdownToggle");
             const menu = document.getElementById("dropdownMenu");
@@ -491,6 +520,31 @@
               document.getElementById('edit_item_image').value = item.item_image;
               openModal('editItemModal');
             };
+
+            let itemIdToDelete = null;
+
+            function openDeleteConfirmModal(item_id) {
+              itemIdToDelete = item_id;
+              openModal('deleteConfirmModal');
+            }
+
+            document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+              if (!itemIdToDelete) return;
+              fetch('admin_delete_menu.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item_id: itemIdToDelete })
+              })
+              .then(res => res.json())
+              .then(response => {
+                if (response.success) {
+                  closeModal('deleteConfirmModal');
+                  location.reload();
+                } else {
+                  alert("Delete failed: " + response.error);
+                }
+              });
+            });
 
             document.getElementById('editItemForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -545,6 +599,7 @@
                     </td>
                     `;
                     tr.querySelector('.edit-btn').addEventListener('click', () => openEditItemModal(item));
+                    tr.querySelector('.delete-btn').addEventListener('click', () => openDeleteConfirmModal(item.item_id));
                     tbody.appendChild(tr);
                 });
 

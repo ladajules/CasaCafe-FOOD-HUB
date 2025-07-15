@@ -4,33 +4,27 @@ session_start();
 require 'db_connection.php';
 
 if (!isset($_SESSION['UserID'])) {
-    echo json_encode(["success" => false, "error" => "User not logged in"]);
+    echo json_encode(["success" => false, "error" => "Not logged in"]);
     exit;
 }
 
 $userId = $_SESSION['UserID'];
-$data = json_decode(file_get_contents('php://input'), true);
+$wishlist = json_decode(file_get_contents('php://input'), true)['wishlist'] ?? [];
 
-if (!isset($data['wishlist']) || !is_array($data['wishlist'])) {
+if (!is_array($wishlist)) {
     echo json_encode(["success" => false, "error" => "Invalid wishlist data"]);
     exit;
 }
 
-// Optional: clear current wishlist for user before syncing
+// Optional: Clear old wishlist for this user
 $conn->query("DELETE FROM wishlist WHERE user_id = $userId");
 
 $stmt = $conn->prepare("INSERT INTO wishlist (user_id, title, price, img) VALUES (?, ?, ?, ?)");
-if (!$stmt) {
-    echo json_encode(["success" => false, "error" => "Failed to prepare statement"]);
-    exit;
-}
 
-foreach ($data['wishlist'] as $item) {
+foreach ($wishlist as $item) {
     $title = $item['title'] ?? '';
     $price = $item['price'] ?? 0;
     $img = $item['img'] ?? '';
-
-    if ($title === '') continue;
 
     $stmt->bind_param("isds", $userId, $title, $price, $img);
     $stmt->execute();

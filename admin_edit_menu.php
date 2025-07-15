@@ -1,31 +1,59 @@
 <?php
 require 'db_connection.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+if ($conn->connect_error) {
+    echo json_encode(["success" => false, "error" => "Database connection failed"]);
+    exit;
+}
+
+$input = file_get_contents("php://input");
+$data = json_decode($input, true);
 
 if (
-  isset($data['item_id'], $data['item_name'], $data['item_category'], 
-        $data['item_description'], $data['item_price'], $data['item_image'])
+    isset($data['item_id'], $data['item_name'], $data['item_category'],
+          $data['item_description'], $data['item_price'], $data['item_image']) &&
+    is_numeric($data['item_id']) && is_numeric($data['item_price'])
 ) {
-  $stmt = $conn->prepare("UPDATE menu SET item_name=?, item_category=?, item_description=?, item_price=?, item_image=? WHERE item_id=?");
-  $stmt->bind_param(
-    "ssssdi",
-    $data['item_name'],
-    $data['item_category'],
-    $data['item_description'],
-    $data['item_price'],
-    $data['item_image'],
-    $data['item_id']
-  );
+    $item_id = intval($data['item_id']);
+    $item_name = $data['item_name'];
+    $item_category = $data['item_category'];
+    $item_description = $data['item_description'];
+    $item_price = floatval($data['item_price']);
+    $item_image = $data['item_image'];
 
-  if ($stmt->execute()) {
-    echo json_encode(["success" => true]);
-  } else {
-    echo json_encode(["success" => false, "error" => $stmt->error]);
-  }
+    $stmt = $conn->prepare("UPDATE item_table SET 
+        item_name = ?, 
+        item_category = ?, 
+        item_description = ?, 
+        item_image = ?, 
+        item_price = ? 
+        WHERE item_id = ?");
 
-  $stmt->close();
+    if (!$stmt) {
+        echo json_encode(["success" => false, "error" => "Prepare failed: " . $conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param(
+        "ssssdi",
+        $item_name,
+        $item_category,
+        $item_description,
+        $item_image,
+        $item_price,
+        $item_id
+    );
+
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["success" => false, "error" => $stmt->error]);
+    }
+
+    $stmt->close();
 } else {
-  echo json_encode(["success" => false, "error" => "Missing fields"]);
+    echo json_encode(["success" => false, "error" => "Missing or invalid fields"]);
 }
+
+$conn->close();
 ?>
