@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-$error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // Connect to the database

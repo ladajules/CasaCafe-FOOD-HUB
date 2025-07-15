@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASACAFE</title>
+    <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body style="margin-top: 88px;">
+
+    <header>
+
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index copy.html" class="logo"><img src="temp casaLogo.png"><span></span></a>
+
+        <nav class="nav-bar">
+           <a href="wishlist.html" id="navWish">
+                <!-- <img src="heart outline.jpg"> -->
+                <i class="fa-regular fa-heart wishlist-icon"></i>
+            </a>    
+            <a href="cart.html" id="navCart">Cart</a>
+            <a href="index copy.html">home</a>
+            <a href="product.html">Menu</a>
+            <a href="contact.html">contact</a>
+            <div class="dropdown" id="profileDropdown">
+            <div id="dropdownToggle">
+                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="profile.html" id="profileBtn" style="color: black;">My Profile</a>
+                <a href="index.html" style="color: black;">Log out</a>
+            </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <section class="contact" id="contact">
+
+        <h1 class="heading"> contact <span> us </span></h1>
+
+        <div class="row">
+            <form action="contact.php" method="POST">
+                <input type="text" name="name" placeholder="name" class="box" required>
+                <input type="email" name="email" placeholder="email" class="box" required>
+                <input type="text" name="number" placeholder="number" class="box">
+                <textarea name="message" class="box" placeholder="message" cols="30" rows="10" required></textarea>
+                <input type="submit" value="send message" class="btn">
+            </form>
+
+            <div class="image">
+                <img src="LADAMART POSTER.png" alt="">
+            </div>
+        </div>
+        
+    </section>
+
+    <section class="footer">
+
+        <div class="box-container">
+            <div class="box">
+                <h3>quick links</h3>
+                <a href="wishlist.html">♡</a> 
+                <a href="cart.html">Cart</a>
+                <a href="index.html">home</a>
+                <a href="product.html">Menu</a>
+                <a href="contact.html">contact</a>
+                </div>
+    
+            <div class="box">
+            <h3>location</h3>
+            <a>Barangay Bankal, Lapu-Lapu City</a>
+        </div>
+
+        <div class="box">
+            <h3>contact info</h3>
+            <a href="#">+63 9177787609</a>
+            <a href="#">CasaCafe@gmail.com</a>
+            <a href="#">cebu, philippines - 6015</a>
+        </div>
+    </div>
+    <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+  </section>
+<script src="cscript.js"></script>
+<script src="dropdown.js"></script>
+</body>
+</html>
