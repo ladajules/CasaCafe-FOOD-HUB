@@ -308,11 +308,8 @@
             document.getElementById('searchInput').addEventListener('input', (e) => {
                 const keyword = e.target.value.toLowerCase();
                 const filtered = allItems.filter(item => 
-                    item.item_id.toString().includes(keyword) ||
-                    item.item_name.toString().includes(keyword) ||
-                    item.item_category.toString().includes(keyword) ||
-                    item.item_description.toString().includes(keyword) ||
-                    item.item_price.toString().includes(keyword)
+                    item.item_id.includes(keyword) ||
+                    item.item_name.toLowerCase().includes(keyword)
                 );
                 renderItems(filtered);
             });
