@@ -18,6 +18,7 @@
     font-size: 40px;
     margin-bottom: 50px;
     color: #e9d36c;
+    text-transform: none;
 
 }
 
@@ -62,6 +63,7 @@
     color: #fff;
     background-color: #4F959D;
     width: 92%;
+    text-transform: none;
 }
 
 #register {
