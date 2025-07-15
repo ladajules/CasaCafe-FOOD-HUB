@@ -1,129 +1,126 @@
-function syncWishlistToDB() {
-  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-  if (wishlist.length > 0) {
-    fetch("sync_wishlist.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ wishlist })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        console.log("Wishlist synced to database");
-        // Optional: localStorage.removeItem("wishlist");
-      } else {
-        console.error("Wishlist sync failed:", data.error);
-      }
-    })
-    .catch(error => console.error("Wishlist sync error:", error));
-  }
-}
-
-function fetchWishlistFromDB() {
-  return fetch("get_wishlist.php", {
-    credentials: "include"
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (Array.isArray(data)) {
-        localStorage.setItem("wishlist", JSON.stringify(data));
-        return data;
-      } else {
-        console.warn("get_wishlist.php returned unexpected data:", data);
-        return [];
-      }
-    })
-    .catch(error => {
-      console.error("Failed to fetch wishlist from DB:", error);
-      return [];
-    });
-}
-
-async function initWishlist() {
+document.addEventListener("DOMContentLoaded", () => {
   const wishlistSection = document.getElementById("wishlistSection");
 
-  const loggedIn = await checkLoginStatus();
-  let wishlist = [];
-
-  if (loggedIn) {
-    await syncWishlistToDB();
-    wishlist = await fetchWishlistFromDB();
-  } else {
-    wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  }
-
-  if (!wishlist.length) {
-    wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
-    return;
-  }
-
-  wishlistSection.innerHTML = "";
-
-  wishlist.forEach(product => {
-    const container = document.createElement("div");
-    container.classList = "productContainer";
-
-    const imageCont = document.createElement("div");
-    imageCont.classList = "imageCont";
-    const cartDescription = document.createElement("div");
-    cartDescription.classList = "cartDescription";
-
-    const img = document.createElement("img");
-    img.src = product.img;
-    img.alt = product.title;
-    img.classList = "imgP";
-
-    const title = document.createElement("p");
-    title.textContent = product.title;
-    title.classList = "titleP";
-
-    const price = document.createElement("p");
-    price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
-    price.classList = "priceP";
-
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.classList = "remove-btn";
-    removeBtn.addEventListener("click", () => {
-      removeFromWishlistByTitle(product.title, container);
-    });
-
-    imageCont.appendChild(img);
-    container.appendChild(imageCont);
-    cartDescription.appendChild(title);
-    cartDescription.appendChild(price);
-    container.appendChild(cartDescription);
-    container.appendChild(removeBtn);
-
-    wishlistSection.appendChild(container);
-  });
-}
-
-function removeFromWishlistByTitle(title, container) {
-  fetch("remove_from_wishlist.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `title=${encodeURIComponent(title)}`
-  })
+  // Check if user is logged in
+  fetch('check_login.php', { credentials: 'include' })
     .then(res => res.json())
     .then(data => {
-      if (!data.success) {
-        console.warn("Warning: Failed to remove from DB:", data.message);
+      if (!data.loggedIn) {
+        loadFromLocalStorage(); // fallback
+      } else {
+        syncWishlistToDB().then(fetchWishlistFromDB);
       }
     })
-    .finally(() => {
-      let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-      wishlist = wishlist.filter(item => item.title !== title);
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-
-      container.remove();
-
-      if (wishlist.length === 0) {
-        document.getElementById("wishlistSection").innerHTML = "<p>Your wishlist is empty.</p>";
-      }
+    .catch(() => {
+      loadFromLocalStorage(); // if error in login check
     });
-}
 
-document.addEventListener("DOMContentLoaded", initWishlist);
+  function syncWishlistToDB() {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    if (wishlist.length === 0) return Promise.resolve();
+
+    return fetch("sync_wishlist.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({ wishlist })
+    }).then(res => res.json())
+      .then(data => {
+        if (!data.success) console.warn("Wishlist sync failed:", data.error);
+      });
+  }
+
+  function fetchWishlistFromDB() {
+    fetch("get_wishlist.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) {
+          wishlistSection.innerHTML = "<p>Failed to load wishlist.</p>";
+          return;
+        }
+        updateWishlistUI(data);
+        localStorage.setItem("wishlist", JSON.stringify(data)); // Optional
+      })
+      .catch(() => {
+        wishlistSection.innerHTML = "<p>Failed to load wishlist from server.</p>";
+      });
+  }
+
+  function loadFromLocalStorage() {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    updateWishlistUI(wishlist);
+  }
+
+  function updateWishlistUI(wishlist) {
+    wishlistSection.innerHTML = "";
+
+    if (wishlist.length === 0) {
+      wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
+      return;
+    }
+
+    wishlist.forEach(product => {
+      const container = document.createElement("div");
+      container.classList = "productContainer";
+
+      const imageCont = document.createElement("div");
+      imageCont.classList = "imageCont";
+      const cartDescription = document.createElement("div");
+      cartDescription.classList = "cartDescription";
+
+      const img = document.createElement("img");
+      img.src = product.img;
+      img.alt = product.title;
+      img.classList = "imgP";
+
+      const title = document.createElement("p");
+      title.textContent = product.title;
+      title.classList = "titleP";
+
+      const price = document.createElement("p");
+      price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
+      price.classList = "priceP";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "Remove";
+      removeBtn.classList = "remove-btn";
+      removeBtn.addEventListener("click", () => {
+        removeFromWishlistByTitle(product.title, container);
+      });
+
+      imageCont.appendChild(img);
+      container.appendChild(imageCont);
+      cartDescription.appendChild(title);
+      cartDescription.appendChild(price);
+      container.appendChild(cartDescription);
+      container.appendChild(removeBtn);
+
+      wishlistSection.appendChild(container);
+    });
+  }
+
+  function removeFromWishlistByTitle(title, container) {
+    fetch('remove_from_wishlist.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      credentials: 'include',
+      body: `title=${encodeURIComponent(title)}`
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) console.warn("Failed to remove:", data.message);
+      })
+      .finally(() => {
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        wishlist = wishlist.filter(item => item.title !== title);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        container.remove();
+
+        if (wishlist.length === 0) {
+          wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
+        }
+      });
+  }
+});
