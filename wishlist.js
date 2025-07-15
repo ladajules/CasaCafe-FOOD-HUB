@@ -1,3 +1,34 @@
+
+function loadWishlistFromDB() {
+  fetch("get_wishlist.php", {
+    credentials: "include" // include session cookies
+  })
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to fetch wishlist");
+      return response.json();
+    })
+    .then(data => {
+      if (Array.isArray(data)) {
+        localStorage.setItem("wishlist", JSON.stringify(data));
+        console.log("Wishlist loaded from DB into localStorage");
+
+        // Optionally reload the page to reflect updated wishlist
+        location.reload();
+      } else {
+        console.error("Invalid wishlist data from server");
+      }
+    })
+    .catch(error => {
+      console.error("Error loading wishlist from DB:", error);
+    });
+}
+
+checkLoginStatus().then(loggedIn => {
+  if (loggedIn) {
+    loadWishlistFromDB();
+  }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   const wishlistSection = document.getElementById("wishlistSection");
 
