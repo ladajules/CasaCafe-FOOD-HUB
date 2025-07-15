@@ -1,27 +1,21 @@
 <?php
-header("Content-Type: application/json");
+require 'db_connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(["success" => false, "error" => "Invalid request method"]);
-    exit;
-}
-
-$conn = new mysqli("localhost", "s24100966_LadaMart", "ciscocisco", "s24100966_LadaMart");
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "error" => "Database connection failed"]);
     exit;
 }
 
 $input = file_get_contents("php://input");
-file_put_contents("debug_input.txt", $input); // log for review
+file_put_contents("debug_input.txt", $input); 
 $data = json_decode($input, true);
 
 if (
     isset($data['item_id'], $data['item_name'], $data['item_category'],
-          $data['item_description'], $data['item_price'], $data['item_image']) &&
+    $data['item_description'], $data['item_price'], $data['item_image']) &&
     is_numeric($data['item_id']) && is_numeric($data['item_price'])
 ) {
-    $stmt = $conn->prepare("UPDATE menu SET 
+    $stmt = $conn->prepare("UPDATE item_table SET 
         item_name = ?, 
         item_category = ?, 
         item_description = ?, 
