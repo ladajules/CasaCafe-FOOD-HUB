@@ -1,67 +1,18 @@
-
-function loadWishlistFromDB() {
-  fetch("get_wishlist.php", {
-    credentials: "include" // include session cookies
-  })
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to fetch wishlist");
-      return response.json();
-    })
-    .then(data => {
-      if (Array.isArray(data)) {
-        localStorage.setItem("wishlist", JSON.stringify(data));
-        console.log("Wishlist loaded from DB into localStorage");
-
-        // Optionally reload the page to reflect updated wishlist
-        location.reload();
-      } else {
-        console.error("Invalid wishlist data from server");
-      }
-    })
-    .catch(error => {
-      console.error("Error loading wishlist from DB:", error);
-    });
-}
-
-checkLoginStatus().then(loggedIn => {
-  if (loggedIn) {
-    loadWishlistFromDB();
-  }
-});
-
 document.addEventListener("DOMContentLoaded", () => {
   const wishlistSection = document.getElementById("wishlistSection");
 
-  // Check if user is logged in
   fetch('check_login.php', { credentials: 'include' })
     .then(res => res.json())
     .then(data => {
-      if (!data.loggedIn) {
-        loadFromLocalStorage(); // fallback
+      if (data.loggedIn) {
+        fetchWishlistFromDB(); // only pull from DB
       } else {
-        syncWishlistToDB().then(fetchWishlistFromDB);
+        loadFromLocalStorage(); // fallback if not logged in
       }
     })
     .catch(() => {
-      loadFromLocalStorage(); // if error in login check
+      loadFromLocalStorage(); // fallback if error
     });
-
-  function syncWishlistToDB() {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    if (wishlist.length === 0) return Promise.resolve();
-
-    return fetch("sync_wishlist.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify({ wishlist })
-    }).then(res => res.json())
-      .then(data => {
-        if (!data.success) console.warn("Wishlist sync failed:", data.error);
-      });
-  }
 
   function fetchWishlistFromDB() {
     fetch("get_wishlist.php", { credentials: "include" })
@@ -71,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
           wishlistSection.innerHTML = "<p>Failed to load wishlist.</p>";
           return;
         }
+        localStorage.setItem("wishlist", JSON.stringify(data)); // overwrite localStorage
         updateWishlistUI(data);
-        localStorage.setItem("wishlist", JSON.stringify(data)); // Optional
       })
       .catch(() => {
         wishlistSection.innerHTML = "<p>Failed to load wishlist from server.</p>";
