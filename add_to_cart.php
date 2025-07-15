@@ -17,8 +17,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
+    try {
+        // Connect to database
+        $pdo = new PDO(
+            "mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", 
+            "s24100966_LadaMart", 
+            "ciscocisco"
+        );
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // 🖼️ Fetch product image from Fake Store API
-    $apiData = file_get_contents('https://fakestoreapi.com/products');
+    $apiResponse = file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/menu_api.php');
     $productList = json_decode($apiData, true);
 
     $img = '';
