@@ -1,14 +1,20 @@
 <?php
 header("Content-Type: application/json");
 
-$conn = new mysqli("localhost", "s24100966_LadaMart", "ciscocisco", "s24100966_LadaMart");
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["success" => false, "error" => "Invalid request method"]);
+    exit;
+}
 
+$conn = new mysqli("localhost", "s24100966_LadaMart", "ciscocisco", "s24100966_LadaMart");
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "error" => "Database connection failed"]);
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+$input = file_get_contents("php://input");
+file_put_contents("debug_input.txt", $input); // log for review
+$data = json_decode($input, true);
 
 if (
     isset($data['item_id'], $data['item_name'], $data['item_category'],
