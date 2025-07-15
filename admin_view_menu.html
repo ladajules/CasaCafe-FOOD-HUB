@@ -222,7 +222,16 @@
 
           <div class="main-content">
             <div class="search-container" style="padding: 20px 20px 20px 0; margin-top: 30px;">
-              <input type="text" id="searchInput" placeholder="Search by ItemID, Name, Category, etc." style="width: 300px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+              <label for="searchBy" style="margin-right: 10px;">Search by:</label>
+              <select id="searchBy" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+                <option value="item_id">Item ID</option>
+                <option value="item_name">Name</option>
+                <option value="item_category">Category</option>
+                <option value="item_description">Description</option>
+                <option value="item_price">Price</option>
+              </select>
+
+              <input type="text" id="searchInput" placeholder="Search..." style="width: 250px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-left: 10px;">
             </div>
     
             <table class="menu-table">
@@ -306,13 +315,16 @@
                 });
             });
 
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                const keyword = e.target.value.toLowerCase();
-                const filtered = allItems.filter(item => 
-                    item.item_id.includes(keyword) ||
-                    item.item_name.toLowerCase().includes(keyword)
-                );
-                renderItems(filtered);
+            document.getElementById('searchInput').addEventListener('input', () => {
+              const searchBy = document.getElementById('searchBy').value;
+              const keyword = document.getElementById('searchInput').value.toLowerCase();
+
+              const filtered = allItems.filter(item => {
+                const value = item[searchBy];
+                return value && value.toString().toLowerCase().includes(keyword);
+              });
+
+              renderItems(filtered);
             });
         </script>
 
