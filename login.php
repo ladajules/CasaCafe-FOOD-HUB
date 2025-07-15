@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-         echo "Invalid username or password.";
+      header("Location: login.html?error=1");
     }
 }
 ?>
