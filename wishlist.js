@@ -1,34 +1,65 @@
-async function syncWishlistFromDB() {
-  try {
-    const response = await fetch("get_wishlist.php", { credentials: "include" });
-    if (!response.ok) throw new Error("Failed to fetch wishlist from DB");
-    const data = await response.json();
+function syncWishlistToDB() {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-    if (!Array.isArray(data)) return [];
-
-    localStorage.setItem("wishlist", JSON.stringify(data));
-    return data;
-  } catch (error) {
-    console.error("Error syncing wishlist from DB:", error);
-    return [];
+  if (wishlist.length > 0) {
+    fetch("sync_wishlist.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ wishlist })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        console.log("Wishlist synced to database");
+        // Optional: localStorage.removeItem("wishlist");
+      } else {
+        console.error("Wishlist sync failed:", data.error);
+      }
+    })
+    .catch(error => console.error("Wishlist sync error:", error));
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+function fetchWishlistFromDB() {
+  return fetch("get_wishlist.php", {
+    credentials: "include"
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        localStorage.setItem("wishlist", JSON.stringify(data));
+        return data;
+      } else {
+        console.warn("get_wishlist.php returned unexpected data:", data);
+        return [];
+      }
+    })
+    .catch(error => {
+      console.error("Failed to fetch wishlist from DB:", error);
+      return [];
+    });
+}
+
+async function initWishlist() {
   const wishlistSection = document.getElementById("wishlistSection");
 
-  const wishlist = [
-  {
-    title: "Tocilog",
-    price: 90,
-    img: "https://casacafe.dcism.org/IMAGES/tocilog.jpg"
-  }
-];
+  const loggedIn = await checkLoginStatus();
+  let wishlist = [];
 
-  if (wishlist.length === 0) {
+  if (loggedIn) {
+    await syncWishlistToDB();
+    wishlist = await fetchWishlistFromDB();
+  } else {
+    wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  }
+
+  if (!wishlist.length) {
     wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
     return;
   }
+
+  wishlistSection.innerHTML = "";
 
   wishlist.forEach(product => {
     const container = document.createElement("div");
@@ -40,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cartDescription.classList = "cartDescription";
 
     const img = document.createElement("img");
-    img.src = product.img.replace("http://", "https://");  // avoid mixed content error
+    img.src = product.img;
     img.alt = product.title;
     img.classList = "imgP";
 
@@ -49,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     title.classList = "titleP";
 
     const price = document.createElement("p");
-    price.textContent = `₱${Number(product.price).toFixed(2)}`;
+    price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
     price.classList = "priceP";
 
     const removeBtn = document.createElement("button");
@@ -68,57 +99,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     wishlistSection.appendChild(container);
   });
-
-  const modal = document.getElementById("productModal");
-  const modalImg = document.getElementById("modalImg");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalPrice = document.getElementById("modalPrice");
-  const modalClose = document.querySelector(".modal .close");
-  let currentModalProduct = null;
-
-  wishlistSection.querySelectorAll("img.imgP").forEach((img, index) => {
-    img.style.cursor = "pointer";
-    img.addEventListener("click", () => {
-      const product = wishlist[index];
-
-      modalImg.src = product.img.replace("http://", "https://");
-      modalTitle.textContent = product.title || "";
-      modalPrice.textContent = `₱${Number(product.price).toFixed(2)}`;
-
-      modal.classList.remove("hidden");
-
-      currentModalProduct = {
-        title: product.title,
-        price: product.price,
-        img: product.img
-      };
-    });
-  });
-
-  const modalCartBtn = document.getElementById("modalCartBtn");
-  modalCartBtn.addEventListener("click", () => {
-    if (!currentModalProduct) return;
-
-    const encodedTitle = encodeURIComponent(currentModalProduct.title);
-    window.location.href = `product.html?title=${encodedTitle}`;
-  });
-
-  modalClose.addEventListener("click", () => modal.classList.add("hidden"));
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) modal.classList.add("hidden");
-  });
-});
+}
 
 function removeFromWishlistByTitle(title, container) {
-  fetch('remove_from_wishlist.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  fetch("remove_from_wishlist.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `title=${encodeURIComponent(title)}`
   })
     .then(res => res.json())
     .then(data => {
       if (!data.success) {
-        console.warn("Failed to remove from server:", data.message);
+        console.warn("Warning: Failed to remove from DB:", data.message);
       }
     })
     .finally(() => {
@@ -133,3 +125,5 @@ function removeFromWishlistByTitle(title, container) {
       }
     });
 }
+
+document.addEventListener("DOMContentLoaded", initWishlist);
