@@ -258,7 +258,7 @@ imgDiv.addEventListener("click", () => {
   document.getElementById("modalImg").alt = title;
   document.getElementById("modalTitle").textContent = title;
   document.getElementById("modalDesc").textContent = description;
-  document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
+  document.getElementById("modalPrice").textContent = `₱${price.toFixed(2)}`;
 
 
   modal.dataset.item_id = id;
