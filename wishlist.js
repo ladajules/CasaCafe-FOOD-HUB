@@ -1,16 +1,10 @@
-const fetchProducts = async () => {
-    try {
-        const response = await fetch("https://fakestoreapi.com/products");
-        if (!response.ok) {
-            throw new Error("Something wrong occured");
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-}
+fetch('menu_api.php')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('API error');
+      }
+      return response.json();
+    })
 
 document.addEventListener("DOMContentLoaded", () => {
     const wishlistSection = document.getElementById("wishlistSection");
@@ -31,23 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
         cartDescription.classList = "cartDescription";
 
         const img = document.createElement("img");
-        img.src = product.img;
-        img.alt = product.title;
+        img.src = item_image;
+        img.alt = item_name;
         img.classList = "imgP";
 
         const title = document.createElement("p");
-        title.textContent = product.title;
+        title.textContent = item_name;
         title.classList = "titleP";
 
         const price = document.createElement("p");
-        price.textContent = `$${product.price.toFixed(2)}`;
+        price.textContent = `$${item_price.toFixed(2)}`;
         price.classList = "priceP";
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "Remove";
         removeBtn.classList = "remove-btn";
         removeBtn.addEventListener("click", () => {
-            removeFromWishlistByTitle(product.title, container);
+            removeFromWishlistByTitle(item_name, container);
         });
 
         imageCont.appendChild(img);
@@ -73,16 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
         img.addEventListener("click", () => {
             const product = wishlist[index];
 
-            modalImg.src = product.img;
-            modalTitle.textContent = product.title || "";
-            modalPrice.textContent = `$${product.price.toFixed(2)}`;
+            modalImg.src = item_image;
+            modalTitle.textContent = item_name || "";
+            modalPrice.textContent = `$${item_price.toFixed(2)}`;
 
             modal.classList.remove("hidden");
 
             currentModalProduct = {
-                title: product.title,
-                price: product.price,
-                img: product.img
+                title: item_name,
+                price: item_price,
+                img: item_image
             };
         });
     });
@@ -107,11 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Function to remove item ---
-function removeFromWishlistByTitle(title, container) {
+function removeFromWishlistByTitle(item_name, container) {
     fetch('remove_from_wishlist.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `title=${encodeURIComponent(title)}`
+        body: `title=${encodeURIComponent(item_name)}`
     })
         .then(res => res.json())
         .then(data => {
@@ -121,7 +115,7 @@ function removeFromWishlistByTitle(title, container) {
         })
         .finally(() => {
             let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-            wishlist = wishlist.filter(item => item.title !== title);
+            wishlist = wishlist.filter(item => item.item_name !== item_name);
             localStorage.setItem("wishlist", JSON.stringify(wishlist));
 
             container.remove();
@@ -134,7 +128,7 @@ function removeFromWishlistByTitle(title, container) {
 
 
 
-const toggle = document.getElementById("dropdownToggle");
+    const toggle = document.getElementById("dropdownToggle");
   const menu = document.getElementById("dropdownMenu");
   const arrow = document.getElementById("dropdownArrow");
 
