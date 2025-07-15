@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - CasaCafe</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+        margin: 0;
+        display: flex;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    #dropdownIcon {
+        font-size: 2.5rem;
+        color: white;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        min-width: 150px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1000;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .dropdown-menu a {
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+#dropdownToggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#dropdownToggle i {
+  margin-left: 8px;
+  font-size: 2.3rem;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+#dropdownToggle.open #dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.sidebar {
+  margin-top: 88px; 
+  width: 220px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.sidebar-section {
+  font-size: 12px;
+  color: #999;
+  margin: 20px 0 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sidebar-link, .menu-toggle {
+  display: flex;
+  align-items: center;
+  color: #444;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-link:hover, .menu-toggle:hover {
+  background-color: #f5f5f5;
+}
+
+.sidebar-link.active {
+    background-color: orange;
+    border-radius: 10px;
+}
+
+.sidebar-link i, .menu-toggle i {
+  margin-right: 10px;
+  min-width: 20px;
+}
+
+.submenu {
+  padding-left: 30px;
+}
+
+.submenu-link {
+  display: block;
+  color: #444;
+  text-decoration: none;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.submenu-link:hover {
+  text-decoration: underline;
+}
+
+.dropdown-icon {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.main-content {
+    margin: 45px;
+    width: 100%;
+    margin-top: 120px;
+    border-radius: 20px;
+}
+  
+.menu-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-table thead {
+  background-color: #212121;
+  color: white;
+  text-align: left;
+}
+
+.menu-table th,
+.menu-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.menu-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+  </style>
+</head>
+<body>
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="#" class="logo"><img src="temp casaLogo.png"><span></span></a>
+
+        <nav class="nav-bar">
+            <div class="dropdown" id="profileDropdown">
+                <div id="dropdownToggle">
+                    <i class="fas fa-user-circle"></i>
+                    <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="index.html" style="color: black;">Log out</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="sidebar">
+        <h3 class="sidebar-section">HOME</h3>
+        <a href="admin_dashboard.html" class="sidebar-link">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+      
+        <h3 class="sidebar-section">LOG</h3>
+        <a href="#" class="sidebar-link">
+          <i class="fas fa-user"></i> Users
+        </a>
+      
+        <div class="dropdown-toggle">
+          <div class="sidebar-link menu-toggle active">
+            <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+          </div>
+          <div class="submenu" style="display: none;">
+            <a href="#" class="submenu-link">View Menu</a>
+            <a href="#" class="submenu-link">Add To Menu</a>
+          </div>
+      
+        <a href="#" class="sidebar-link">
+          <i class="fas fa-shopping-cart"></i> Orders
+        </a>
+      </div>
+          </div>
+
+          <div class="main-content">
+            <div class="search-container" style="padding: 20px 20px 20px 0; margin-top: 30px;">
+              <input type="text" id="searchInput" placeholder="Search by ItemID, Name, Category, etc." style="width: 300px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+    
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="menuTableBody">
+                    <!-- js goes here -->
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            const toggle = document.getElementById("dropdownToggle");
+            const menu = document.getElementById("dropdownMenu");
+            const arrow = document.getElementById("dropdownArrow");
+
+            toggle.addEventListener("click", () => {
+                const isVisible = menu.style.display === "block";
+                menu.style.display = isVisible ? "none" : "block";
+                toggle.classList.toggle("open", !isVisible);
+            });
+
+            window.addEventListener("click", (e) => {
+                if (!document.getElementById("profileDropdown").contains(e.target)) {
+                    menu.style.display = "none";
+                    toggle.classList.remove("open");
+                }
+            });
+
+            document.querySelector('.menu-toggle').addEventListener('click', () => {
+                const submenu = document.querySelector('.submenu');
+                submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            let allItems = [];
+
+            function renderItems(items) {
+                const tbody = document.getElementById('menuTableBody');
+                tbody.innerHTML = '';
+
+                items.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td>${item.item_id}</td>
+                    <td>${item.item_name}</td>
+                    <td>${item.item_category}</td>
+                    <td>${item.item_description}</td>
+                    <td>${item.item_price}</td>
+                    <td>${item.item_image}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+                        <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
+                    </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // edit button js
+
+                //delete button js
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                fetch('admin_get_menu.php')
+                .then(res => res.json())
+                .then(items => {
+                    allItems = items;
+                    renderItems(items);
+                })
+                .catch(error => {
+                    console.error('Error loading items:', error);
+                });
+            });
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase();
+                const filtered = allItems.filter(item => 
+                    item.item_id.toString().includes(keyword) ||
+                    item.item_name.toString().includes(keyword) ||
+                    item.item_category.toString().includes(keyword) ||
+                    item.item_description.toString().includes(keyword) ||
+                    item.item_price.toString().includes(keyword)
+                );
+                renderItems(filtered);
+            })
+        </script>
+
+</body>

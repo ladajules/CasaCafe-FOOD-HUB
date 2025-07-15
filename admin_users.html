@@ -382,7 +382,7 @@
         openModal('deleteModal');
       });
     });
-  }
+  };
 
     document.addEventListener('DOMContentLoaded', () => {
     fetch('admin_get_users.php')
@@ -394,7 +394,7 @@
       .catch(error => {
         console.error('Error loading users:', error);
       });
-  });
+    });
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase();
