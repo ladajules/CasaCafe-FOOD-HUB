@@ -32,6 +32,37 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+function syncCartToDB() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length > 0) {
+    fetch("sync_cart.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ cart })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        console.log("Cart synced to database");
+        // Optionally clear the local cart
+        // localStorage.removeItem("cart");
+      } else {
+        console.error("Sync failed:", data.error);
+      }
+    })
+    .catch(error => console.error("Sync error:", error));
+  }
+}
+
+
+checkLoginStatus().then(loggedIn => {
+  if (loggedIn) {
+    syncCartToDB();
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
 
@@ -80,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cartBtn.classList.add("cartBtn");
 
         const wishlistBtn = document.createElement("button");
-        wishlistBtn.textContent = "Add to Wishlist";
+        wishlistBtn.textContent = "♡";
         wishlistBtn.classList.add("wishlistBtn");
 
         cartBtn.addEventListener("click", () => {
