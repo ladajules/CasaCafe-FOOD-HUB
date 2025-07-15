@@ -194,86 +194,84 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //   //eventlistener nga mogawas ang specific product
 
-//   imgDiv.addEventListener("click", () => {
-//     currentModalProduct = { title, price, img };
-//     const modal = document.getElementById("productModal");
-//     const modalBox = document.getElementById("productModal");
+  imgDiv.addEventListener("click", () => {
+     currentModalProduct = { item_name: title, item_price: price, item_image: img };
+    const modal = document.getElementById("productModal");
 
-//     document.getElementById("modalImg").src = img;
-//     document.getElementById("modalImg").alt = title;
-//     document.getElementById("modalTitle").textContent = title;
-//     document.getElementById("modalDesc").textContent = description;
-//     document.getElementById("modalRate").textContent = rate;
-//     document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
+    document.getElementById("modalImg").src = img;
+    document.getElementById("modalImg").alt = title;
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalDesc").textContent = description;
+    document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
 
 
-//     modalBox.dataset.id = id;
-//     modal.classList.remove("hidden");
+    modal.dataset.item_id = id;
+    modal.classList.remove("hidden");
 
-//     fetch("save_recently_viewed.php", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({
-//         product_id: id
-//       })
-//     });
-//   });
+    fetch("save_recently_viewed.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        item_id: id
+      })
+    });
+  });
 
 
 //   // WISHLIST AND CART!!!!!!
 
-//   const popup = document.getElementById("popupNotification");
-//   const closeBtn = document.getElementById("popupCloseBtn");
+  const popup = document.getElementById("popupNotification");
+  const closeBtn = document.getElementById("popupCloseBtn");
 
-//   if (closeBtn) {
-//     closeBtn.addEventListener("click", closePopup);
-//   }
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closePopup);
+  }
 
-//   window.addEventListener("click", (e) => {
-//     if (e.target === popup) {
-//       closePopup();
-//     }
-//   });
+  window.addEventListener("click", (e) => {
+    if (e.target === popup) {
+      closePopup();
+    }
+  });
 
-//   document.addEventListener("DOMContentLoaded", () => {
-//     const popup = document.getElementById("popupNotification");
-//     const closeBtn = document.getElementById("popupCloseBtn");
+  document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("popupNotification");
+    const closeBtn = document.getElementById("popupCloseBtn");
 
-//     closeBtn.addEventListener("click", () => {
-//       closePopup();
-//     });
+    closeBtn.addEventListener("click", () => {
+      closePopup();
+    });
 
-//     window.addEventListener("click", (e) => {
-//       if (e.target === popup) {
-//         closePopup();
-//       }
-//     });
-//   });
+    window.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        closePopup();
+      }
+    });
+  });
 
-//   wishlistBtn.addEventListener("click", () => {
-//     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-//     const exists = wishlist.some(item => item.title === title);
-//     if (!exists) {
-//       wishlist.push({ title, price, img });
-//       localStorage.setItem("wishlist", JSON.stringify(wishlist));
-//       addToWishlist(title, price, img);
-//       showPopup(`${title} has been added to your Favorites.`);
-//       const product = { title, price, img };
-//       fetch("add_to_wishlist.php", {
-//         method: "POST",
-//         credentials: "include",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify(product)
-//       });
+  wishlistBtn.addEventListener("click", () => {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const exists = wishlist.some(item => item.title === title);
+    if (!exists) {
+      wishlist.push({ title, price, img });
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      addToWishlist(title, price, img);
+      showPopup(`${title} has been added to your Favorites.`);
+      const product = { title, price, img };
+      fetch("add_to_wishlist.php", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(product)
+      });
 
-//     } else {
-//       showPopup("Already in Favorites.");
-//     }
-//   });
+    } else {
+      showPopup("Already in Favorites.");
+    }
+  });
 
 //   cartBtn.addEventListener("click", () => {
 //     const product = { title, price, img };
@@ -333,7 +331,7 @@ function handleSearch() {
   }
 
   const filtered = allProducts.filter(product =>
-    product.title.toLowerCase().includes(searchTerm) ||
+    product.item_name.toLowerCase().includes(searchTerm) ||
     product.description.toLowerCase().includes(searchTerm) ||
     product.category.toLowerCase().includes(searchTerm)
   );

@@ -13,46 +13,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $price = floatval($_POST['price'] ?? 0);
 
     if ($product === '' || $quantity <= 0 || $price <= 0) {
-        echo "Invalid product, quantity or price.";
+        echo "Invalid product, quantity, or price.";
         exit;
     }
 
     try {
         // Connect to database
         $pdo = new PDO(
-            "mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", 
-            "s24100966_LadaMart", 
+            "mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8",
+            "s24100966_LadaMart",
             "ciscocisco"
         );
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 🖼️ Fetch product image from Fake Store API
-    $apiResponse = file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/menu_api.php');
-    $productList = json_decode($apiData, true);
+        // Fetch product list from API
+        $apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/menu_api.php';
+        $apiData = file_get_contents($apiUrl);
+        $productList = json_decode($apiData, true);
 
-    $img = '';
-    $exactTitle = '';
-    foreach ($productList as $item) {
-    if (stripos($item['title'], $product) !== false) {
-            $img = $item['image'];
-            $exactTitle = $item['title'];
-            break;
+        $img = '';
+        $exactTitle = '';
+
+        foreach ($productList as $item) {
+            if (strcasecmp($item['item_name'], $product) === 0) {
+                $img = $item['item_image'];
+                $exactTitle = $item['item_name'];
+                break;
+            }
         }
-    }
 
-    
-    if ($img === '') {
-        $img = 'https://fakestoreapi.com/img/placeholder.jpg';
-    }
-    if ($exactTitle !== '') {
-        $product = $exactTitle;  // overwrite product with exact API title
-    }
+        // If exact match found, update product name
+        if ($exactTitle !== '') {
+            $product = $exactTitle;
+        }
 
-    try {
-        $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // check if product already exists for this user
+        // Check if product already exists in cart
         $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_name = ?");
         $stmt->execute([$userID, $product]);
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -68,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             echo "Item added to cart successfully.";
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        echo "Database error: " . $e->getMessage();
     }
 }
 ?>
