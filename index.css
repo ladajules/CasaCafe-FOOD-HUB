@@ -175,12 +175,6 @@ label {
     margin-top: 40px;
 }
 
-#navHome {
-    background: #e9d36c;
-    padding: 1rem;
-    border-radius: 2rem;
-}
-
 #navCart {
     padding: 1rem;
     border-radius: 1rem;
@@ -557,17 +551,21 @@ header .logo span {
 
 header .nav-bar a {
     font-size: 2rem;
-    padding: 0 1.5rem;
+    padding: 1rem 1rem;
+    border-radius: 15px;
     color: #ffffff;
+    background: none;
     align-items: center;
+    margin: 5px;
 }
 
 header .nav-bar a:hover {
-    color: var(--pink);
+    color: black;
+    background: white;
 }
 
 header .nav-bar a:hover::after {
-    color: var(--pink)
+    color: black;
 }
 
 header .icons a {
