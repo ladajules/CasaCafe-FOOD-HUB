@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // Connect to the database
      $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
@@ -29,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-         echo "Invalid username or password.";
+      header("Location: login.html?error=1");
     }
 }
 ?>

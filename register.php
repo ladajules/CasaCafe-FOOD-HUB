@@ -19,7 +19,7 @@ try {
     $plainPassword = $_POST['password'] ?? '';
 
     if (!$username || !$plainPassword) {
-        echo "Please fill in both fields.";
+        header("Location: register.html?error=Please+fill+in+both+fields");
         exit;
     }
 
@@ -27,7 +27,7 @@ try {
     $stmt->execute([':username' => $username]);
 
     if ($stmt->fetch()) {
-        echo "Username already taken.";
+        header("Location: register.html?error=Username+already+taken");
     } else {
         $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
         $insert = $pdo->prepare("INSERT INTO login (Username, Password) VALUES (:username, :password)");
