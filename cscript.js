@@ -63,39 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const price = document.createElement('p');
         price.textContent = `Base Price: ₱${item.item_price}`;
 
-        const buttonCont = document.createElement("section");
-        const cartBtn = document.createElement("button");
-        const wishlistBtn = document.createElement("button");
-        const wishlistImg = document.createElement("img");
-
-        wishlistImg.src = "heart outline.jpg"
-        wishlistImg.alt = "heart Button";
-        wishlistIcon.classList.add("fa-regular", "fa-heart"); // outline heart
-        cartBtn.textContent = "Add to Cart";
-        wishlistBtn.textContent = " ";
-
-        wishlistBtn.addEventListener("click", () => {
-          let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-          const exists = wishlist.some(item => item.title === title);
-          const icon = wishlistBtn.querySelector("i");
-
-          if (!exists) {
-            wishlist.push({ title, price, img });
-            localStorage.setItem("wishlist", JSON.stringify(wishlist));
-            icon.classList.remove("fa-regular");
-            icon.classList.add("fa-solid");
-          } else {
-            wishlist = wishlist.filter(item => item.title !== title);
-            localStorage.setItem("wishlist", JSON.stringify(wishlist));
-            icon.classList.remove("fa-solid");
-            icon.classList.add("fa-regular");
-          }
-        });
-
-        cartBtn.classList = "cartBtn";
-        wishlistBtn.classList = "wishlistBtn";
-        buttonCont.classList = "buttonCont";
-
+          const buttonCont = document.createElement("section");
+  const newCont = document.createElement("Section");
+  const cartBtn = document.createElement("button");
+  const wishlistBtn = document.createElement("button");
+  const wishlistImg = document.createElement("img");
 
         const variantList = document.createElement('ul');
         if (item.variants && item.variants.length > 0) {
@@ -111,9 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
         card.appendChild(desc);
         card.appendChild(price);
         card.appendChild(variantList);
-        buttonCont.appendChild(cartBtn);
-        buttonCont.appendChild(wishlistBtn);
-        card.appendChild(buttonCont);
+
         container.appendChild(card);
       });
     })
@@ -173,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
 //   imgP.alt = title;
 
 
+
 //   // pang himo ug class sa each details
 //   wishlistImg.classList = "wishlistImg";
 //   titleP.classList = "titleP";
@@ -183,7 +154,8 @@ document.addEventListener('DOMContentLoaded', function () {
 //   rateStar.classList = "rateStar";
 //   imgDiv.classList = "imgDiv";
 //   imgP.classList = "imgP";
-
+//   cartBtn.classList = "cartBtn";
+//   wishlistBtn.classList = "wishlistBtn";
 
 //   //class sa containers
 //   titleContainer.classList = "titleContainer";
@@ -193,91 +165,92 @@ document.addEventListener('DOMContentLoaded', function () {
 //   rateContainer.classList = "rateContainer";
 //   productContainer.classList = "productContainer";
 //   infoContainer.classList = "infoContainer";
-
+//   newCont.classList = "newCont";
+//   buttonCont.classList = "buttonCont";
 
 
 
 
 //   //eventlistener nga mogawas ang specific product
 
-imgDiv.addEventListener("click", () => {
-  currentModalProduct = { item_name: title, item_price: price, item_image: img };
-  const modal = document.getElementById("productModal");
+  imgDiv.addEventListener("click", () => {
+     currentModalProduct = { item_name: title, item_price: price, item_image: img };
+    const modal = document.getElementById("productModal");
 
-  document.getElementById("modalImg").src = img;
-  document.getElementById("modalImg").alt = title;
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalDesc").textContent = description;
-  document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
+    document.getElementById("modalImg").src = img;
+    document.getElementById("modalImg").alt = title;
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalDesc").textContent = description;
+    document.getElementById("modalPrice").textContent = `$${price.toFixed(2)}`;
 
 
-  modal.dataset.item_id = id;
-  modal.classList.remove("hidden");
+    modal.dataset.item_id = id;
+    modal.classList.remove("hidden");
 
-  fetch("save_recently_viewed.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      item_id: id
-    })
+    fetch("save_recently_viewed.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        item_id: id
+      })
+    });
   });
-});
 
 
 //   // WISHLIST AND CART!!!!!!
 
-const popup = document.getElementById("popupNotification");
-const closeBtn = document.getElementById("popupCloseBtn");
-
-if (closeBtn) {
-  closeBtn.addEventListener("click", closePopup);
-}
-
-window.addEventListener("click", (e) => {
-  if (e.target === popup) {
-    closePopup();
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popupNotification");
   const closeBtn = document.getElementById("popupCloseBtn");
 
-  closeBtn.addEventListener("click", () => {
-    closePopup();
-  });
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closePopup);
+  }
 
   window.addEventListener("click", (e) => {
     if (e.target === popup) {
       closePopup();
     }
   });
-});
 
-wishlistBtn.addEventListener("click", () => {
-  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  const exists = wishlist.some(item => item.title === title);
-  if (!exists) {
-    wishlist.push({ title, price, img });
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    addToWishlist(title, price, img);
-    showPopup(`${title} has been added to your Favorites.`);
-    const product = { title, price, img };
-    fetch("add_to_wishlist.php", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(product)
+  document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("popupNotification");
+    const closeBtn = document.getElementById("popupCloseBtn");
+
+    closeBtn.addEventListener("click", () => {
+      closePopup();
     });
 
-  } else {
-    showPopup("Already in Favorites.");
-  }
-});
+    window.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        closePopup();
+      }
+    });
+  });
+
+  wishlistBtn.addEventListener("click", () => {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const exists = wishlist.some(item => item.title === title);
+    if (!exists) {
+      wishlist.push({ title, price, img });
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      addToWishlist(title, price, img);
+      showPopup(`${title} has been added to your Favorites.`);
+      const product = { title, price, img };
+      fetch("add_to_wishlist.php", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(product)
+      });
+
+    } else {
+      showPopup("Already in Favorites.");
+    }
+  });
 
 //   cartBtn.addEventListener("click", () => {
 //     const product = { title, price, img };
@@ -433,7 +406,7 @@ const displayProducts = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-
+  
 
   const modalBox = document.getElementById("productModal");
   const closeBtn = modalBox.querySelector(".close");
