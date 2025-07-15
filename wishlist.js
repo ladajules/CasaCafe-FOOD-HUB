@@ -25,23 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
         cartDescription.classList = "cartDescription";
 
         const img = document.createElement("img");
-        img.src = item_image;
-        img.alt = item_name;
+        img.src = product.img;
+        img.alt = product.title;
         img.classList = "imgP";
 
         const title = document.createElement("p");
-        title.textContent = item_name;
+        title.textContent = product.title;
         title.classList = "titleP";
 
         const price = document.createElement("p");
-        price.textContent = `$${item_price.toFixed(2)}`;
+        price.textContent = `$${product.price.toFixed(2)}`;
         price.classList = "priceP";
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "Remove";
         removeBtn.classList = "remove-btn";
         removeBtn.addEventListener("click", () => {
-            removeFromWishlistByTitle(item_name, container);
+            removeFromWishlistByTitle(product.title, container);
         });
 
         imageCont.appendChild(img);
@@ -67,16 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
         img.addEventListener("click", () => {
             const product = wishlist[index];
 
-            modalImg.src = item_image;
-            modalTitle.textContent = item_name || "";
-            modalPrice.textContent = `$${item_price.toFixed(2)}`;
+            modalImg.src = product.img;
+            modalTitle.textContent = product.title || "";
+            modalPrice.textContent = `$${product.price.toFixed(2)}`;
 
             modal.classList.remove("hidden");
 
             currentModalProduct = {
-                title: item_name,
-                price: item_price,
-                img: item_image
+                title: product.title,
+                price: product.price,
+                img: product.img
             };
         });
     });
@@ -101,11 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Function to remove item ---
-function removeFromWishlistByTitle(item_name, container) {
+function removeFromWishlistByTitle(title, container) {
     fetch('remove_from_wishlist.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `title=${encodeURIComponent(item_name)}`
+        body: `title=${encodeURIComponent(title)}`
     })
         .then(res => res.json())
         .then(data => {
@@ -115,7 +115,7 @@ function removeFromWishlistByTitle(item_name, container) {
         })
         .finally(() => {
             let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-            wishlist = wishlist.filter(item => item.item_name !== item_name);
+            wishlist = wishlist.filter(item => item.title !== title);
             localStorage.setItem("wishlist", JSON.stringify(wishlist));
 
             container.remove();
