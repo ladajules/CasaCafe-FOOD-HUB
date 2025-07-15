@@ -437,7 +437,6 @@ label {
 
 .wishlistBtn:hover {
     cursor: pointer;
-    font-size: 4rem;
     color: #ff4a9b;
     border-radius: 5px;
 }
