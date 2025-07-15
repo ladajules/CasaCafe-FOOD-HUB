@@ -192,16 +192,20 @@
 
   .modal-content {
     background: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
+    width: 100%;
+    max-width: 500px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
   }
 
   .modal-content h3 {
     margin-top: 0;
-    font-size: 20px;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   .modal-content label {
@@ -213,7 +217,7 @@
   .modal-content input,
   .modal-content textarea {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-top: 5px;
     font-size: 14px;
     border: 1px solid #ccc;
@@ -221,14 +225,20 @@
     box-sizing: border-box;
   }
 
+  .modal-content .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
   .modal-content .confirm-btn,
   .modal-content .cancel-btn {
-    padding: 10px 15px;
-    margin-top: 15px;
-    margin-right: 10px;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
   }
 
   .modal-content .confirm-btn {
@@ -240,7 +250,6 @@
     background-color: #f44336;
     color: white;
   }
-
   </style>
 </head>
 <body>
