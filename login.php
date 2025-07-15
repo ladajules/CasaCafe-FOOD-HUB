@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-      header("Location: login.html?error=1");
+      $error_message = 'Incorrect username or password. Please try again.';
     }
 }
 ?>
