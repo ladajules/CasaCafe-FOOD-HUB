@@ -252,7 +252,30 @@
             </table>
         </div>
 
-        <script>
+        <div class="modal" id="editItemModal">
+          <div class="modal-content">
+            <h3>Edit Item</h3>
+            <form id="editItemForm">
+            <input type="hidden" id="edit_item_id">
+            <label>Name</label>
+            <input type="text" id="edit_item_name">
+            <label>Category</label>
+            <input type="text" id="edit_item_category">
+            <label>Description</label>
+            <textarea id="edit_item_description" rows="3"></textarea>
+            <label>Price</label>
+            <input type="number" id="edit_item_price" step="0.01">
+            <label>Image Filename</label>
+            <input type="text" id="edit_item_image">
+            <div style="margin-top: 15px;">
+              <button type="submit" class="confirm-btn">Save</button>
+              <button type="button" class="cancel-btn" onclick="closeModal('editItemModal')">Cancel</button>
+            </div>
+            </form>
+          </div>
+        </div>
+
+      <script>
             const toggle = document.getElementById("dropdownToggle");
             const menu = document.getElementById("dropdownMenu");
             const arrow = document.getElementById("dropdownArrow");
@@ -269,6 +292,51 @@
                     toggle.classList.remove("open");
                 }
             });
+
+            function openModal (id) {
+              document.getElementById(id).classList.add("active");
+            }
+
+            function closeModal (id) {
+              document.getElementById(id).classList.remove("active");
+            }
+
+            function openEditItemModal(item) {
+              document.getElementById('edit_item_id').value = item.item_id;
+              document.getElementById('edit_item_name').value = item.item_name;
+              document.getElementById('edit_item_category').value = item.item_category;
+              document.getElementById('edit_item_description').value = item.item_description;
+              document.getElementById('edit_item_price').value = item.item_price;
+              document.getElementById('edit_item_image').value = item.item_image;
+              openModal('editItemModal');
+            };
+
+            document.getElementById('editItemForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const data = {
+    item_id: document.getElementById('edit_item_id').value,
+    item_name: document.getElementById('edit_item_name').value,
+    item_category: document.getElementById('edit_item_category').value,
+    item_description: document.getElementById('edit_item_description').value,
+    item_price: document.getElementById('edit_item_price').value,
+    item_image: document.getElementById('edit_item_image').value
+  };
+
+  fetch('edit_menu_item.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    if (response.success) {
+      closeModal('editItemModal');
+      location.reload();
+    } else {
+      alert('Update failed: ' + response.error);
+    }
+  });
+});
 
             document.querySelector('.menu-toggle').addEventListener('click', () => {
                 const submenu = document.querySelector('.submenu');
@@ -300,20 +368,20 @@
 
                 // edit button js
 
-                //delete button js
+                // delete button js
             };
 
-            document.addEventListener('DOMContentLoaded', () => {
-                fetch('admin_get_menu.php')
-                .then(res => res.json())
-                .then(items => {
-                    allItems = items;
-                    renderItems(items);
-                })
-                .catch(error => {
-                    console.error('Error loading items:', error);
-                });
-            });
+            // document.addEventListener('DOMContentLoaded', () => {
+            //     fetch('admin_get_menu.php')
+            //     .then(res => res.json())
+            //     .then(items => {
+            //         allItems = items;
+            //         renderItems(items);
+            //     })
+            //     .catch(error => {
+            //         console.error('Error loading items:', error);
+            //     });
+            // });
 
             document.getElementById('searchInput').addEventListener('input', () => {
               const searchBy = document.getElementById('searchBy').value;
@@ -326,6 +394,7 @@
 
               renderItems(filtered);
             });
-        </script>
 
-</body>
+      </script>
+    </body>
+    </html>
