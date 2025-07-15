@@ -7,14 +7,20 @@ if ($conn->connect_error) {
 }
 
 $input = file_get_contents("php://input");
-file_put_contents("debug_input.txt", $input); 
 $data = json_decode($input, true);
 
 if (
     isset($data['item_id'], $data['item_name'], $data['item_category'],
-    $data['item_description'], $data['item_price'], $data['item_image']) &&
+          $data['item_description'], $data['item_price'], $data['item_image']) &&
     is_numeric($data['item_id']) && is_numeric($data['item_price'])
 ) {
+    $item_id = intval($data['item_id']);
+    $item_name = $data['item_name'];
+    $item_category = $data['item_category'];
+    $item_description = $data['item_description'];
+    $item_price = floatval($data['item_price']);
+    $item_image = $data['item_image'];
+
     $stmt = $conn->prepare("UPDATE item_table SET 
         item_name = ?, 
         item_category = ?, 
@@ -30,12 +36,12 @@ if (
 
     $stmt->bind_param(
         "ssssdi",
-        $data['item_name'],
-        $data['item_category'],
-        $data['item_description'],
-        $data['item_image'],
-        floatval($data['item_price']),
-        intval($data['item_id'])
+        $item_name,
+        $item_category,
+        $item_description,
+        $item_image,
+        $item_price,
+        $item_id
     );
 
     if ($stmt->execute()) {
