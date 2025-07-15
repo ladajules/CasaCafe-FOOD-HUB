@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-      $error_message = 'Incorrect username or password. Please try again.';
+         $error_message = 'Incorrect username or password. Please try again.';
     }
 }
 ?>
