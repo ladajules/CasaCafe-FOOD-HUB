@@ -16,7 +16,14 @@ async function syncWishlistFromDB() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const wishlistSection = document.getElementById("wishlistSection");
-  const wishlist = await syncWishlistFromDB();
+
+  const wishlist = [
+  {
+    title: "Tocilog",
+    price: 90,
+    img: "https://casacafe.dcism.org/IMAGES/tocilog.jpg"
+  }
+];
 
   if (wishlist.length === 0) {
     wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
