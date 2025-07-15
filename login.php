@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$error_message = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // Connect to the database
      $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
@@ -29,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          }
          exit;
     } else {
-         $error_message = 'Incorrect username or password. Please try again.';
+         $error_message = 'Incorrect username or password. Please try again.';   
     }
 }
 ?>
