@@ -440,17 +440,17 @@
                 // delete button js
             };
 
-            // document.addEventListener('DOMContentLoaded', () => {
-            //     fetch('admin_get_menu.php')
-            //     .then(res => res.json())
-            //     .then(items => {
-            //         allItems = items;
-            //         renderItems(items);
-            //     })
-            //     .catch(error => {
-            //         console.error('Error loading items:', error);
-            //     });
-            // });
+            document.addEventListener('DOMContentLoaded', () => {
+                fetch('admin_get_menu.php')
+                .then(res => res.json())
+                .then(items => {
+                    allItems = items;
+                    renderItems(items);
+                })
+                .catch(error => {
+                    console.error('Error loading items:', error);
+                });
+            });
 
             document.getElementById('searchInput').addEventListener('input', () => {
               const searchBy = document.getElementById('searchBy').value;
