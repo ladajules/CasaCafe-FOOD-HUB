@@ -393,7 +393,7 @@ label {
     background: none;
     color: #FFC5D3;
     margin-left: 8px;
-    font-size: 4rem;
+    font-size: 2rem;
     border-radius: 5px;
 }
 
@@ -448,7 +448,7 @@ label {
 
 * {
     margin: 0;
-    padding: 0;
+    padding: 3px;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
     outline: none;
