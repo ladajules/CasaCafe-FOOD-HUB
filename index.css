@@ -1278,3 +1278,17 @@ hr {
     align-items: center;
     justify-content: center;
 }
+
+.variant-dropdown {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.variant-dropdown:hover {
+  border-color: #aaa;
+}
