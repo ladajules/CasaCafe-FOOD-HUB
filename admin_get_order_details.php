@@ -2,17 +2,18 @@
 require 'db_connection.php';
 header('Content-Type: application/json');
 
-if (!isset($_GET['order_id'])) {
-    echo json_encode(["success" => false, "error" => "Missing order ID"]);
+if (!isset($_GET['order_id']) || !isset($_GET['purchase_date'])) {
+    echo json_encode(["success" => false, "error" => "Missing order ID or purchase date"]);
     exit;
 }
 
-$order_id = intval($_GET['order_id']);
+$user_id = intval($_GET['order_id']); 
+$purchase_date = $_GET['purchase_date']; 
 
 $sql = "SELECT * FROM purchases WHERE user_id = ? AND purchase_date = ?";
-
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $order_id);
+$stmt->bind_param("is", $user_id, $purchase_date);
+
 $stmt->execute();
 $result = $stmt->get_result();
 
