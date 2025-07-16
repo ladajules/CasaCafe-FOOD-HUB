@@ -69,15 +69,25 @@ document.addEventListener("DOMContentLoaded", () => {
     addBtn.textContent     = "Add to Cart";
     addBtn.className       = "cartBtn";
     addBtn.addEventListener("click", () => {
-      addToCart(product.title, 1, product.price);          // back‑end
-      // update localStorage cart
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      if (!cart.some(i => i.title === product.title)) {
-        cart.push({ title: product.title, price: product.price, img: product.img });
-        localStorage.setItem("cart", JSON.stringify(cart));
-      }
-      alert(`${product.title} added to cart ✔`);
+      addBtn.disabled = true;
+      addToCart(product.title, 1, product.price, product.variant || '')
+        .then(() => {
+          const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          if (!cart.some(i => i.title === product.title)) {
+            cart.push({ title: product.title, price: product.price, img: product.img });
+            localStorage.setItem("cart", JSON.stringify(cart));
+          }
+          showPopup(`${product.title} added to cart ✔`);
+        })
+        .catch(err => {
+          console.error(err);
+          showPopup(`Failed to add ${product.title} to cart.`);
+        })
+        .finally(() => {
+          addBtn.disabled = false;
+        });
     });
+    
 
       const removeBtn = document.createElement("button");
       removeBtn.textContent = "Remove";
@@ -98,8 +108,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
+  function showPopup(message) {
+    const popup = document.getElementById("popupNotification");
+    const popupMessage = document.getElementById("popupMessage");
+  
+    if (popup && popupMessage) {
+      popupMessage.textContent = message;
+      popup.style.display = "block";
+  
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 3000);
+    }
+  }
   function addToCart(product, quantity, price, variant = '') {
-    fetch('add_to_cart.php', {
+    return fetch('add_to_cart.php', {   // <-- Add 'return' here
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       credentials: 'include',
@@ -112,17 +136,12 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(response => response.text())
     .then(text => {
-      if (text.includes('successfully')) {
-        showPopup(`${product} added to cart`);
-      } else {
-        showPopup(`Failed to add to cart: ${text}`);
+      if (!text.includes('successfully')) {
+        throw new Error(text);
       }
-    })
-    .catch(err => {
-      console.error('Add to cart error:', err);
-      showPopup('Error adding to cart.');
     });
   }
+  
   
 
   function removeFromWishlistByTitle(title, container) {
