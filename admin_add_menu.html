@@ -493,7 +493,7 @@
                   description: document.getElementById("edit_item_description").value.trim()
                 };
 
-                fetch("add_menu_item.php", {
+                fetch("admin_add_menu_item.php", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(data)
