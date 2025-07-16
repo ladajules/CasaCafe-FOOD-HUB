@@ -106,12 +106,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const variantContainer = document.createElement('div');
         variantContainer.classList.add('variant-container');
 
+        let variantSelect = null;
         if (item.variants && item.variants.length > 0) {
           const variantLabel = document.createElement('label');
           variantLabel.textContent = 'Options:';
           variantLabel.classList.add('variant-label');
           
-          const variantSelect = document.createElement('select');
+          variantSelect = document.createElement('select');
           variantSelect.classList.add('variant-dropdown');
           variantSelect.setAttribute('data-item-id', item.item_id);
 
