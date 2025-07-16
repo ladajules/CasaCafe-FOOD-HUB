@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $quantity = intval($_POST['quantity'] ?? 0);
     $price = floatval($_POST['price'] ?? 0);
     $variant = strip_tags(trim($_POST['variant'] ?? ''));
-
+    $variant = $variant ?: '';
 
     if ($product === '' || $quantity <= 0 || $price <= 0) {
         echo "Invalid product, quantity, or price.";
@@ -57,8 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($existing) {
             $newQty = $existing['quantity'] + $quantity;
-            $updateStmt = $pdo->prepare("UPDATE cart SET quantity = ?, price = ?, img = ?, variant = ? WHERE user_id = ? AND product_name = ?");
-            $updateStmt->execute([$newQty, $price, $img, $variant, $userID, $product]);
+            $updateStmt = $pdo->prepare("UPDATE cart SET quantity = ?, price = ?, img = ?, variant = ? WHERE user_id = ? AND product_name = ? AND variant = ?");
+            $updateStmt->execute([$newQty, $price, $img, $variant, $userID, $product, $variant]);
+            
 
             echo "Cart updated successfully.";
         } else {
