@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let variantSelect = null;
       if (item.variants && item.variants.length > 0) {
         const variantLabel = document.createElement('label');
-        variantLabel.textContent = 'Options:';
+        variantLabel.textContent = '';
         variantLabel.classList.add('variant-label');
 
         variantSelect = document.createElement('select');
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         variantSelect.addEventListener('change', function () {
           const selectedOption = this.options[this.selectedIndex];
           const variantPrice = selectedOption.getAttribute('data-price') || 0;
-          const totalPrice = (parseFloat(item.item_price) + parseFloat(variantPrice)).toFixed(2);
+          const totalPrice = (parseFloat(item.item_price)).toFixed(2);
           price.textContent = `₱${totalPrice}`;
         });
 
