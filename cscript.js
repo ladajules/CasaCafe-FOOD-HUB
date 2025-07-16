@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
           variantLabel.textContent = 'Options:';
           variantLabel.classList.add('variant-label');
           
-          const variantSelect = document.createElement('select');
+          variantSelect = document.createElement('select');
           variantSelect.classList.add('variant-dropdown');
           variantSelect.setAttribute('data-item-id', item.item_id);
 
