@@ -2,11 +2,7 @@
 require 'db_connection.php';
 session_start();
 
-file_put_contents("debug_getuser.txt", json_encode([
-    "session" => $_SESSION,
-    "userID" => $row['UserID'] ?? null,
-    "username" => $row['Username'] ?? null
-]));
+$debug = [];
 
 if (!isset($_SESSION['UserID'])) {
     echo json_encode([
@@ -17,13 +13,14 @@ if (!isset($_SESSION['UserID'])) {
 }
 
 $userID = $_SESSION['UserID'];
+$debug['session'] = $_SESSION;
 
 $stmt = $conn->prepare("SELECT UserID, Username FROM login WHERE UserID = ?");
 $stmt->bind_param("i", $userID);
 
 if ($stmt->execute()) {
     $result = $stmt->get_result();
-    if ($result->num_rows === 1) {
+    if ($result && $result->num_rows === 1) {
         $row = $result->fetch_assoc();
         echo json_encode([
             "success" => true,
@@ -31,16 +28,14 @@ if ($stmt->execute()) {
             "username" => $row['Username']
         ]);
     } else {
-        echo json_encode([
-            "success" => false,
-            "error" => "User not found"
-        ]);
+        $debug['error'] = "User not found with ID $userID";
+        file_put_contents("debug_getuser.txt", print_r($debug, true));
+        echo json_encode(["success" => false, "error" => "User not found"]);
     }
 } else {
-    echo json_encode([
-        "success" => false,
-        "error" => "Query failed: " . $stmt->error
-    ]);
+    $debug['error'] = "Query failed: " . $stmt->error;
+    file_put_contents("debug_getuser.txt", print_r($debug, true));
+    echo json_encode(["success" => false, "error" => "Query error"]);
 }
 
 $stmt->close();
