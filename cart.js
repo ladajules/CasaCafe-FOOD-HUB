@@ -106,10 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     removeBtn.classList = "remove-btn";
 
                     removeBtn.addEventListener("click", () => {
-                        removeFromCart(product.title);
+                        removeFromCart(product.title, product.variant || '');
                         cart.splice(index, 1);
                         renderCart();
                     });
+
 
                     imageCont.appendChild(img);
                     container.appendChild(imageCont);
@@ -170,48 +171,48 @@ document.addEventListener("DOMContentLoaded", () => {
             }));
 
             fetch("checkout.php", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        cart: cartForCheckout,
-        user_address: {
-            fullName,
-            addressLine,
-            city,
-            postalCode,
-            phoneNumber,
-            saveAddress
-        }
-    })
-})
-.then(res => res.text())  // get raw text first
-.then(text => {
-    console.log("Raw response text:", text);
-    return JSON.parse(text); // manually parse here to catch errors
-})
-.then(data => {
-    if (data.success) {
-        localStorage.removeItem("cart");
-        cartSection.innerHTML = "";
-        totalPriceDisplay.textContent = "";
-        addressModal.classList.add("hidden");
-        checkoutBtn.classList.add("hidden");
-        cartWrapper.style.display = "none";
-        if (thankYouMessage) {
-            thankYouMessage.classList.add("show");
-        }
-        homeBtn.classList.add("show");
-    } else {
-        alert("Checkout failed: " + data.error);
-    }
-})
-.catch(err => {
-    console.error("Checkout error:", err);
-    alert("Something went wrong during checkout.");
-});
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    cart: cartForCheckout,
+                    user_address: {
+                        fullName,
+                        addressLine,
+                        city,
+                        postalCode,
+                        phoneNumber,
+                        saveAddress
+                    }
+                })
+            })
+                .then(res => res.text())  // get raw text first
+                .then(text => {
+                    console.log("Raw response text:", text);
+                    return JSON.parse(text); // manually parse here to catch errors
+                })
+                .then(data => {
+                    if (data.success) {
+                        localStorage.removeItem("cart");
+                        cartSection.innerHTML = "";
+                        totalPriceDisplay.textContent = "";
+                        addressModal.classList.add("hidden");
+                        checkoutBtn.classList.add("hidden");
+                        cartWrapper.style.display = "none";
+                        if (thankYouMessage) {
+                            thankYouMessage.classList.add("show");
+                        }
+                        homeBtn.classList.add("show");
+                    } else {
+                        alert("Checkout failed: " + data.error);
+                    }
+                })
+                .catch(err => {
+                    console.error("Checkout error:", err);
+                    alert("Something went wrong during checkout.");
+                });
 
         });
     }
@@ -331,34 +332,34 @@ function removeFromCart(productName, variant = '') {
         credentials: 'include',
         body: `product_name=${encodeURIComponent(productName)}&variant=${encodeURIComponent(variant)}`
     })
-    .then(response => response.text())
-    .then(() => {
-        return fetch('get_cart.php', { credentials: 'include' });
-    })
-    .then(res => res.json())
-    .then(cart => {
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateTotalPrice(cart);
-        renderCart();
-    })
-    .catch(error => {
-        console.error("Error removing item or syncing cart:", error);
-    });
+        .then(response => response.text())
+        .then(() => {
+            return fetch('get_cart.php', { credentials: 'include' });
+        })
+        .then(res => res.json())
+        .then(cart => {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateTotalPrice(cart);
+            renderCart();
+        })
+        .catch(error => {
+            console.error("Error removing item or syncing cart:", error);
+        });
 }
 
 const toggle = document.getElementById("dropdownToggle");
-  const menu = document.getElementById("dropdownMenu");
-  const arrow = document.getElementById("dropdownArrow");
+const menu = document.getElementById("dropdownMenu");
+const arrow = document.getElementById("dropdownArrow");
 
-  toggle.addEventListener("click", () => {
+toggle.addEventListener("click", () => {
     const isVisible = menu.style.display === "block";
     menu.style.display = isVisible ? "none" : "block";
     toggle.classList.toggle("open", !isVisible);
-  });
+});
 
-  window.addEventListener("click", (e) => {
+window.addEventListener("click", (e) => {
     if (!document.getElementById("profileDropdown").contains(e.target)) {
-      menu.style.display = "none";
-      toggle.classList.remove("open");
+        menu.style.display = "none";
+        toggle.classList.remove("open");
     }
-  });
+});
