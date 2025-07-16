@@ -276,6 +276,7 @@
                 <div class="col"><span class="label">Full Name:</span> <span id="fullName"></span></div>
                 <div class="col"><span class="label">Phone:</span> <span id="phoneNumber"></span></div>
                 <div class="col"><span class="label">Delivery Type:</span> <span id="deliveryType"></span></div>
+                <div class="col"><span class="label">Payment Method:</span> <span id="paymentMethod"></span></div>
                 </div>
                 <div class="row">
                 <div class="col"><span class="label">Address:</span> <span id="fullAddress"></span></div>
@@ -352,6 +353,7 @@
                 document.getElementById("fullName").textContent = details[0].full_name;
                 document.getElementById("phoneNumber").textContent = details[0].phone_number;
                 document.getElementById("deliveryType").textContent = details[0].delivery_type;
+                document.getElementById("paymentMethod").textContent = details[0].payment_method;
                 document.getElementById("fullAddress").textContent =
                     `${details[0].address_line}, ${details[0].city}, ${details[0].postal_code}`;
 

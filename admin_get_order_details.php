@@ -2,11 +2,6 @@
 require 'db_connection.php';
 header('Content-Type: application/json');
 
-file_put_contents("debug_order.txt", json_encode([
-    "user_id" => $_GET['order_id'],
-    "purchase_date" => $_GET['purchase_date']
-]));
-
 if (!isset($_GET['order_id']) || !isset($_GET['purchase_date'])) {
     echo json_encode(["success" => false, "error" => "Missing order ID or purchase date"]);
     exit;
