@@ -69,41 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
     addBtn.textContent     = "Add to Cart";
     addBtn.className       = "cartBtn";
     addBtn.addEventListener("click", () => {
-      const selectedVariantId = variantSelect ? variantSelect.value : null;
-      const selectedVariantText = getSelectedText(variantSelect);
-
-      const product = {
-        title: item.item_name,
-        price: price.textContent.replace('₱', ''),
-        img: item.item_image || 'fallback.png',
-        variant: selectedVariantId,
-        variantText: selectedVariantText,
-      };
-
-
-      fetch('add_to_cart.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        credentials: 'include',
-        body: new URLSearchParams({
-          product: product.title,
-          quantity: 1,
-          price: product.price,
-          variant: product.variant || ''
-        })
-      })
-      .then(response => response.text())
-      .then(text => {
-        if (text.includes('successfully')) {
-          showPopup(`${product.title} ${product.variantText} added to cart`);
-        } else {
-          showPopup(`Failed to add to cart: ${text}`);
-        }
-      })
-      .catch(error => {
-        console.error('Error adding to cart:', error);
-        showPopup('Error adding to cart.');
-      });
+      addToCart(product.title, 1, product.price);          // back‑end
+      // update localStorage cart
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (!cart.some(i => i.title === product.title)) {
+        cart.push({ title: product.title, price: product.price, img: product.img });
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+      alert(`${product.title} added to cart ✔`);
     });
 
       const removeBtn = document.createElement("button");
@@ -124,6 +97,33 @@ document.addEventListener("DOMContentLoaded", () => {
       wishlistSection.appendChild(container);
     });
   }
+
+  function addToCart(product, quantity, price, variant = '') {
+    fetch('add_to_cart.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      credentials: 'include',
+      body: new URLSearchParams({
+        product,
+        quantity,
+        price,
+        variant
+      })
+    })
+    .then(response => response.text())
+    .then(text => {
+      if (text.includes('successfully')) {
+        showPopup(`${product} added to cart`);
+      } else {
+        showPopup(`Failed to add to cart: ${text}`);
+      }
+    })
+    .catch(err => {
+      console.error('Add to cart error:', err);
+      showPopup('Error adding to cart.');
+    });
+  }
+  
 
   function removeFromWishlistByTitle(title, container) {
     fetch('remove_from_wishlist.php', {
