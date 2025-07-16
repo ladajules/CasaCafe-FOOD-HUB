@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
+let currentUserID = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch("getUser.php")
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             document.getElementById("usernameDisplay").textContent = data.username;
             editUsernameInput.value = data.username;
+            currentUserID = data.userID; 
 
             document.querySelector('.edit-btn').addEventListener('click', () => {
                 openModal('editModal');
@@ -111,13 +113,13 @@ function closeModal(id) {
 
 document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
-    if (newUsername) {
+    if (newUsername && currentUserID) {
         fetch('edit_users.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: `Username=${encodeURIComponent(newUsername)}`
+            body: `Username=${encodeURIComponent(newUsername)}&UserID=${encodeURIComponent(currentUserID)}`
         })
         .then(res => res.json())
         .then(data => {
@@ -128,5 +130,7 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
                 alert('Edit failed: ' + data.error);
             }
         });
+    } else {
+        alert("Missing username or user ID.");
     }
 });
