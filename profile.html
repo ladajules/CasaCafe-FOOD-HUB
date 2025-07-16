@@ -40,7 +40,7 @@
             <img src="profile.png" id="profImg">
             <div class="text-content">
                 <h2 id="usernameDisplay"></h2>
-                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}" onclick="openModal('${user.UserID}')"><i class="fas fa-pen"></i></button>
                 <p>Edit Profile</p>
             </div>
         </div>
@@ -101,7 +101,7 @@
     document.getElementById('saveEditBtn').addEventListener('click', () => {
       const newUsername = editUsernameInput.value.trim();
       if (newUsername && selectedUserId) {
-        fetch('admin_edit_users.php', {
+        fetch('edit_users.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
