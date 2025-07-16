@@ -174,6 +174,46 @@
   color: #e53935;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.dashboard-box {
+  background-color: white;
+  border: 2px solid black;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.dashboard-box.large {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.dashboard-box p {
+  font-size: 32px;
+  margin: 10px 0 20px;
+}
+
+.dashboard-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.dashboard-box button:hover {
+  background-color: #333;
+}
+
   </style>
 </head>
 <body>
@@ -196,31 +236,66 @@
     </header>
 
         <div class="sidebar">
-  <h3 class="sidebar-section">HOME</h3>
-  <a href="#" class="sidebar-link active">
-    <i class="fas fa-tachometer-alt"></i> Dashboard
-  </a>
+          <h3 class="sidebar-section">HOME</h3>
+          <a href="#" class="sidebar-link active">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
 
-  <h3 class="sidebar-section">LOG</h3>
-  <a href="admin_users.html" class="sidebar-link">
-    <i class="fas fa-user"></i> Users
-  </a>
+          <h3 class="sidebar-section">LOG</h3>
+          <a href="admin_users.html" class="sidebar-link">
+            <i class="fas fa-user"></i> Users
+          </a>
 
-  <div class="dropdown-toggle">
-    <div class="sidebar-link menu-toggle">
-      <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+          <div class="dropdown-toggle">
+            <div class="sidebar-link menu-toggle">
+              <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+            <div class="submenu" style="display: none;">
+              <a href="admin_view_menu.html" class="submenu-link">View Menu</a>
+              <a href="admin_add_menu.html" class="submenu-link">Add To Menu</a>
+            </div>
+
+          <a href="admin_orders.html" class="sidebar-link">
+            <i class="fas fa-shopping-cart"></i> Orders
+          </a>
+        </div>
     </div>
-    <div class="submenu" style="display: none;">
-      <a href="admin_view_menu.html" class="submenu-link">View Menu</a>
-      <a href="admin_add_menu.html" class="submenu-link">Add To Menu</a>
-    </div>
 
-  <a href="admin_orders.html" class="sidebar-link">
-    <i class="fas fa-shopping-cart"></i> Orders
-  </a>
-</div>
-    </div>
+    <div class="main-content">
+      <h1>Dashboard</h1>
 
+      <div class="dashboard-grid">
+        <div class="dashboard-box large">
+          <h2>PENDING ORDERS</h2>
+          <p id="pendingCount">0</p>
+          <button onclick="location.href='admin_orders.html'">Go To</button>
+        </div>
+
+        <div class="dashboard-box">
+          <h2>TOTAL ORDERS</h2>
+          <p id="totalOrdersCount">0</p>
+          <button onclick="location.href='admin_orders.html'">Go To</button>
+        </div>
+
+        <div class="dashboard-box">
+          <h2>COMPLETED ORDERS</h2>
+          <p id="completedCount">0</p>
+          <button onclick="location.href='admin_orders.html'">Go To</button>
+        </div>
+
+        <div class="dashboard-box">
+          <h2>TOTAL PRODUCTS</h2>
+          <p id="productsCount">0</p>
+          <button onclick="location.href='admin_view_menu.html'">Go To</button>
+        </div>
+
+        <div class="dashboard-box">
+          <h2>TOTAL CUSTOMERS</h2>
+          <p id="customersCount">0</p>
+          <button onclick="location.href='admin_users.html'">Go To</button>
+        </div>
+      </div>
+    </div>
 
     <script>
     const toggle = document.getElementById("dropdownToggle");
@@ -246,30 +321,16 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-  fetch('admin_get_users.php')
-    .then(res => res.json())
-    .then(users => {
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
-
-      users.forEach(user => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${user.UserID}</td>
-          <td>${user.Username}</td>
-          <td>
-            <button class="edit-btn"><i class="fas fa-pen"></i></button>
-            <button class="delete-btn"><i class="fas fa-trash"></i></button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    })
-    .catch(error => {
-      console.error('Error loading users:', error);
+      fetch('admin_get_dashboard_stats.php')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('pendingCount').textContent = data.pending_orders;
+          document.getElementById('completedCount').textContent = data.completed_orders;
+          document.getElementById('totalOrdersCount').textContent = data.total_orders;
+          document.getElementById('productsCount').textContent = data.total_products;
+          document.getElementById('customersCount').textContent = data.total_customers;
+        });
     });
-});
     </script>
-    <script src="admin.js"></script>
 </body>
 </html>
