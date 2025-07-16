@@ -386,7 +386,7 @@
             <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
           </div>
           <div class="submenu" style="display: none;">
-            <a href="#" class="submenu-link">View Menu</a>
+            <a href="admin_view_menu.html" class="submenu-link">View Menu</a>
             <a href="#" class="submenu-link">Add To Menu</a>
           </div>
       
@@ -398,10 +398,7 @@
 
         <div class="main-content">
             <div class="modal-header">
-                <h3 class="modal-title">Edit Menu Item</h3>
-                <button class="close-btn" onclick="closeModal('editItemModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h3 class="modal-title">Add Menu Item</h3>
             </div>
 
             <form id="editItemForm">
@@ -434,14 +431,14 @@
                     </div>
 
                     <div class="button-group">
-                      <button type="button" class="btn btn-secondary" onclick="closeModal('editItemModal')">Cancel</button>
+                      <button type="button" class="btn btn-secondary">Clear All</button>
                       <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
                 
             </form>
         </div>
-        
+
       <script>
             const toggle = document.getElementById("dropdownToggle");
             const menu = document.getElementById("dropdownMenu");
