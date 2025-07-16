@@ -176,7 +176,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         wishlistBtn.addEventListener("click", () => {
-          // Your existing wishlist logic
+          const product = {
+            title: item.item_name,
+            price: item.item_price,
+            img: item.item_image || 'fallback.png'
+          };
+          let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+          const exists = wishlist.some(p => p.title === product.title);
+          if (!exists) {
+            wishlist.push(product);
+            localStorage.setItem("wishlist", JSON.stringify(wishlist));
+            showPopup(`${product.title} has been added to your Favorites.`);
+            addToWishlist(product.title, product.price, product.img);
+          } else {
+            showPopup("Already in Favorites.");
+          }
         });
 
         buttonContainer.appendChild(cartBtn);
