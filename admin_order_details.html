@@ -384,7 +384,7 @@
             fetch("admin_update_order_status.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `order_id=${orderId}&status=${newStatus}`
+                body: `user_id=${orderId}&purchase_date=${encodeURIComponent(purchaseDate)}&status=${newStatus}`
             })
                 .then(res => res.text())
                 .then(msg => alert("Status updated."))
