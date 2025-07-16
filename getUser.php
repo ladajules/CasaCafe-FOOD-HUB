@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 require 'db_connection.php';
 
 if (!isset($_SESSION['UserID'])) {
-    echo json_encode(['Username' => 'Guest']);
+    echo json_encode(['username' => 'Guest']);
     exit;
 }
 
