@@ -14,8 +14,8 @@ $price = $input['price'] ?? '';
 $description = $input['description'] ?? '';
 
 if ($name && $category && $image && $price && $description) {
-    $stmt = $conn->prepare("INSERT INTO menu (name, category, image, price, description) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $name, $category, $image, $price, $description);
+    $stmt = $conn->prepare("INSERT INTO item_table (item_name, item_category, item_image, item_price, item_description) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssds", $name, $category, $image, $price, $description);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true]);
