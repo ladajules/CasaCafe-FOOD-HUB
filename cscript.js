@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Variants Dropdown
         const variantContainer = document.createElement('div');
         variantContainer.classList.add('variant-container');
+        let variantSelect = null; 
 
         if (item.variants && item.variants.length > 0) {
           const variantLabel = document.createElement('label');
