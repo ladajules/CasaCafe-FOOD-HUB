@@ -108,6 +108,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
+  function showPopup(message) {
+    const popup = document.getElementById("popupNotification");
+    const popupMessage = document.getElementById("popupMessage");
+  
+    if (popup && popupMessage) {
+      popupMessage.textContent = message;
+      popup.style.display = "block";
+  
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 3000);
+    }
+  }
   function addToCart(product, quantity, price, variant = '') {
     return fetch('add_to_cart.php', {   // <-- Add 'return' here
       method: 'POST',
