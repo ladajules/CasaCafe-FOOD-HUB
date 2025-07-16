@@ -11,6 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $product = strip_tags(trim($_POST['product'] ?? ''));
     $quantity = intval($_POST['quantity'] ?? 0);
     $price = floatval($_POST['price'] ?? 0);
+    $variant = strip_tags(trim($_POST['variant'] ?? ''));
+
 
     if ($product === '' || $quantity <= 0 || $price <= 0) {
         echo "Invalid product, quantity, or price.";
