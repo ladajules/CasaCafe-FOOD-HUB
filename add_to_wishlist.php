@@ -28,9 +28,10 @@ if (!isset($product['title'], $product['price'], $product['img'])) {
 $title = $product['title'];
 $price = $product['price'];
 $img = $product['img'];
+$variant = isset($product['variant']) ? $product['variant'] : '';
 
-$stmt = $conn->prepare("INSERT INTO wishlist (user_id, title, price, img) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("isds", $user_id, $title, $price, $img);
+$stmt = $conn->prepare("INSERT INTO wishlist (user_id, title, price, img, variant) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("isdss", $user_id, $title, $price, $img, $variant);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

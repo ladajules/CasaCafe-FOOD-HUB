@@ -219,24 +219,27 @@ document.addEventListener('DOMContentLoaded', function () {
       : '';
   }
 
-  function addToWishlist(title, price, img) {
-    fetch('add_to_wishlist.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ product: { title, price: Number(price), img } })
+  function addToWishlist(title, price, img, variant = '') {
+  fetch('add_to_wishlist.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ product: { title, price: Number(price), img, variant } })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.success) {
+        showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
+      } else {
+        showPopup(`${title} (${variant || 'Default'}) added to Favorites ✔`);
+      }
     })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.success) {
-          showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
-        }
-      })
-      .catch(error => {
-        console.error('Error adding to Favorites:', error);
-        showPopup('Failed to add to Favorites.');
-      });
-  }
+    .catch(error => {
+      console.error('Error adding to Favorites:', error);
+      showPopup('Failed to add to Favorites.');
+    });
+}
+
 
   // Unified filtering (search + category + sort)
   function applyAllFilters() {

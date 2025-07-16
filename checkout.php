@@ -55,7 +55,7 @@ try {
 
     foreach ($cart as $item) {
         $stmt->bind_param(
-            "isidsssssss",
+            "isidssssssss",
             $user_id,
             $item['product_name'],
             $item['quantity'],

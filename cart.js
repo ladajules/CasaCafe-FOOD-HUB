@@ -1,18 +1,5 @@
 let pendingGcash = false;
 
-function showPopup(content) {
-    const popup = document.getElementById("popupNotification");
-    const popupMessage = document.getElementById("popupMessage");
-    popupMessage.innerHTML = content;
-    popup.style.display = "block";
-}
-
-function confirmGcashPayment() {
-    const popup = document.getElementById("popupNotification");
-    popup.style.display = "none";
-    document.getElementById("addressForm").dispatchEvent(new Event("submit"));
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const cartSection = document.getElementById("cartSection");
     const totalPriceDisplay = document.getElementById("totalPriceDisplay");
@@ -22,10 +9,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModalBtn = document.getElementById("closeAddressModal");
     const addressForm = document.getElementById("addressForm");
     const thankYouMessage = document.getElementById("thankYouMessage");
+    const popup = document.getElementById("popupNotification");
+    const popupMessage = document.getElementById("popupMessage");
+    const popupOverlay = document.getElementById("popupOverlay");
 
     if (thankYouMessage) thankYouMessage.classList.remove("show");
 
-    // Load saved addresses
+    function showPopup(content) {
+        popupMessage.innerHTML = content;
+        popup.style.display = "block";
+        popupOverlay.style.display = "block";
+    }
+
+    window.confirmGcashPayment = function () {
+        popup.style.display = "none";
+        popupOverlay.style.display = "none";
+        addressForm.requestSubmit();
+    };
+
     if (savedAddressesSelect) {
         fetch('get_addresses.php', { credentials: 'include' })
             .then(res => res.json())
@@ -41,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 savedAddressesSelect.addEventListener("change", (e) => {
                     const selectedId = e.target.value;
                     if (!selectedId) return;
+
                     const selectedAddress = addresses.find(addr => addr.id == selectedId);
                     if (!selectedAddress) return;
 
@@ -53,8 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => console.error("Failed to load saved addresses:", err));
     }
-
-    renderCart();
 
     if (checkoutBtn) {
         checkoutBtn.addEventListener("click", () => {
@@ -78,14 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value || "";
             const fullName = document.getElementById("fullName").value;
             const addressLine = document.getElementById("addressLine").value;
             const city = document.getElementById("city").value;
             const postalCode = document.getElementById("postalCode").value;
             const phoneNumber = document.getElementById("phoneNumber").value;
             const saveAddress = document.getElementById("saveAddress").checked;
-            const paymentMethod = document.getElementById("paymentMethod").value;
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
             const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
             const cartForCheckout = cartFromStorage.map(item => ({
@@ -95,20 +95,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 img: item.img
             }));
 
-            if (paymentMethod === "Gcash" && !pendingGcash) {
-                showPopup(`
-    <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
-    <img src="gcash_qr.png" alt="GCash QR Code"
-         style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
-    <button onclick="confirmGcashPayment()" 
-            style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-        I have paid
-    </button>
-`);
-
-                pendingGcash = true;
-                return;
+            if (paymentMethod === "Gcash") {
+                if (!pendingGcash) {
+                    pendingGcash = true;
+                    showPopup(`
+            <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
+            <img src="gcash_qr.png" alt="GCash QR Code"
+                style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
+            <button onclick="confirmGcashPayment()"
+                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                I have paid
+            </button>
+        `);
+                    return;
+                }
+                pendingGcash = false;
             }
+
 
             fetch("checkout.php", {
                 method: "POST",
@@ -118,6 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify({
                     cart: cartForCheckout,
+                    deliveryType,
+                    paymentMethod,
                     user_address: {
                         fullName,
                         addressLine,
@@ -125,9 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         postalCode,
                         phoneNumber,
                         saveAddress
-                    },
-                    deliveryType,
-                    paymentMethod
+                    }
                 })
             })
                 .then(res => res.text())
@@ -143,7 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         addressModal.classList.add("hidden");
                         checkoutBtn.classList.add("hidden");
                         if (thankYouMessage) thankYouMessage.classList.add("show");
-                        if (homeBtn) homeBtn.classList.add("show");
+                        document.getElementById("cartWrapper").style.display = "none";
+                        document.getElementById("homeBtn").classList.add("show");
                     } else {
                         alert("Checkout failed: " + data.error);
                     }
@@ -154,10 +158,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         });
     }
+
+    renderCart();
 });
 
-// keep your existing renderCart(), updateTotalPrice(), addToCartClicked(), etc.
-// no changes needed there for this feature
+function updateTotalPrice(cart) {
+    const totalPriceDisplay = document.getElementById("totalPriceDisplay");
+    const total = cart.reduce((sum, item) => {
+        const qty = item.quantity || 1;
+        return sum + (item.price * qty);
+    }, 0);
+    totalPriceDisplay.textContent = `Total: ₱${total.toFixed(2)}`;
+}
+
 
 function renderCart() {
     const cartSection = document.getElementById("cartSection");
@@ -172,8 +185,22 @@ function renderCart() {
             if (!Array.isArray(cart) || cart.length === 0) {
                 cartSection.innerHTML = "<p>Your cart is empty.</p>";
                 totalPriceDisplay.textContent = "";
+                const checkoutBtn = document.getElementById("checkoutBtn");
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.style.opacity = "0.5";
+                    checkoutBtn.style.cursor = "not-allowed";
+                }
                 return;
+            } else {
+                const checkoutBtn = document.getElementById("checkoutBtn");
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.style.opacity = "1";
+                    checkoutBtn.style.cursor = "pointer";
+                }
             }
+
 
             cart.forEach((product, index) => {
                 const container = document.createElement("div");
@@ -197,13 +224,6 @@ function renderCart() {
                 price.textContent = `₱${product.price.toFixed(2)}`;
                 price.classList = "priceP";
 
-                if (product.variant && product.variant.trim() !== "") {
-                    const variant = document.createElement("p");
-                    variant.textContent = `Variant: ${product.variant}`;
-                    variant.classList = "variantP";
-                    cartDescription.appendChild(variant);
-                }
-
                 const quantity = document.createElement("input");
                 quantity.type = "number";
                 quantity.min = 1;
@@ -224,16 +244,15 @@ function renderCart() {
                 const removeBtn = document.createElement("button");
                 removeBtn.textContent = "Remove";
                 removeBtn.classList = "remove-btn";
-
                 removeBtn.addEventListener("click", () => {
                     removeFromCart(product.title, product.variant || '');
                 });
 
                 imageCont.appendChild(img);
-                container.appendChild(imageCont);
                 cartDescription.appendChild(title);
                 cartDescription.appendChild(price);
                 cartDescription.appendChild(quantity);
+                container.appendChild(imageCont);
                 container.appendChild(cartDescription);
                 container.appendChild(removeBtn);
 
@@ -248,6 +267,26 @@ function renderCart() {
         });
 }
 
+function updateCartQuantity(product_name, quantity) {
+    fetch('update_cart_quantity.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'include',
+        body: `product_name=${encodeURIComponent(product_name)}&quantity=${quantity}`
+    })
+        .then(response => response.text())
+        .then(() => {
+            return fetch('get_cart.php', { credentials: 'include' });
+        })
+        .then(res => res.json())
+        .then(cart => {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateTotalPrice(cart);
+        })
+        .catch(error => {
+            console.error("Error updating quantity or syncing cart:", error);
+        });
+}
 
 function removeFromCart(productName, variant = '') {
     fetch('remove_from_cart.php', {
@@ -263,14 +302,12 @@ function removeFromCart(productName, variant = '') {
         .then(res => res.json())
         .then(cart => {
             localStorage.setItem("cart", JSON.stringify(cart));
-            updateTotalPrice(cart);
             renderCart();
         })
         .catch(error => {
             console.error("Error removing item or syncing cart:", error);
         });
 }
-
 const toggle = document.getElementById("dropdownToggle");
 const menu = document.getElementById("dropdownMenu");
 const arrow = document.getElementById("dropdownArrow");
