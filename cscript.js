@@ -70,9 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('menu_api.php')
     .then(response => {
-      if (!response.ok) {
-        throw new Error('API error');
-      }
+      if (!response.ok) throw new Error('API error');
       return response.json();
     })
     .then(data => {
@@ -85,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Item Image
         const img = document.createElement('img');
-        img.src = item.item_image || 'fallback.png';
+        img.src = item.item_image ? `IMAGES/${item.item_image}` : 'fallback.png';
         img.alt = item.item_name;
         img.classList.add('item-img');
 
@@ -99,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         desc.textContent = item.item_description;
         desc.classList.add('item-desc');
 
-        // Item Price (will update when variant selected)
+        // Item Price
         const price = document.createElement('p');
         price.classList.add('item-price');
         price.textContent = `₱${item.item_price}`;
@@ -108,22 +106,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const variantContainer = document.createElement('div');
         variantContainer.classList.add('variant-container');
 
+        let variantSelect = null;
+
         if (item.variants && item.variants.length > 0) {
           const variantLabel = document.createElement('label');
           variantLabel.textContent = 'Options:';
           variantLabel.classList.add('variant-label');
-          
-          const variantSelect = document.createElement('select');
+
+          variantSelect = document.createElement('select');
           variantSelect.classList.add('variant-dropdown');
           variantSelect.setAttribute('data-item-id', item.item_id);
 
-          // Default option
           const defaultOption = document.createElement('option');
           defaultOption.value = '';
           defaultOption.textContent = 'Select an option';
           variantSelect.appendChild(defaultOption);
 
-          // Add variant options
           item.variants.forEach(variant => {
             const option = document.createElement('option');
             option.value = variant.variant_id;
@@ -132,12 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
             variantSelect.appendChild(option);
           });
 
-          // Handle selection changes
-          variantSelect.addEventListener('change', function() {
+          variantSelect.addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
             const variantPrice = selectedOption.getAttribute('data-price') || 0;
             const totalPrice = (parseFloat(item.item_price) + parseFloat(variantPrice)).toFixed(2);
             price.textContent = `₱${totalPrice}`;
+            cartBtn.disabled = (this.value === '');
           });
 
           variantContainer.appendChild(variantLabel);
@@ -151,34 +149,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const cartBtn = document.createElement("button");
         cartBtn.textContent = "Add to Cart";
         cartBtn.classList.add("cartBtn");
+        if (variantSelect) cartBtn.disabled = true;
 
         const wishlistBtn = document.createElement("button");
         wishlistBtn.textContent = "♡";
         wishlistBtn.classList.add("wishlistBtn");
 
-        // Button event handlers
+        // Add to Cart Logic
         cartBtn.addEventListener("click", () => {
           const product = {
             title: item.item_name,
             price: price.textContent.replace('₱', ''),
-            img: item.item_image || 'fallback.png',
-            variant: variantSelect.value
+            img: item.item_image ? `IMAGES/${item.item_image}` : 'fallback.png',
+            variant: variantSelect ? variantSelect.value : null
           };
-          
+
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
           const exists = cart.some(p => p.title === product.title && p.variant === product.variant);
-          
+
           if (!exists) {
             cart.push(product);
             localStorage.setItem("cart", JSON.stringify(cart));
-            showPopup(`${product.title} (${getSelectedText(variantSelect)}) added to cart`);
+            showPopup(`${product.title} ${getSelectedText(variantSelect)} added to cart`);
           } else {
             showPopup("Already in cart");
           }
         });
 
         wishlistBtn.addEventListener("click", () => {
-          // Your existing wishlist logic
+          // Optional: Add wishlist logic here
+          showPopup("Added to wishlist (logic not yet implemented)");
         });
 
         buttonContainer.appendChild(cartBtn);
@@ -201,19 +201,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Helper function to get selected variant text
+// Helper function
 function getSelectedText(select) {
-  return select.options[select.selectedIndex].text;
+  return select && select.selectedIndex > 0
+    ? `(${select.options[select.selectedIndex].text})`
+    : '';
 }
 
-// Your existing showPopup function
+// Popup Function (assuming this exists)
 function showPopup(message) {
-  // Your existing popup implementation
+  const popup = document.getElementById("popupNotification");
+  const messageBox = document.getElementById("popupMessage");
+  const closeBtn = document.getElementById("popupCloseBtn");
+
+  messageBox.textContent = message;
+  popup.classList.add("show");
+
+  closeBtn.onclick = () => popup.classList.remove("show");
 }
-
-
-
-
 
 
 
