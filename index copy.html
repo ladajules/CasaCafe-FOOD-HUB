@@ -41,7 +41,6 @@
     </header>
     <!-- Home Section -->
        
-            <a href="product.html" class="btn" id="shopBtn">Shop Now</a>
 
     <!-- Carousel Section -->
     <section class="carousel" id="carousel">
@@ -157,6 +156,10 @@
             }
             slides[slideIndex - 1].style.display = "block";
         }
+
+        setInterval(() => {
+            plusSlides(1);
+        }, 3000);
     </script>
 </body>
 </html>
