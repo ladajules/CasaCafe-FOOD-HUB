@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addressForm) {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
-
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
             const fullName = document.getElementById("fullName").value;
             const addressLine = document.getElementById("addressLine").value;
             const city = document.getElementById("city").value;
@@ -96,13 +96,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         postalCode,
                         phoneNumber,
                         saveAddress
-                    }
+                    },
+                    deliveryType: deliveryType
                 })
+
             })
-                .then(res => res.text())  // get raw text first
+                .then(res => res.text()) 
                 .then(text => {
                     console.log("Raw response text:", text);
-                    return JSON.parse(text); // manually parse here to catch errors
+                    return JSON.parse(text);
                 })
                 .then(data => {
                     if (data.success) {

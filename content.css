@@ -16,6 +16,13 @@
   font-weight: 1000;
 }
 
+#addressForm input {
+  background-color:rgb(235, 235, 235);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 10px;
+}
+
 .btn {
   padding: 9px 35px;
   width: 157px;

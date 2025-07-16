@@ -14,7 +14,6 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Check if user is logged in and get user ID from session
 if (!isset($_SESSION['UserID'])) {
     echo json_encode(["success" => false, "error" => "User not logged in"]);
     exit;
@@ -22,8 +21,11 @@ if (!isset($_SESSION['UserID'])) {
 
 $user_id = $_SESSION['UserID'];
 
-// Read JSON input
+
 $data = json_decode(file_get_contents("php://input"), true);
+
+$deliveryType = $data['deliveryType'] ?? 'Delivery'; 
+
 
 if (!$data || !isset($data['cart'], $data['user_address'])) {
     echo json_encode(["success" => false, "error" => "Invalid JSON or missing fields"]);
@@ -33,7 +35,6 @@ if (!$data || !isset($data['cart'], $data['user_address'])) {
 $cart = $data['cart'];
 $address = $data['user_address'];
 
-// Validate address fields
 $required = ['fullName', 'addressLine', 'city', 'postalCode', 'phoneNumber'];
 foreach ($required as $field) {
     if (empty($address[$field])) {
@@ -42,17 +43,17 @@ foreach ($required as $field) {
     }
 }
 
+
 $conn->begin_transaction();
 
 try {
-    // Insert each cart item into purchases table
     $stmt = $conn->prepare("INSERT INTO purchases 
-        (user_id, product_name, quantity, price, img, full_name, address_line, city, postal_code, phone_number, purchase_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    (user_id, product_name, quantity, price, img, full_name, address_line, city, postal_code, phone_number, delivery_type, purchase_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
 
     foreach ($cart as $item) {
         $stmt->bind_param(
-            "isidssssss",
+            "isidsssssss",
             $user_id,
             $item['product_name'],
             $item['quantity'],
@@ -62,8 +63,10 @@ try {
             $address['addressLine'],
             $address['city'],
             $address['postalCode'],
-            $address['phoneNumber']
+            $address['phoneNumber'],
+            $deliveryType
         );
+
 
         if (!$stmt->execute()) {
             throw new Exception("Failed to insert purchase: " . $stmt->error);
