@@ -362,7 +362,7 @@ label {
     margin: 5px;
     background-color: #4F959D;
     color: white;
-    padding: 5px;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -993,6 +993,7 @@ POP UP WISHLIST AND CART   */
     border-radius: 5px;
     margin-top: 10px;
 }
+
 
 #homeBtn {
     background-color: #e9d36c;
