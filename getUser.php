@@ -29,12 +29,10 @@ if ($stmt->execute()) {
         ]);
     } else {
         $debug['error'] = "User not found with ID $userID";
-        file_put_contents("debug_getuser.txt", print_r($debug, true));
         echo json_encode(["success" => false, "error" => "User not found"]);
     }
 } else {
     $debug['error'] = "Query failed: " . $stmt->error;
-    file_put_contents("debug_getuser.txt", print_r($debug, true));
     echo json_encode(["success" => false, "error" => "Query error"]);
 }
 
