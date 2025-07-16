@@ -18,14 +18,15 @@ if (!isset($_SESSION['UserID'])) {
 
 $userId = $_SESSION['UserID'];
 $product = strip_tags(trim($_POST['product_name'] ?? ''));
+$variant = strip_tags(trim($_POST['variant'] ?? ''));
 
 if (!$product) {
     echo "Invalid product.";
     exit;
 }
 
-$stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_name = ?");
-$stmt->bind_param("is", $userId, $product);
+$stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_name = ? AND variant = ?");
+$stmt->bind_param("iss", $userId, $product, $variant);
 
 if ($stmt->execute()) {
     echo "Item removed.";
