@@ -193,6 +193,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  document.getElementById("searchForm").addEventListener("submit", function (e) {
+    e.preventDefault(); 
+    applyAllFilters();  
+  });
+
+
   function getSelectedText(select) {
     return select && select.selectedIndex > 0
       ? select.options[select.selectedIndex].text
