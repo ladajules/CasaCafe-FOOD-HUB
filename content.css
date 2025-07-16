@@ -37,6 +37,14 @@
     text-align: center;
 }
 
+#cartSubmit {
+  border-radius: 10px;
+}
+
+#cartSubmit:hover {
+  cursor: pointer;
+  background-color: rgb(209, 209, 209);
+}
 
 #popupMessage {
   background: white;
