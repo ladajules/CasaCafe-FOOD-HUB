@@ -84,13 +84,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-fetch("getUser.php")
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("usernameDisplay").textContent = data.username;
-        editUsernameInput.value = data.username;
-    })
-    .catch(err => console.error(err));
+document.addEventListener('DOMContentLoaded', () => {
+    fetch("getUser.php")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("usernameDisplay").textContent = data.username;
+            editUsernameInput.value = data.username;
+
+            document.querySelector('.edit-btn').addEventListener('click', () => {
+                openModal('editModal');
+            });
+        })
+        .catch(err => console.error(err));
+});
 
 const editModal = document.getElementById("editModal");
 const editUsernameInput = document.getElementById("editUsernameInput");
@@ -102,13 +108,6 @@ function openModal(id) {
 function closeModal(id) {
     document.getElementById(id).classList.remove("active");
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('.edit-btn').addEventListener('click', () => {
-      console.log('Edit button clicked');
-      openModal('editModal');
-    });
-});
 
 document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
