@@ -87,19 +87,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 fetch("getUser.php")
     .then(res => res.json())
     .then(data => {
-        // Update displayed username
         document.getElementById("usernameDisplay").textContent = data.username;
-
-        // Set data attributes for edit button
-        const editBtn = document.querySelector(".edit-btn");
-        editBtn.setAttribute("data-id", data.userid); // or data.userID depending on the key name
-        editBtn.setAttribute("data-username", data.username);
+        editUsernameInput.value = data.username;
     })
     .catch(err => console.error(err));
 
 const editModal = document.getElementById("editModal");
 const editUsernameInput = document.getElementById("editUsernameInput");
-let selectedUserId = null;
 
 function openModal(id) {
     document.getElementById(id).classList.add("active");
@@ -109,33 +103,28 @@ function closeModal(id) {
     document.getElementById(id).classList.remove("active");
 }
 
-document.querySelectorAll('.edit-btn').forEach(button => {
-    button.addEventListener('click', e => {
-    selectedUserId = e.currentTarget.getAttribute('data-id');
-    const username = e.currentTarget.getAttribute('data-username');
-    editUsernameInput.value = username;
+document.querySelector('.edit-btn').addEventListener('click', () => {
     openModal('editModal');
-    });
 });
 
 document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
-    if (newUsername && selectedUserId) {
-    fetch('edit_users.php', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `UserID=${selectedUserId}&Username=${encodeURIComponent(newUsername)}`
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-        closeModal('editModal');
-        location.reload();
-        } else {
-        alert('Edit failed: ' + data.error);
-        }
-    });
+    if (newUsername) {
+        fetch('edit_users.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `Username=${encodeURIComponent(newUsername)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                closeModal('editModal');
+                location.reload();
+            } else {
+                alert('Edit failed: ' + data.error);
+            }
+        });
     }
 });
