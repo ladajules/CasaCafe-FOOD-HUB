@@ -42,95 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error("Failed to load saved addresses:", err));
     }
 
-    const renderCart = () => {
-        fetch('get_cart.php', { credentials: 'include' })
-            .then(response => response.json())
-            .then(cart => {
-                localStorage.setItem("cart", JSON.stringify(cart));
-                cartSection.innerHTML = "";
-
-                if (!Array.isArray(cart) || cart.length === 0) {
-                    cartSection.innerHTML = "<p>Your cart is empty.</p>";
-                    totalPriceDisplay.textContent = "";
-                    return;
-                }
-
-                cart.forEach((product, index) => {
-                    const container = document.createElement("div");
-                    container.classList = "productContainer";
-
-                    const imageCont = document.createElement("div");
-                    imageCont.classList = "imageCont";
-                    const cartDescription = document.createElement("div");
-                    cartDescription.classList = "cartDescription";
-
-                    const img = document.createElement("img");
-                    img.src = product.img;
-                    img.alt = product.title;
-                    img.classList = "imgP";
-
-                    const title = document.createElement("p");
-                    title.textContent = product.title;
-                    title.classList = "titleP";
-
-                    const price = document.createElement("p");
-                    price.textContent = `₱${product.price.toFixed(2)}`;
-                    price.classList = "priceP";
-
-                    if (product.variant && product.variant.trim() !== "") {
-                        const variant = document.createElement("p");
-                        variant.textContent = `Variant: ${product.variant}`;
-                        variant.classList = "variantP";
-                        cartDescription.appendChild(variant);
-                    }
-
-                    const quantity = document.createElement("input");
-                    quantity.type = "number";
-                    quantity.min = 1;
-                    quantity.value = product.quantity || 1;
-                    quantity.classList = "qty-input";
-
-                    quantity.addEventListener("change", (e) => {
-                        const newQty = parseInt(e.target.value);
-                        if (newQty < 1) {
-                            quantity.value = 1;
-                            return;
-                        }
-                        product.quantity = newQty;
-                        updateTotalPrice(cart);
-                        updateCartQuantity(product.title, newQty);
-                    });
-
-                    const removeBtn = document.createElement("button");
-                    removeBtn.textContent = "Remove";
-                    removeBtn.classList = "remove-btn";
-
-                    removeBtn.addEventListener("click", () => {
-                        removeFromCart(product.title, product.variant || '');
-                        cart.splice(index, 1);
-                        renderCart();
-                    });
-
-
-                    imageCont.appendChild(img);
-                    container.appendChild(imageCont);
-                    cartDescription.appendChild(title);
-                    cartDescription.appendChild(price);
-                    cartDescription.appendChild(quantity);
-                    container.appendChild(cartDescription);
-                    container.appendChild(removeBtn);
-
-                    cartSection.appendChild(container);
-                });
-
-                updateTotalPrice(cart);
-            })
-            .catch(error => {
-                console.error("Error loading cart from DB:", error);
-                cartSection.innerHTML = "<p>Failed to load cart.</p>";
-            });
-    };
-
     renderCart();
 
     if (checkoutBtn) {
@@ -324,6 +235,96 @@ function updateCartQuantity(product_name, quantity) {
             console.error("Error updating quantity or syncing cart:", error);
         });
 }
+
+function renderCart() {
+    const cartSection = document.getElementById("cartSection");
+    const totalPriceDisplay = document.getElementById("totalPriceDisplay");
+
+    fetch('get_cart.php', { credentials: 'include' })
+        .then(response => response.json())
+        .then(cart => {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            cartSection.innerHTML = "";
+
+            if (!Array.isArray(cart) || cart.length === 0) {
+                cartSection.innerHTML = "<p>Your cart is empty.</p>";
+                totalPriceDisplay.textContent = "";
+                return;
+            }
+
+            cart.forEach((product, index) => {
+                const container = document.createElement("div");
+                container.classList = "productContainer";
+
+                const imageCont = document.createElement("div");
+                imageCont.classList = "imageCont";
+                const cartDescription = document.createElement("div");
+                cartDescription.classList = "cartDescription";
+
+                const img = document.createElement("img");
+                img.src = product.img;
+                img.alt = product.title;
+                img.classList = "imgP";
+
+                const title = document.createElement("p");
+                title.textContent = product.title;
+                title.classList = "titleP";
+
+                const price = document.createElement("p");
+                price.textContent = `₱${product.price.toFixed(2)}`;
+                price.classList = "priceP";
+
+                if (product.variant && product.variant.trim() !== "") {
+                    const variant = document.createElement("p");
+                    variant.textContent = `Variant: ${product.variant}`;
+                    variant.classList = "variantP";
+                    cartDescription.appendChild(variant);
+                }
+
+                const quantity = document.createElement("input");
+                quantity.type = "number";
+                quantity.min = 1;
+                quantity.value = product.quantity || 1;
+                quantity.classList = "qty-input";
+
+                quantity.addEventListener("change", (e) => {
+                    const newQty = parseInt(e.target.value);
+                    if (newQty < 1) {
+                        quantity.value = 1;
+                        return;
+                    }
+                    product.quantity = newQty;
+                    updateTotalPrice(cart);
+                    updateCartQuantity(product.title, newQty);
+                });
+
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remove";
+                removeBtn.classList = "remove-btn";
+
+                removeBtn.addEventListener("click", () => {
+                    removeFromCart(product.title, product.variant || '');
+                });
+
+                imageCont.appendChild(img);
+                container.appendChild(imageCont);
+                cartDescription.appendChild(title);
+                cartDescription.appendChild(price);
+                cartDescription.appendChild(quantity);
+                container.appendChild(cartDescription);
+                container.appendChild(removeBtn);
+
+                cartSection.appendChild(container);
+            });
+
+            updateTotalPrice(cart);
+        })
+        .catch(error => {
+            console.error("Error loading cart from DB:", error);
+            cartSection.innerHTML = "<p>Failed to load cart.</p>";
+        });
+}
+
 
 function removeFromCart(productName, variant = '') {
     fetch('remove_from_cart.php', {
