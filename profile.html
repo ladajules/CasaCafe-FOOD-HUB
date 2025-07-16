@@ -40,7 +40,7 @@
             <img src="profile.png" id="profImg">
             <div class="text-content">
                 <h2 id="usernameDisplay"></h2>
-                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}" onclick="openModal('editModal')"><i class="fas fa-pen"></i></button>
+                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
                 <p>Edit Profile</p>
             </div>
         </div>
@@ -89,6 +89,7 @@
   <script>
     const editModal = document.getElementById("editModal");
     const editUsernameInput = document.getElementById("editUsernameInput");
+    let selectedUserId = null;
 
     function openModal(id) {
       document.getElementById(id).classList.add("active");
@@ -97,6 +98,15 @@
     function closeModal(id) {
       document.getElementById(id).classList.remove("active");
     }
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', e => {
+        selectedUserId = e.currentTarget.getAttribute('data-id');
+        const username = e.currentTarget.getAttribute('data-username');
+        editUsernameInput.value = username;
+        openModal('editModal');
+      });
+    });
 
     document.getElementById('saveEditBtn').addEventListener('click', () => {
       const newUsername = editUsernameInput.value.trim();
