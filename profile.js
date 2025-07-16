@@ -87,6 +87,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 fetch("getUser.php")
     .then(res => res.json())
     .then(data => {
+        // Update displayed username
         document.getElementById("usernameDisplay").textContent = data.username;
+
+        // Set data attributes for edit button
+        const editBtn = document.querySelector(".edit-btn");
+        editBtn.setAttribute("data-id", data.userid); // or data.userID depending on the key name
+        editBtn.setAttribute("data-username", data.username);
     })
     .catch(err => console.error(err));

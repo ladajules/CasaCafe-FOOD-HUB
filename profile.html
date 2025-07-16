@@ -82,11 +82,20 @@
 
   <section class="footer">
 
-    <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+    <div class="credit"> Created by <span> Althea Telmo, Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
   </section>
   <script src="script.js"></script>
   <script src="profile.js"></script>
   <script>
+    const user = {
+        UserID: 1,
+        Username: "JohnDoe"
+    };
+
+    document.querySelector(".edit-btn").setAttribute("data-id", user.UserID);
+    document.querySelector(".edit-btn").setAttribute("data-username", user.Username);
+    document.getElementById("usernameDisplay").textContent = user.Username;
+
     const editModal = document.getElementById("editModal");
     const editUsernameInput = document.getElementById("editUsernameInput");
     let selectedUserId = null;
