@@ -291,6 +291,9 @@
         </table>
     </div>
 
+    <!-- add this above delete button
+    <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button> -->
+
     <!-- Edit -->
     <div class="modal" id="editModal">
     <div class="modal-content">
@@ -361,7 +364,6 @@
         <td>${user.UserID}</td>
         <td style="text-transform: none;">${user.Username}</td>
         <td>
-          // <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
           <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
         </td>
       `;
