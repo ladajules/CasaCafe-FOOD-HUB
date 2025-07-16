@@ -13,7 +13,7 @@ $sql = "SELECT
         FROM purchases p
         GROUP BY p.user_id, p.purchase_date
         ORDER BY CASE 
-            WHEN status = 'Pending' THEN 0 ELSE 1 END,
+            WHEN p.status = 'Pending' THEN 0 ELSE 1 END,
             purchase_date DESC";
 
 $result = $conn->query($sql);
