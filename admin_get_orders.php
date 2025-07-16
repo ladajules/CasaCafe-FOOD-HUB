@@ -14,7 +14,7 @@ $sql = "SELECT
         GROUP BY p.user_id, p.purchase_date
         ORDER BY CASE 
             WHEN p.status = 'Pending' THEN 0 ELSE 1 END,
-            purchase_date DESC";
+            p.purchase_date DESC";
 
 $result = $conn->query($sql);
 $orders = [];
