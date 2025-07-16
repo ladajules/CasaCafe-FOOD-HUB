@@ -378,14 +378,14 @@ label {
 #modalCartBtn:hover {
     cursor: pointer;
     background-color: #98D2C0;
-    padding: 10px 15px;
+    padding: 5px;
     border-radius: 5px;
 }
 
 .cartBtn:hover {
     cursor: pointer;
     background-color: #e9d36c;
-    padding: 5px;
+    padding: 10px 15px;
     border-radius: 5px;
 }
 
