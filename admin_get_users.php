@@ -2,7 +2,7 @@
 session_start();
 require 'db_connection.php'; 
 
-$sql = "SELECT UserID, Username FROM login WHERE role = "User" ORDER BY UserID ASC";
+$sql = "SELECT UserID, Username FROM login WHERE role = 'User' ORDER BY UserID ASC";
 $result = $conn->query($sql);
 
 $users = [];
