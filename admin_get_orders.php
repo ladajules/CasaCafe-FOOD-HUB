@@ -12,7 +12,9 @@ $sql = "SELECT
             SUM(p.price * p.quantity) AS total_amount
         FROM purchases p
         GROUP BY p.user_id, p.purchase_date
-        ORDER BY p.purchase_date DESC";
+        ORDER BY CASE 
+            WHEN status = 'Pending' THEN 0 ELSE 1 END,
+            purchase_date DESC";
 
 $result = $conn->query($sql);
 $orders = [];
