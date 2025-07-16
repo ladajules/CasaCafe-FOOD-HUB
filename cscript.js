@@ -104,10 +104,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         variantSelect.addEventListener('change', function () {
           const selectedOption = this.options[this.selectedIndex];
-          const variantPrice = selectedOption.getAttribute('data-price') || 0;
-          const totalPrice = (parseFloat(item.item_price)).toFixed(2);
-          price.textContent = `₱${totalPrice}`;
+          const variantPrice = selectedOption.getAttribute('data-price');
+          if (variantPrice) {
+            price.textContent = `₱${parseFloat(variantPrice).toFixed(2)}`;
+          } else {
+            price.textContent = `₱${parseFloat(item.item_price).toFixed(2)}`;
+          }
         });
+
 
         variantContainer.appendChild(variantLabel);
         variantContainer.appendChild(variantSelect);
@@ -128,9 +132,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedVariantId = variantSelect ? variantSelect.value : null;
         const selectedVariantText = getSelectedText(variantSelect);
 
+        // Prevent adding if variant is required and not selected
+        if (variantSelect && selectedVariantId === "") {
+          showPopup("Please select a variant before adding to cart.");
+          return;
+        }
+
+        const variantPrice = variantSelect
+          ? variantSelect.options[variantSelect.selectedIndex].getAttribute("data-price") || item.item_price
+          : item.item_price;
+
         const product = {
           title: item.item_name,
-          price: price.textContent.replace('₱', ''),
+          price: parseFloat(variantPrice).toFixed(2),
           img: item.item_image || 'fallback.png',
           variant: selectedVariantId,
           variantText: selectedVariantText,
@@ -194,8 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   document.getElementById("searchForm").addEventListener("submit", function (e) {
-    e.preventDefault(); 
-    applyAllFilters();  
+    e.preventDefault();
+    applyAllFilters();
   });
 
 
