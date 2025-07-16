@@ -1,25 +1,41 @@
 <?php
-session_start();
-header('Content-Type: application/json');
 require 'db_connection.php';
+session_start();
+
+$debug = [];
 
 if (!isset($_SESSION['UserID'])) {
-    echo json_encode(['username' => 'Guest']);
-    exit;
+    echo json_encode([
+        "success" => false,
+        "error" => "Guest users are not allowed to access this page"
+    ]);
+    exit();
 }
 
 $userID = $_SESSION['UserID'];
-$sql = "SELECT Username FROM login WHERE UserID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userID);
-$stmt->execute();
-$result = $stmt->get_result();
+$debug['session'] = $_SESSION;
 
-$username = "Guest";
-if ($row = $result->fetch_assoc()) {
-    $username = htmlspecialchars($row['Username']);
+$stmt = $conn->prepare("SELECT UserID, Username FROM login WHERE UserID = ?");
+$stmt->bind_param("i", $userID);
+
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+    if ($result && $result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        echo json_encode([
+            "success" => true,
+            "userID" => $row['UserID'],
+            "username" => $row['Username']
+        ]);
+    } else {
+        $debug['error'] = "User not found with ID $userID";
+        echo json_encode(["success" => false, "error" => "User not found"]);
+    }
+} else {
+    $debug['error'] = "Query failed: " . $stmt->error;
+    echo json_encode(["success" => false, "error" => "Query error"]);
 }
 
-echo json_encode(['username' => $username]);
-
+$stmt->close();
+$conn->close();
 ?>

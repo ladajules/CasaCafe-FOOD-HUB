@@ -465,7 +465,7 @@ html {
 }
 
 section {
-    padding: 2rem 9%;
+    padding: 2rem 5%;
 }
 
 section.buttonCont {
@@ -619,7 +619,7 @@ header .fa-bars {
 
 .home .content p {
     font-size: 1.5rem;
-    color: #333;
+    color: #fff;
     padding: 1rem 0;
     line-height: 1.5;
 }
@@ -1294,3 +1294,98 @@ hr {
 .variant-dropdown:hover {
   border-color: #aaa;
 }
+
+/* Carousel */
+
+#carousel {
+    margin-top: 6%; /* adjust 
+    position: relative;
+    z-index: 1;
+}
+
+{box-sizing:border-box}
+
+/* Slideshow container */
+.slideshow-container {
+    width: 90%;
+    max-width: 100%;
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Hide the images by default */
+.mySlides {
+    display: none;
+    z-index: 1;
+    position: relative;
+    
+}
+
+.shopBtn {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            z-index:10;
+            /* left: 50%; */
+            transform: translateX(-50%);
+            z-index: 10;
+            background-color: #4F959D;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5rem;
+            text-decoration: none;
+            font-size: 1.7rem;
+            transition: background 0.3s ease;
+        }
+        
+        .shopBtn:hover {
+            background: #285b60;
+        }
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  z-index: 10;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+} }
