@@ -9,9 +9,7 @@ if (!isset($_GET['order_id'])) {
 
 $order_id = intval($_GET['order_id']);
 
-$sql = "SELECT *
-        FROM purchases
-        WHERE id = ?";
+$sql = "SELECT * FROM purchases WHERE user_id = ? AND purchase_date = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $order_id);

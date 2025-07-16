@@ -3,7 +3,7 @@ require 'db_connection.php';
 header('Content-Type: application/json');
 
 $sql = "SELECT 
-            p.id AS order_id,
+            MIN(p.id) AS order_id,
             p.user_id,
             p.full_name,
             p.phone_number,
@@ -11,7 +11,7 @@ $sql = "SELECT
             p.status,
             SUM(p.price * p.quantity) AS total_amount
         FROM purchases p
-        GROUP BY p.id
+        GROUP BY p.user_id, p.purchase_date
         ORDER BY p.purchase_date DESC";
 
 $result = $conn->query($sql);
