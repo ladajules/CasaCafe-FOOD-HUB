@@ -324,27 +324,28 @@ function updateCartQuantity(product_name, quantity) {
         });
 }
 
-function removeFromCart(productName) {
+function removeFromCart(productName, variant = '') {
     fetch('remove_from_cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'include',
-        body: `product_name=${encodeURIComponent(productName)}`
+        body: `product_name=${encodeURIComponent(productName)}&variant=${encodeURIComponent(variant)}`
     })
-        .then(response => response.text())
-        .then(() => {
-            return fetch('get_cart.php', { credentials: 'include' });
-        })
-        .then(res => res.json())
-        .then(cart => {
-            localStorage.setItem("cart", JSON.stringify(cart));
-            updateTotalPrice(cart);
-            renderCart();
-        })
-        .catch(error => {
-            console.error("Error removing item or syncing cart:", error);
-        });
+    .then(response => response.text())
+    .then(() => {
+        return fetch('get_cart.php', { credentials: 'include' });
+    })
+    .then(res => res.json())
+    .then(cart => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateTotalPrice(cart);
+        renderCart();
+    })
+    .catch(error => {
+        console.error("Error removing item or syncing cart:", error);
+    });
 }
+
 const toggle = document.getElementById("dropdownToggle");
   const menu = document.getElementById("dropdownMenu");
   const arrow = document.getElementById("dropdownArrow");
