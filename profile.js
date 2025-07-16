@@ -103,8 +103,11 @@ function closeModal(id) {
     document.getElementById(id).classList.remove("active");
 }
 
-document.querySelector('.edit-btn').addEventListener('click', () => {
-    openModal('editModal');
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.edit-btn').addEventListener('click', () => {
+      console.log('Edit button clicked');
+      openModal('editModal');
+    });
 });
 
 document.getElementById('saveEditBtn').addEventListener('click', () => {
