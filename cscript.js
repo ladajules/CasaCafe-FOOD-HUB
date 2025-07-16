@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cart.push(product);
             localStorage.setItem("cart", JSON.stringify(cart));
             showPopup(`${product.title} (${getSelectedText(variantSelect)}) added to cart`);
+            addToCart(product.title, 1, product.price, variantSelect);
           } else {
             showPopup("Already in cart");
           }
