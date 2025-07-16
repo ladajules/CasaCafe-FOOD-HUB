@@ -40,7 +40,7 @@
             <img src="profile.png" id="profImg">
             <div class="text-content">
                 <h2 id="usernameDisplay"></h2>
-                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
+                <button class="edit-btn"><i class="fas fa-pen"></i></button>
                 <p>Edit Profile</p>
             </div>
         </div>
@@ -87,15 +87,6 @@
   <script src="script.js"></script>
   <script src="profile.js"></script>
   <script>
-    const user = {
-        UserID: 1,
-        Username: "JohnDoe"
-    };
-
-    document.querySelector(".edit-btn").setAttribute("data-id", user.UserID);
-    document.querySelector(".edit-btn").setAttribute("data-username", user.Username);
-    document.getElementById("usernameDisplay").textContent = user.Username;
-
     const editModal = document.getElementById("editModal");
     const editUsernameInput = document.getElementById("editUsernameInput");
     let selectedUserId = null;
