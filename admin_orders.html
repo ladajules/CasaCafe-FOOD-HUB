@@ -300,16 +300,11 @@
              <div class="search-container" style="padding: 20px 20px 20px 0; margin-top: 30px;">
               <label for="searchBy" style="margin-right: 10px;">Search by:</label>
               <select id="searchBy" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="item_id">User ID</option>
-                <option value="item_name">Item</option>
-                <option value="item_category">Price</option>
-                <option value="item_description">Full Name</option>
-                <option value="item_price">Address Line</option>
-                <option value="item_price">City</option>
-                <option value="item_price">Postal Code</option>
-                <option value="item_price">Phone Number</option>
-                <option value="item_price">Date</option>
-                <option value="item_price">Status</option>
+                <option value="user_id">User ID</option>
+                <option value="name">Customer Name</option>
+                <option value="phone">Phone Number</option>
+                <option value="date">Date</option>
+                <option value="status">Order Status</option>
               </select>
 
               <input type="text" id="searchInput" placeholder="Search..." style="width: 250px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-left: 10px;">
@@ -318,17 +313,13 @@
             <table class="order-table">
                 <thead>
                     <tr>
-                        <th>User ID</th>
-                        <th>Items</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Full Name</th>
-                        <th>Address Line</th>
-                        <th>City</th>
-                        <th>Postal Code</th>
+                        <th>ID</th>
+                        <th>Customer Name</th>
                         <th>Phone Number</th>
                         <th>Date</th>
-                        <th>Status</th>
+                        <th>Total Amount</th>
+                        <th>Order Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="orderTableBody">
@@ -355,14 +346,62 @@
                 }
             });
 
-            // might be useful
-            // function closeModal(id) {
-            //   document.getElementById(id).classList.remove("active");
-            // }
+            document.addEventListener("DOMContentLoaded", () => {
+                const tableBody = document.getElementById("orderTableBody");
+                const searchInput = document.getElementById("searchInput");
+                const searchBy = document.getElementById("searchBy");
 
-            // function openModal(id) {
-            //   document.getElementById(id).classList.add("active");
-            // }
+                let orders = [];
+
+                fetch("admin_get_orders.php")
+                    .then(res => res.json())
+                    .then(data => {
+                    if (data.success) {
+                        orders = data.orders;
+                        displayOrders(orders);
+                    } else {
+                        tableBody.innerHTML = "<tr><td colspan='7'>No orders found.</td></tr>";
+                    }
+                    });
+
+                searchInput.addEventListener("input", () => {
+                    const filter = searchInput.value.toLowerCase();
+                    const key = searchBy.value;
+
+                    const filtered = orders.filter(order => {
+                    const value = order[key]?.toString().toLowerCase() || "";
+                    return value.includes(filter);
+                    });
+
+                    displayOrders(filtered);
+                });
+
+                function displayOrders(data) {
+                    tableBody.innerHTML = "";
+
+                    data.forEach(order => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${order.user_id}</td>
+                        <td>${order.name}</td>
+                        <td>${order.phone}</td>
+                        <td>${order.date}</td>
+                        <td>₱${parseFloat(order.total).toFixed(2)}</td>
+                        <td>${order.status}</td>
+                        <td>
+                        <button onclick="viewOrder(${order.order_id})" class="btn btn-primary">View</button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                    });
+                }
+                });
+
+                function viewOrder(orderId) {
+                window.location.href = `admin_order_details.html?order_id=${orderId}`;
+                }
 
       </script>
     </body>
