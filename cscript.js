@@ -63,146 +63,110 @@ checkLoginStatus().then(loggedIn => {
   }
 });
 
-// PRODUCTS API FETCHING
-
 document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
-  const imageBasePath = 'https://casacafe.dcism.org/IMAGES/'; //  your actual online image path
 
   fetch('menu_api.php')
     .then(response => {
-      if (!response.ok) throw new Error('API error');
+      if (!response.ok) {
+        throw new Error('API error');
+      }
       return response.json();
     })
     .then(data => {
-      container.innerHTML = ''; // Clear old content
+      container.innerHTML = ''; // clear old content
 
       data.forEach(item => {
         const card = document.createElement('div');
         card.classList.add('menu-item');
 
-        // Item Image
         const img = document.createElement('img');
-        img.src = item.item_image ? imageBasePath + item.item_image : 'fallback.png';
+        img.src = item.item_image || 'fallback.png';
         img.alt = item.item_name;
-        img.classList.add('item-img');
+        img.width = 150;
 
-        // Show fallback image if the image fails to load
-        img.onerror = () => {
-          img.src = 'fallback.png';
-        };
-
-        // Item Name
         const name = document.createElement('h3');
         name.textContent = item.item_name;
-        name.classList.add('item-name');
 
-        // Description
         const desc = document.createElement('p');
         desc.textContent = item.item_description;
-        desc.classList.add('item-desc');
 
-        // Base Price
         const price = document.createElement('p');
-        price.classList.add('item-price');
-        price.textContent = `₱${item.item_price}`;
+        price.textContent = Base Price: ₱${item.item_price};
 
-        // Variants
-        const variantContainer = document.createElement('div');
-        variantContainer.classList.add('variant-container');
-
-        let variantSelect = null;
-
+        const variantList = document.createElement('ul');
         if (item.variants && item.variants.length > 0) {
-          const variantLabel = document.createElement('label');
-          variantLabel.textContent = 'Options:';
-          variantLabel.classList.add('variant-label');
-
-          variantSelect = document.createElement('select');
-          variantSelect.classList.add('variant-dropdown');
-          variantSelect.setAttribute('data-item-id', item.item_id);
-
-          const defaultOption = document.createElement('option');
-          defaultOption.value = '';
-          defaultOption.textContent = 'Select an option';
-          variantSelect.appendChild(defaultOption);
-
           item.variants.forEach(variant => {
-            const option = document.createElement('option');
-            option.value = variant.variant_id;
-            option.textContent = `${variant.variant_name} (+₱${variant.variant_price})`;
-            option.setAttribute('data-price', variant.variant_price);
-            variantSelect.appendChild(option);
+            const li = document.createElement('li');
+            li.textContent = ${variant.variant_name} - ₱${variant.variant_price};
+            variantList.appendChild(li);
           });
-
-          // Update price on selection
-          variantSelect.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const variantPrice = selectedOption.getAttribute('data-price') || 0;
-            const totalPrice = (parseFloat(item.item_price) + parseFloat(variantPrice)).toFixed(2);
-            price.textContent = `₱${totalPrice}`;
-            cartBtn.disabled = (this.value === '');
-          });
-
-          variantContainer.appendChild(variantLabel);
-          variantContainer.appendChild(variantSelect);
         }
 
-        // Buttons
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("button-container");
 
         const cartBtn = document.createElement("button");
         cartBtn.textContent = "Add to Cart";
         cartBtn.classList.add("cartBtn");
-        if (variantSelect) cartBtn.disabled = true;
 
         const wishlistBtn = document.createElement("button");
         wishlistBtn.textContent = "♡";
         wishlistBtn.classList.add("wishlistBtn");
 
-        // Cart Logic
         cartBtn.addEventListener("click", () => {
           const product = {
             title: item.item_name,
-            price: price.textContent.replace('₱', ''),
-            img: item.item_image ? imageBasePath + item.item_image : 'fallback.png',
-            variant: variantSelect ? variantSelect.value : null
+            price: item.item_price,
+            img: item.item_image || 'fallback.png'
           };
-
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
-          const exists = cart.some(p => p.title === product.title && p.variant === product.variant);
-
+          const exists = cart.some(p => p.title === product.title);
           if (!exists) {
             cart.push(product);
             localStorage.setItem("cart", JSON.stringify(cart));
-            showPopup(`${product.title} ${getSelectedText(variantSelect)} added to cart`);
+            showPopup(${product.title} has been added to your cart.);
+            addToCart(product.title, 1, product.price);
           } else {
-            showPopup("Already in cart");
+            showPopup("Already in cart.");
           }
         });
 
         wishlistBtn.addEventListener("click", () => {
-          showPopup("Added to wishlist (logic not yet implemented)");
+          const product = {
+            title: item.item_name,
+            price: item.item_price,
+            img: item.item_image || 'fallback.png'
+          };
+          let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+          const exists = wishlist.some(p => p.title === product.title);
+          if (!exists) {
+            wishlist.push(product);
+            localStorage.setItem("wishlist", JSON.stringify(wishlist));
+            showPopup(${product.title} has been added to your Favorites.);
+            addToWishlist(product.title, product.price, product.img);
+          } else {
+            showPopup("Already in Favorites.");
+          }
         });
 
         buttonContainer.appendChild(cartBtn);
         buttonContainer.appendChild(wishlistBtn);
 
-        // Build card
         card.appendChild(img);
         card.appendChild(name);
         card.appendChild(desc);
         card.appendChild(price);
-        card.appendChild(variantContainer);
+        card.appendChild(variantList);
         card.appendChild(buttonContainer);
 
         container.appendChild(card);
       });
+
     })
     .catch(error => {
       console.error('Fetch failed:', error);
-      container.innerHTML = '<p class="error-message">Failed to load menu.</p>';
+      container.innerHTML = '<p style="color:red;">Failed to load menu.</p>';
     });
 });
 
