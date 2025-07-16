@@ -25,6 +25,7 @@ $user_id = $_SESSION['UserID'];
 $data = json_decode(file_get_contents("php://input"), true);
 
 $deliveryType = $data['deliveryType'] ?? 'Delivery'; 
+$paymentMethod = $data['paymentMethod'] ?? 'Cash on Delivery';
 
 
 if (!$data || !isset($data['cart'], $data['user_address'])) {
@@ -48,8 +49,9 @@ $conn->begin_transaction();
 
 try {
     $stmt = $conn->prepare("INSERT INTO purchases 
-    (user_id, product_name, quantity, price, img, full_name, address_line, city, postal_code, phone_number, delivery_type, purchase_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    (user_id, product_name, quantity, price, img, full_name, address_line, city, postal_code, phone_number, delivery_type, payment_method, purchase_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+
 
     foreach ($cart as $item) {
         $stmt->bind_param(
@@ -64,7 +66,8 @@ try {
             $address['city'],
             $address['postalCode'],
             $address['phoneNumber'],
-            $deliveryType
+            $deliveryType,
+            $paymentMethod
         );
 
 
