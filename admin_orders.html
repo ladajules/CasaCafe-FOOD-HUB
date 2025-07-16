@@ -302,7 +302,7 @@
                         <td>₱${parseFloat(order.total).toFixed(2)}</td>
                         <td>${order.status}</td>
                         <td>
-                        <button onclick="viewOrder(${order.order_id}, "${order.date}")" class="btn btn-primary">View</button>
+                        <button onclick='viewOrder(${order.user_id}, "${order.date}")' class="btn btn-primary">View</button>
                         </td>
                     `;
 
@@ -311,7 +311,7 @@
                 }
                 });
 
-                function viewOrder(orderId, purchaseDate) {
+                function viewOrder(userId, purchaseDate) {
                   window.location.href = `admin_order_details.html?order_id=${order.user_id}&purchase_date=${encodeURIComponent(order.date)}`;
                 }
 
