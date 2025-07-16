@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="index.css">
     <script src="cscript.js" defer></script>
-    
+
 </head>
 
 <body style="margin-top: 88px;">
@@ -21,10 +21,11 @@
         <label for="toggler" class="fas fa-bars"></label>
         <a href="index copy.html" class="logo"><img src="temp casaLogo.png"><span></span></a>
 
-        <form onsubmit="return false;">
-        <input type="search" id="searchBar" placeholder="Search by title, description, category...">
-        <button type="button" class="srchButton" onclick="handleSearch()">🔍</button>
+        <form id="searchForm">
+            <input type="search" id="searchBar" placeholder="Search by title, description, category...">
+            <button type="submit" class="srchButton">🔍</button>
         </form>
+
 
         <nav class="nav-bar">
             <a href="wishlist.html" id="navWish">
@@ -67,17 +68,17 @@
         <div id="filterControls" style="margin-bottom: 10px;">
             <label for="categoryFilter">Filter by category:</label>
             <select id="categoryFilter">
-              <option value="">All Categories</option>
+                <option value="">All Categories</option>
             </select>
-          </div>
+        </div>
 
-<div class="box-container">
-    <div id="menuContainer"></div>
-</div>
+        <div class="box-container">
+            <div id="menuContainer"></div>
+        </div>
 
-     <!-- This is where your JavaScript will insert all products -->
-    
-    </section> 
+        <!-- This is where your JavaScript will insert all products -->
+
+    </section>
     <section class="footer">
 
         <div class="box-container">
@@ -88,19 +89,20 @@
                 <a href="product.html">Menu</a>
                 <a href="cart.html">Cart</a>
             </div>
-        <div class="box">
-            <h3>location</h3>
-            <a href="https://maps.app.goo.gl/pHYDhTVSVu65ZY137">Barangay Bankal, Lapu-Lapu City</a>
-        </div>
+            <div class="box">
+                <h3>location</h3>
+                <a href="https://maps.app.goo.gl/pHYDhTVSVu65ZY137">Barangay Bankal, Lapu-Lapu City</a>
+            </div>
 
-        <div class="box">
-            <h3>contact info</h3>
-            <a href="#">+63 9177787609</a>
-            <a href="#">CasaCafe@gmail.com</a>
-            <a href="#">cebu, philippines - 6015</a>
+            <div class="box">
+                <h3>contact info</h3>
+                <a href="#">+63 9177787609</a>
+                <a href="#">CasaCafe@gmail.com</a>
+                <a href="#">cebu, philippines - 6015</a>
+            </div>
         </div>
-    </div>
-    <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+        <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir
+                Ballesteros</span></div>
     </section>
 
     <div id="productModal" class="modal hidden">
@@ -115,21 +117,22 @@
                 <button id="modalCartBtn">Add to cart</button>
                 <button id="modalWishlistBtn"><img src="heart outline.jpg"></button>
             </div>
-            
+
         </div>
     </div>
 
 
     <!-- Popup Container -->
     <div id="popupNotification" class="popup">
-  <div class="popup-content">
-    <span id="popupCloseBtn" class="close-btn">&times;</span>
-    <p id="popupMessage">Message goes here</p>
-  </div>
-</div>
+        <div class="popup-content">
+            <span id="popupCloseBtn" class="close-btn">&times;</span>
+            <p id="popupMessage">Message goes here</p>
+        </div>
+    </div>
 
 
 
 </body>
 <script src="dropdown.js"></script>
+
 </html>
