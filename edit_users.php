@@ -2,8 +2,13 @@
 require 'db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("Raw POST: " . json_encode($_POST));
+
     $userID = $_POST['UserID'] ?? '';
     $newUsername = $_POST['Username'] ?? '';
+
+    error_log("UserID: " . $userID);
+    error_log("Username: " . $newUsername);
 
     if (!empty($userID) && !empty($newUsername)) {
         $stmt = $conn->prepare("UPDATE login SET Username = ? WHERE UserID = ?");

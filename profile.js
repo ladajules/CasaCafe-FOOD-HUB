@@ -2,10 +2,10 @@ function fetchPurchasedItems() {
     fetch('get_purchased_items.php')
         .then(res => res.json())
         .then(data => {
-            if (data.success) {
-                const container = document.getElementById('purchasedItemsContainer');
-                container.innerHTML = '';
+            const container = document.getElementById('purchasedItemsContainer');
+            container.innerHTML = '';
 
+            if (data.success && data.products.length > 0) {
                 data.products.forEach(product => {
                     const item = document.createElement('div');
                     item.classList.add('product-item');
@@ -35,56 +35,20 @@ function fetchPurchasedItems() {
                     container.appendChild(item);
                 });
             } else {
-                console.error('Failed to load purchased items:', data.message);
+                container.innerHTML = "<p>You have no purchased items.</p>";
             }
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error('Failed to load purchased items:', err));
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const purchasedSection = document.getElementById("purchasedSection");
-    const purchased = await fetchPurchasedItems();
-
-    if (purchased.length === 0) {
-        purchasedSection.innerHTML = "<p>You have no purchased items.</p>";
-        return;
-    }
-
-    purchased.forEach(product => {
-        const container = document.createElement("div");
-        container.classList.add("productContainer");
-
-        const img = document.createElement("img");
-        img.src = product.img;
-        img.alt = product.product_name;
-        img.classList.add("imgP");
-
-        const title = document.createElement("p");
-        title.textContent = product.product_name;
-        title.classList.add("titleP");
-
-        const price = document.createElement("p");
-        price.textContent = `$${parseFloat(product.price).toFixed(2)}`;
-        price.classList.add("priceP");
-
-        const qty = document.createElement("p");
-        qty.textContent = `Quantity: ${product.quantity}`;
-        qty.classList.add("quantityP");
-
-        container.appendChild(img);
-        container.appendChild(title);
-        container.appendChild(price);
-        container.appendChild(qty);
-
-        purchasedSection.appendChild(container);
-    });
-});
-
 let currentUserID = null;
-const editModal = document.getElementById("editModal");
-const editUsernameInput = document.getElementById("editUsernameInput");
+let editUsernameInput;
+let editModal;
 
 document.addEventListener('DOMContentLoaded', () => {
+    editUsernameInput = document.getElementById("editUsernameInput");
+    editModal = document.getElementById("editModal");
+
     fetch("getUser.php")
         .then(res => res.json())
         .then(data => {
@@ -101,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .catch(err => console.error(err));
+
+    fetchPurchasedItems();
 });
 
 function openModal(id) {
