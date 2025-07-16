@@ -9,17 +9,31 @@ if (!isset($_SESSION['UserID'])) {
 }
 
 $userID = $_SESSION['UserID'];
-$sql = "SELECT Username FROM login WHERE UserID = ?";
+$sql = "SELECT UserID, Username FROM login WHERE UserID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userID);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$username = "Guest";
-if ($row = $result->fetch_assoc()) {
-    $username = htmlspecialchars($row['Username']);
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        echo json_encode([
+            "success" => true,
+            "userID" => $row['UserID'],
+            "username" => $row['Username']
+        ]);
+    } else {
+        echo json_encode([
+            "success" => false,
+            "error" => "User not found"
+        ]);
+    }
+} else {
+    echo json_encode([
+        "success" => false,
+        "error" => "Query failed: " . $stmt->error
+    ]);
 }
 
-echo json_encode(['Username' => $username]);
-
+$stmt->close();
+$conn->close();
 ?>
