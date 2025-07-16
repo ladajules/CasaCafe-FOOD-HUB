@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const sortSelect = document.getElementById('sortSelect');
 
   // Fixed category options
-  const categories = ['Silog', 'Foods', 'Iced Coffee', 'Fruit Yogurt', 'MilkTea'];
+  const categories = ['Silog', 'Foods', 'Iced Coffee', 'Fruit Yogurt', 'MilkTea', 'Drinks'];
   categories.forEach(cat => {
     const option = document.createElement('option');
     option.value = cat;
