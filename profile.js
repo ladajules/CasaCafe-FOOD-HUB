@@ -4,7 +4,7 @@ function fetchPurchasedItems() {
         .then(data => {
             if (data.success) {
                 const container = document.getElementById('purchasedItemsContainer');
-                container.innerHTML = ''; // Clear previous content if any
+                container.innerHTML = '';
 
                 data.products.forEach(product => {
                     const item = document.createElement('div');
@@ -33,16 +33,13 @@ function fetchPurchasedItems() {
                     item.appendChild(quantity);
 
                     container.appendChild(item);
-
                 });
             } else {
                 console.error('Failed to load purchased items:', data.message);
             }
         })
         .catch(err => console.error(err));
-
 }
-
 
 document.addEventListener("DOMContentLoaded", async () => {
     const purchasedSection = document.getElementById("purchasedSection");
@@ -84,24 +81,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 let currentUserID = null;
+const editModal = document.getElementById("editModal");
+const editUsernameInput = document.getElementById("editUsernameInput");
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch("getUser.php")
         .then(res => res.json())
         .then(data => {
-            document.getElementById("usernameDisplay").textContent = data.username;
-            editUsernameInput.value = data.username;
-            currentUserID = data.userID; 
+            if (data.success) {
+                document.getElementById("usernameDisplay").textContent = data.username;
+                editUsernameInput.value = data.username;
+                currentUserID = data.userID;
 
-            document.querySelector('.edit-btn').addEventListener('click', () => {
-                openModal('editModal');
-            });
+                document.querySelector('.edit-btn').addEventListener('click', () => {
+                    openModal('editModal');
+                });
+            } else {
+                alert(data.error || "Failed to load user.");
+            }
         })
         .catch(err => console.error(err));
 });
-
-const editModal = document.getElementById("editModal");
-const editUsernameInput = document.getElementById("editUsernameInput");
 
 function openModal(id) {
     document.getElementById(id).classList.add("active");
@@ -114,12 +114,17 @@ function closeModal(id) {
 document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
     if (newUsername && currentUserID) {
+        const bodyData = new URLSearchParams({
+            Username: newUsername,
+            UserID: currentUserID
+        });
+
         fetch('edit_users.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: `Username=${encodeURIComponent(newUsername)}&UserID=${encodeURIComponent(currentUserID)}`
+            body: bodyData
         })
         .then(res => res.json())
         .then(data => {
@@ -129,6 +134,10 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
             } else {
                 alert('Edit failed: ' + data.error);
             }
+        })
+        .catch(err => {
+            alert("An error occurred during update.");
+            console.error(err);
         });
     } else {
         alert("Missing username or user ID.");
