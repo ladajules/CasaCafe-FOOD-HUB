@@ -40,6 +40,7 @@
             <img src="profile.png" id="profImg">
             <div class="text-content">
                 <h2 id="usernameDisplay"></h2>
+                <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button>
                 <p>Edit Profile</p>
             </div>
         </div>
@@ -54,6 +55,17 @@
     </div>
     </section>
     <!--a href="cart.html">My Purchase</a-->
+
+    <div class="modal active" id="editModal">
+        <div class="modal-content">
+          <h3>Edit Username</h3>
+          <input type="text" id="editUsernameInput" />
+          <div>
+            <button class="confirm-btn" id="saveEditBtn">Save</button>
+            <button class="cancel-btn" onclick="closeModal('editModal')">Cancel</button>
+          </div>
+        </div>
+    </div>
 
     <section class="orderHistory">
   <div>
@@ -74,6 +86,41 @@
   </section>
   <script src="script.js"></script>
   <script src="profile.js"></script>
+  <script>
+    const editModal = document.getElementById("editModal");
+    const editUsernameInput = document.getElementById("editUsernameInput");
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    document.getElementById('saveEditBtn').addEventListener('click', () => {
+      const newUsername = editUsernameInput.value.trim();
+      if (newUsername && selectedUserId) {
+        fetch('admin_edit_users.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `UserID=${selectedUserId}&Username=${encodeURIComponent(newUsername)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            closeModal('editModal');
+            location.reload();
+          } else {
+            alert('Edit failed: ' + data.error);
+          }
+        });
+      }
+    });
+
+  </script>
 
 </body>
 
