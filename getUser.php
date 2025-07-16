@@ -2,6 +2,12 @@
 require 'db_connection.php';
 session_start();
 
+file_put_contents("debug_getuser.txt", json_encode([
+    "session" => $_SESSION,
+    "userID" => $row['UserID'] ?? null,
+    "username" => $row['Username'] ?? null
+]));
+
 if (!isset($_SESSION['UserID'])) {
     echo json_encode([
         "success" => false,
