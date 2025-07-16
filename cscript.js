@@ -107,23 +107,41 @@ document.addEventListener('DOMContentLoaded', function () {
         wishlistBtn.classList.add('wishlistBtn');
 
         cartBtn.addEventListener('click', () => {
+          const selectedVariantId = variantSelect ? variantSelect.value : null;
+          const selectedVariantText = getSelectedText(variantSelect);
+
           const product = {
             title: item.item_name,
             price: price.textContent.replace('₱', ''),
             img: item.item_image || 'fallback.png',
-            variant: variantSelect ? variantSelect.value : null
+            variant: selectedVariantId,
+            variantText: selectedVariantText,
           };
 
-          let cart = JSON.parse(localStorage.getItem('cart')) || [];
-          const exists = cart.some(p => p.title === product.title && p.variant === product.variant);
 
-          if (!exists) {
-            cart.push(product);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            showPopup(`${product.title} ${getSelectedText(variantSelect)} added to cart`);
-          } else {
-            showPopup('Already in cart');
-          }
+          fetch('add_to_cart.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            credentials: 'include',
+            body: new URLSearchParams({
+              product: product.title,
+              quantity: product.quantity,
+              price: product.price,
+              variant: product.variant || ''
+            })
+          })
+          .then(response => response.text())
+          .then(text => {
+            if (text.includes('successfully')) {
+              showPopup(`${product.title} ${product.variantText} added to cart`);
+            } else {
+              showPopup(`Failed to add to cart: ${text}`);
+            }
+          })
+          .catch(error => {
+            console.error('Error adding to cart:', error);
+            showPopup('Error adding to cart.');
+          });
         });
 
         wishlistBtn.addEventListener('click', () => {
