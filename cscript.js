@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const categoryFilter = document.getElementById('categoryFilter');
   const sortSelect = document.getElementById('sortSelect');
 
-  // Fixed category options
   const categories = ['Silog', 'Foods', 'Iced Coffee', 'Fruit Yogurt', 'MilkTea', 'Drinks'];
   categories.forEach(cat => {
     const option = document.createElement('option');
@@ -98,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         item.variants.forEach(variant => {
           const option = document.createElement('option');
           option.value = variant.variant_id;
-          option.textContent = `${variant.variant_name}`;
+          option.textContent = variant.variant_name;
           option.setAttribute('data-price', variant.variant_price);
           variantSelect.appendChild(option);
         });
@@ -219,40 +218,50 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Apply filters and sorting whenever a filter changes
-  function applyFilters() {
-    let filteredProducts = [...allProducts];
-
-    // Filter by category if selected
+  // Unified filtering (search + category + sort)
+  function applyAllFilters() {
+    const searchQuery = document.getElementById("searchBar").value.toLowerCase();
     const selectedCategory = categoryFilter.value;
-    if (selectedCategory) {
-      filteredProducts = filteredProducts.filter(item => item.item_category === selectedCategory);
-    }
+    const sortValue = sortSelect.value;
 
-    // Sort filtered products
-    switch (sortSelect.value) {
+    let filtered = allProducts.filter(product => {
+      const matchesSearch =
+        product.item_name.toLowerCase().includes(searchQuery) ||
+        product.item_description.toLowerCase().includes(searchQuery) ||
+        product.item_category.toLowerCase().includes(searchQuery);
+
+      const matchesCategory =
+        !selectedCategory || product.item_category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+
+    switch (sortValue) {
       case 'price-asc':
-        filteredProducts.sort((a, b) => parseFloat(a.item_price) - parseFloat(b.item_price));
+        filtered.sort((a, b) => parseFloat(a.item_price) - parseFloat(b.item_price));
         break;
       case 'price-desc':
-        filteredProducts.sort((a, b) => parseFloat(b.item_price) - parseFloat(a.item_price));
+        filtered.sort((a, b) => parseFloat(b.item_price) - parseFloat(a.item_price));
         break;
       case 'name-asc':
-        filteredProducts.sort((a, b) => a.item_name.localeCompare(b.item_name));
+        filtered.sort((a, b) => a.item_name.localeCompare(b.item_name));
         break;
       case 'name-desc':
-        filteredProducts.sort((a, b) => b.item_name.localeCompare(a.item_name));
-        break;
-      default:
-        // no sorting or default order
+        filtered.sort((a, b) => b.item_name.localeCompare(a.item_name));
         break;
     }
 
-    renderProducts(filteredProducts);
+    renderProducts(filtered);
   }
 
-  categoryFilter.addEventListener('change', applyFilters);
-  sortSelect.addEventListener('change', applyFilters);
+  // Event listeners
+  categoryFilter.addEventListener('change', applyAllFilters);
+  sortSelect.addEventListener('change', applyAllFilters);
+
+  const searchInput = document.getElementById("searchBar");
+  if (searchInput) {
+    searchInput.addEventListener("input", applyAllFilters);
+  }
 
   const closeBtn = document.getElementById("popupCloseBtn");
   const popup = document.getElementById("popupNotification");
