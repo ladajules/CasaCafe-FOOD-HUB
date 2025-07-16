@@ -4,6 +4,8 @@ require 'db_connection.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("Raw POST: " . json_encode($_POST));
 
+    file_put_contents("debug_post.txt", print_r($_POST, true));
+
     $userID = $_POST['UserID'] ?? '';
     $newUsername = $_POST['Username'] ?? '';
 
