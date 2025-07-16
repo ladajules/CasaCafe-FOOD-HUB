@@ -252,7 +252,7 @@
                     toggle.classList.remove("open");
                 }
             });
-            
+
             document.querySelector('.menu-toggle').addEventListener('click', () => {
                 const submenu = document.querySelector('.submenu');
                 submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
@@ -312,7 +312,7 @@
                 });
 
                 function viewOrder(orderId) {
-                window.location.href = `admin_order_details.html?order_id=${orderId}`;
+                  window.location.href = `admin_order_details.html?order_id=${order.user_id}&purchase_date=${encodeURIComponent(order.date)}`;
                 }
 
       </script>
