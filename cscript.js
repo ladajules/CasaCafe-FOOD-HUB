@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
             product: product.title,
             quantity: 1,
             price: product.price,
-            variant: product.variant || ''
+            variant: selectedVariantText || ''
           })
         })
           .then(response => response.text())
