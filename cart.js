@@ -77,6 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     price.textContent = `₱${product.price.toFixed(2)}`;
                     price.classList = "priceP";
 
+                    if (product.variant && product.variant.trim() !== "") {
+                        const variant = document.createElement("p");
+                        variant.textContent = `Variant: ${product.variant}`;
+                        variant.classList = "variantP";
+                        cartDescription.appendChild(variant);
+                    }
+
                     const quantity = document.createElement("input");
                     quantity.type = "number";
                     quantity.min = 1;

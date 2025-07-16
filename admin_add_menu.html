@@ -386,8 +386,8 @@
             <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
           </div>
           <div class="submenu" style="display: none;">
-            <a href="#" class="submenu-link">View Menu</a>
-            <a href="admin_add_menu.html" class="submenu-link">Add To Menu</a>
+            <a href="admin_view_menu.html" class="submenu-link">View Menu</a>
+            <a href="#" class="submenu-link">Add To Menu</a>
           </div>
       
         <a href="#" class="sidebar-link">
@@ -396,47 +396,11 @@
       </div>
           </div>
 
-          <div class="main-content">
-            <div class="search-container" style="padding: 20px 20px 20px 0; margin-top: 30px;">
-              <label for="searchBy" style="margin-right: 10px;">Search by:</label>
-              <select id="searchBy" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="item_id">Item ID</option>
-                <option value="item_name">Name</option>
-                <option value="item_category">Category</option>
-                <option value="item_description">Description</option>
-                <option value="item_price">Price</option>
-              </select>
-
-              <input type="text" id="searchInput" placeholder="Search..." style="width: 250px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-left: 10px;">
-            </div>
-    
-            <table class="menu-table">
-                <thead>
-                    <tr>
-                        <th>Item ID</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="menuTableBody">
-                    <!-- js goes here -->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="modal" id="editItemModal">
-        <div class="modal-content">
+        <div class="main-content">
             <div class="modal-header">
-                <h3 class="modal-title">Edit Menu Item</h3>
-                <button class="close-btn" onclick="closeModal('editItemModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h3 class="modal-title">Add Menu Item</h3>
             </div>
-            
+
             <form id="editItemForm">
                 <input type="hidden" id="edit_item_id">
                 
@@ -467,24 +431,13 @@
                     </div>
 
                     <div class="button-group">
-                      <button type="button" class="btn btn-secondary" onclick="closeModal('editItemModal')">Cancel</button>
+                      <button type="button" class="btn btn-secondary">Clear All</button>
                       <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
                 
             </form>
         </div>
-    </div>
-
-    <div class="modal" id="deleteConfirmModal">
-    <div class="modal-content">
-      <h3 id="deleteMessage">Are you sure you want to delete this item?</h3>
-      <div>
-        <button class="confirm-btn" id="confirmDeleteBtn">Yes</button>
-        <button class="cancel-btn" onclick="closeModal('deleteConfirmModal')">No</button>
-      </div>
-    </div>
-  </div>
 
       <script>
             const toggle = document.getElementById("dropdownToggle");
@@ -504,135 +457,11 @@
                 }
             });
 
-            function openModal (id) {
-              document.getElementById(id).classList.add("active");
-            }
-
-            function closeModal (id) {
-              document.getElementById(id).classList.remove("active");
-            }
-
-            function openEditItemModal(item) {
-              document.getElementById('edit_item_id').value = item.item_id;
-              document.getElementById('edit_item_name').value = item.item_name;
-              document.getElementById('edit_item_category').value = item.item_category;
-              document.getElementById('edit_item_description').value = item.item_description;
-              document.getElementById('edit_item_price').value = item.item_price;
-              document.getElementById('edit_item_image').value = item.item_image;
-              openModal('editItemModal');
-            };
-
-            let itemIdToDelete = null;
-
-            function openDeleteConfirmModal(item_id) {
-              itemIdToDelete = item_id;
-              openModal('deleteConfirmModal');
-            }
-
-            document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
-              if (!itemIdToDelete) return;
-              fetch('admin_delete_menu.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item_id: itemIdToDelete })
-              })
-              .then(res => res.json())
-              .then(response => {
-                if (response.success) {
-                  closeModal('deleteConfirmModal');
-                  location.reload();
-                } else {
-                  alert("Delete failed: " + response.error);
-                }
-              });
-            });
-
-            document.getElementById('editItemForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const data = {
-              item_id: document.getElementById('edit_item_id').value,
-              item_name: document.getElementById('edit_item_name').value,
-              item_category: document.getElementById('edit_item_category').value,
-              item_description: document.getElementById('edit_item_description').value,
-              item_price: document.getElementById('edit_item_price').value,
-              item_image: document.getElementById('edit_item_image').value
-            };
-
-            fetch('admin_edit_menu.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(response => {
-              if (response.success) {
-                closeModal('editItemModal');
-                location.reload();
-              } else {
-                alert('Update failed: ' + response.error);
-              }
-            });
-          });
-
             document.querySelector('.menu-toggle').addEventListener('click', () => {
                 const submenu = document.querySelector('.submenu');
                 submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
             });
 
-            let allItems = [];
-
-            function renderItems(items) {
-                const tbody = document.getElementById('menuTableBody');
-                tbody.innerHTML = '';
-
-                items.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                    <td>${item.item_id}</td>
-                    <td>${item.item_name}</td>
-                    <td>${item.item_category}</td>
-                    <td>${item.item_description}</td>
-                    <td>${item.item_price}</td>
-                    <td>${item.item_image}</td>
-                    <td>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                    </td>
-                    `;
-                    tr.querySelector('.edit-btn').addEventListener('click', () => openEditItemModal(item));
-                    tr.querySelector('.delete-btn').addEventListener('click', () => openDeleteConfirmModal(item.item_id));
-                    tbody.appendChild(tr);
-                });
-
-                // edit button js
-
-                // delete button js
-            };
-
-            document.addEventListener('DOMContentLoaded', () => {
-                fetch('admin_get_menu.php')
-                .then(res => res.json())
-                .then(items => {
-                    allItems = items;
-                    renderItems(items);
-                })
-                .catch(error => {
-                    console.error('Error loading items:', error);
-                });
-            });
-
-            document.getElementById('searchInput').addEventListener('input', () => {
-              const searchBy = document.getElementById('searchBy').value;
-              const keyword = document.getElementById('searchInput').value.toLowerCase();
-
-              const filtered = allItems.filter(item => {
-                const value = item[searchBy];
-                return value && value.toString().toLowerCase().includes(keyword);
-              });
-
-              renderItems(filtered);
-            });
-
       </script>
     </body>
-    </html>
+</html>

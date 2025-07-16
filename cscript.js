@@ -4,13 +4,18 @@ let currentModalProduct = null;
 let allProducts = [];
 let currentProducts = [];
 
-
 function showPopup(message) {
   const popup = document.getElementById("popupNotification");
   const popupMessage = document.getElementById("popupMessage");
 
-  popupMessage.textContent = message;
-  popup.style.display = "block";
+  if (popup && popupMessage) {
+    popupMessage.textContent = message;
+    popup.style.display = "block";
+
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 3000);
+  }
 }
 
 function closePopup() {
@@ -18,53 +23,19 @@ function closePopup() {
   popup.style.display = "none";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.querySelector(".contact form");
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-
-    showPopup("Your message has been sent successfully!");
-
-    form.reset();
-  });
-});
-
-
-function syncCartToDB() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  if (cart.length > 0) {
-    fetch("sync_cart.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ cart })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        console.log("Cart synced to database");
-        // Optionally clear the local cart
-        // localStorage.removeItem("cart");
-      } else {
-        console.error("Sync failed:", data.error);
-      }
-    })
-    .catch(error => console.error("Sync error:", error));
-  }
-}
-
-
-checkLoginStatus().then(loggedIn => {
-  if (loggedIn) {
-    syncCartToDB();
-  }
-});
-
 document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const sortSelect = document.getElementById('sortSelect');
+
+  // Fixed category options
+  const categories = ['Silog', 'Foods', 'Iced Coffee', 'Fruit Yogurt', 'MilkTea', 'Drinks'];
+  categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilter.appendChild(option);
+  });
 
   fetch('menu_api.php')
     .then(response => {
@@ -74,689 +45,226 @@ document.addEventListener('DOMContentLoaded', function () {
       return response.json();
     })
     .then(data => {
-      container.innerHTML = ''; // Clear old content
-
-      data.forEach(item => {
-        // Create card container
-        const card = document.createElement('div');
-        card.classList.add('menu-item');
-
-        // Item Image
-        const img = document.createElement('img');
-        img.src = item.item_image || 'fallback.png';
-        img.alt = item.item_name;
-        img.classList.add('item-img');
-
-        // Item Name
-        const name = document.createElement('h3');
-        name.textContent = item.item_name;
-        name.classList.add('item-name');
-
-        // Item Description
-        const desc = document.createElement('p');
-        desc.textContent = item.item_description;
-        desc.classList.add('item-desc');
-
-        // Item Price (will update when variant selected)
-        const price = document.createElement('p');
-        price.classList.add('item-price');
-        price.textContent = `₱${item.item_price}`;
-
-        // Variants Dropdown
-        const variantContainer = document.createElement('div');
-        variantContainer.classList.add('variant-container');
-
-        let variantSelect = null;
-        if (item.variants && item.variants.length > 0) {
-          const variantLabel = document.createElement('label');
-          variantLabel.textContent = 'Options:';
-          variantLabel.classList.add('variant-label');
-          
-          variantSelect = document.createElement('select');
-          variantSelect.classList.add('variant-dropdown');
-          variantSelect.setAttribute('data-item-id', item.item_id);
-
-          // Default option
-          const defaultOption = document.createElement('option');
-          defaultOption.value = '';
-          defaultOption.textContent = 'Select an option';
-          variantSelect.appendChild(defaultOption);
-
-          // Add variant options
-          item.variants.forEach(variant => {
-            const option = document.createElement('option');
-            option.value = variant.variant_id;
-            option.textContent = `${variant.variant_name}`;
-            option.setAttribute('data-price', variant.variant_price);
-            variantSelect.appendChild(option);
-          });
-
-          // Handle selection changes
-          variantSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const variantPrice = selectedOption.getAttribute('data-price') || 0;
-            const totalPrice = (parseFloat(item.item_price) + parseFloat(variantPrice)).toFixed(2);
-            price.textContent = `₱${totalPrice}`;
-          });
-
-          variantContainer.appendChild(variantLabel);
-          variantContainer.appendChild(variantSelect);
-        }
-
-        // Action Buttons
-        const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("button-container");
-
-        const cartBtn = document.createElement("button");
-        cartBtn.textContent = "Add to Cart";
-        cartBtn.classList.add("cartBtn");
-
-        const wishlistBtn = document.createElement("button");
-        wishlistBtn.textContent = "♡";
-        wishlistBtn.classList.add("wishlistBtn");
-
-        // Button event handlers (unchanged from your original)
-        cartBtn.addEventListener("click", () => {
-          const product = {
-            title: item.item_name,
-            price: price.textContent.replace('₱', ''),
-            img: item.item_image || 'fallback.png',
-            variant: variantSelect ? variantSelect.value : null
-          };
-          
-          let cart = JSON.parse(localStorage.getItem("cart")) || [];
-          const exists = cart.some(p => p.title === product.title && p.variant === product.variant);
-          
-          if (!exists) {
-            cart.push(product);
-            localStorage.setItem("cart", JSON.stringify(cart));
-            showPopup(`${product.title} (${getSelectedText(variantSelect)}) added to cart`);
-          } else {
-            showPopup("Already in cart");
-          }
-        });
-
-        wishlistBtn.addEventListener("click", () => {
-          const product = {
-            title: item.item_name,
-            price: item.item_price,
-            img: item.item_image || 'fallback.png'
-          };
-          let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-          const exists = wishlist.some(p => p.title === product.title);
-          if (!exists) {
-            wishlist.push(product);
-            localStorage.setItem("wishlist", JSON.stringify(wishlist));
-            showPopup(`${product.title} has been added to your Favorites.`);
-            addToWishlist(product.title, product.price, product.img);
-          } else {
-            showPopup("Already in Favorites.");
-          }
-        });
-
-        buttonContainer.appendChild(cartBtn);
-        buttonContainer.appendChild(wishlistBtn);
-
-        // Assemble card
-        card.appendChild(img);
-        card.appendChild(name);
-        card.appendChild(desc);
-        card.appendChild(price);
-        card.appendChild(variantContainer);
-        card.appendChild(buttonContainer);
-
-        container.appendChild(card);
-      });
+      allProducts = data;
+      renderProducts(allProducts);
     })
     .catch(error => {
       console.error('Fetch failed:', error);
       container.innerHTML = '<p class="error-message">Failed to load menu.</p>';
     });
-});
 
-// Helper function to get selected variant text
-function getSelectedText(select) {
-  return select && select.selectedIndex > 0
-    ? select.options[select.selectedIndex].text
-    : '';
-}
+  function renderProducts(products) {
+    container.innerHTML = '';
 
+    products.forEach(item => {
+      const card = document.createElement('div');
+      card.classList.add('menu-item');
 
-// Your existing showPopup function
-function showPopup(message) {
-  // Your existing popup implementation
-}
+      const img = document.createElement('img');
+      img.src = item.item_image || 'fallback.png';
+      img.alt = item.item_name;
+      img.classList.add('item-img');
 
+      const name = document.createElement('h3');
+      name.textContent = item.item_name;
+      name.classList.add('item-name');
 
+      const desc = document.createElement('p');
+      desc.textContent = item.item_description;
+      desc.classList.add('item-desc');
 
+      const price = document.createElement('p');
+      price.classList.add('item-price');
+      price.textContent = `₱${item.item_price}`;
 
-// const createProduct = (id, title, description, category, price, img, rate) => {
-//   // himuon ug variable
-//   const productContainer = document.createElement("div");
-//   productContainer.setAttribute("data-id", id);
-//   const titleContainer = document.createElement("div");
-//   const titleP = document.createElement("p");
+      const variantContainer = document.createElement('div');
+      variantContainer.classList.add('variant-container');
 
-//   const descContainer = document.createElement("div");
-//   const descP = document.createElement("p");
+      let variantSelect = null;
+      if (item.variants && item.variants.length > 0) {
+        const variantLabel = document.createElement('label');
+        variantLabel.textContent = '';
+        variantLabel.classList.add('variant-label');
 
-//   const categContainer = document.createElement("div");
-//   const categP = document.createElement("p");
+        variantSelect = document.createElement('select');
+        variantSelect.classList.add('variant-dropdown');
+        variantSelect.setAttribute('data-item-id', item.item_id);
 
-//   const priceContainer = document.createElement("div");
-//   const priceP = document.createElement("p");
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select an option';
+        variantSelect.appendChild(defaultOption);
 
-//   const imgDiv = document.createElement("button");
-//   const imgP = document.createElement("img");
+        item.variants.forEach(variant => {
+          const option = document.createElement('option');
+          option.value = variant.variant_id;
+          option.textContent = `${variant.variant_name}`;
+          option.setAttribute('data-price', variant.variant_price);
+          variantSelect.appendChild(option);
+        });
 
-//   const rateContainer = document.createElement("div");
-//   const rateP = document.createElement("p");
-//   const rateStar = document.createElement("p");
+        variantSelect.addEventListener('change', function () {
+          const selectedOption = this.options[this.selectedIndex];
+          const variantPrice = selectedOption.getAttribute('data-price') || 0;
+          const totalPrice = (parseFloat(item.item_price)).toFixed(2);
+          price.textContent = `₱${totalPrice}`;
+        });
 
+        variantContainer.appendChild(variantLabel);
+        variantContainer.appendChild(variantSelect);
+      }
 
+      const buttonContainer = document.createElement('div');
+      buttonContainer.classList.add('button-container');
 
-//   const infoContainer = document.createElement("section");
-//   const heartIcon = document.getElementById('heartIcon');
-//   let isFilled = false;
+      const cartBtn = document.createElement('button');
+      cartBtn.textContent = 'Add to Cart';
+      cartBtn.classList.add('cartBtn');
 
-//   // const wishlistIcon = document.createElement("i");
+      const wishlistBtn = document.createElement('button');
+      wishlistBtn.textContent = '♡';
+      wishlistBtn.classList.add('wishlistBtn');
 
+      cartBtn.addEventListener('click', () => {
+        const selectedVariantId = variantSelect ? variantSelect.value : null;
+        const selectedVariantText = getSelectedText(variantSelect);
 
+        const product = {
+          title: item.item_name,
+          price: price.textContent.replace('₱', ''),
+          img: item.item_image || 'fallback.png',
+          variant: selectedVariantId,
+          variantText: selectedVariantText,
+        };
 
-//   // textContent
-//   titleP.textContent = title;
-//   descP.textContent = description;
-//   categP.textContent = category;
-//   priceP.textContent = `$${price.toFixed(2)}`;
-//   rateP.textContent = rate;
-//   rateStar.textContent = "⭐";
-//   imgP.src = img;
-//   imgP.alt = title;
+        fetch('add_to_cart.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          credentials: 'include',
+          body: new URLSearchParams({
+            product: product.title,
+            quantity: 1,
+            price: product.price,
+            variant: selectedVariantText || ''
+          })
+        })
+          .then(response => response.text())
+          .then(text => {
+            if (text.includes('successfully')) {
+              showPopup(`${product.title} ${product.variantText} added to cart`);
+            } else {
+              showPopup(`Failed to add to cart: ${text}`);
+            }
+          })
+          .catch(error => {
+            console.error('Error adding to cart:', error);
+            showPopup('Error adding to cart.');
+          });
+      });
 
+      wishlistBtn.addEventListener('click', () => {
+        const product = {
+          title: item.item_name,
+          price: item.item_price,
+          img: item.item_image || 'fallback.png'
+        };
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const exists = wishlist.some(p => p.title === product.title);
+        if (!exists) {
+          wishlist.push(product);
+          localStorage.setItem('wishlist', JSON.stringify(wishlist));
+          showPopup(`${product.title} has been added to your Favorites.`);
+          addToWishlist(product.title, product.price, product.img);
+        } else {
+          showPopup('Already in Favorites.');
+        }
+      });
 
+      buttonContainer.appendChild(cartBtn);
+      buttonContainer.appendChild(wishlistBtn);
 
-//   // pang himo ug class sa each details
-//   wishlistImg.classList = "wishlistImg";
-//   titleP.classList = "titleP";
-//   descP.classList = "descP";
-//   categP.classList = "categP";
-//   priceP.classList = "priceP";
-//   rateP.classList = "rateP";
-//   rateStar.classList = "rateStar";
-//   imgDiv.classList = "imgDiv";
-//   imgP.classList = "imgP";
-//   cartBtn.classList = "cartBtn";
-//   wishlistBtn.classList = "wishlistBtn";
+      card.appendChild(img);
+      card.appendChild(name);
+      card.appendChild(desc);
+      card.appendChild(price);
+      card.appendChild(variantContainer);
+      card.appendChild(buttonContainer);
 
-//   //class sa containers
-//   titleContainer.classList = "titleContainer";
-//   descContainer.classList = "descContainer";
-//   categContainer.classList = "categContainer";
-//   priceContainer.classList = "priceContainer";
-//   rateContainer.classList = "rateContainer";
-//   productContainer.classList = "productContainer";
-//   infoContainer.classList = "infoContainer";
-//   newCont.classList = "newCont";
-//   buttonCont.classList = "buttonCont";
-
-
-
-
-//   //eventlistener nga mogawas ang specific product
-
-imgDiv.addEventListener("click", () => {
-  currentModalProduct = { item_name: title, item_price: price, item_image: img };
-  const modal = document.getElementById("productModal");
-
-  document.getElementById("modalImg").src = img;
-  document.getElementById("modalImg").alt = title;
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalDesc").textContent = description;
-  document.getElementById("modalPrice").textContent = `₱${price.toFixed(2)}`;
-
-
-  modal.dataset.item_id = id;
-  modal.classList.remove("hidden");
-
-  fetch("save_recently_viewed.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      item_id: id
-    })
-  });
-});
-
-
-//   // WISHLIST AND CART!!!!!!
-
-const popup = document.getElementById("popupNotification");
-const closeBtn = document.getElementById("popupCloseBtn");
-
-if (closeBtn) {
-  closeBtn.addEventListener("click", closePopup);
-}
-
-window.addEventListener("click", (e) => {
-  if (e.target === popup) {
-    closePopup();
+      container.appendChild(card);
+    });
   }
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-  const popup = document.getElementById("popupNotification");
+  function getSelectedText(select) {
+    return select && select.selectedIndex > 0
+      ? select.options[select.selectedIndex].text
+      : '';
+  }
+
+  function addToWishlist(title, price, img) {
+    fetch('add_to_wishlist.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ product: { title, price: Number(price), img } })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding to Favorites:', error);
+        showPopup('Failed to add to Favorites.');
+      });
+  }
+
+  // Apply filters and sorting whenever a filter changes
+  function applyFilters() {
+    let filteredProducts = [...allProducts];
+
+    // Filter by category if selected
+    const selectedCategory = categoryFilter.value;
+    if (selectedCategory) {
+      filteredProducts = filteredProducts.filter(item => item.item_category === selectedCategory);
+    }
+
+    // Sort filtered products
+    switch (sortSelect.value) {
+      case 'price-asc':
+        filteredProducts.sort((a, b) => parseFloat(a.item_price) - parseFloat(b.item_price));
+        break;
+      case 'price-desc':
+        filteredProducts.sort((a, b) => parseFloat(b.item_price) - parseFloat(a.item_price));
+        break;
+      case 'name-asc':
+        filteredProducts.sort((a, b) => a.item_name.localeCompare(b.item_name));
+        break;
+      case 'name-desc':
+        filteredProducts.sort((a, b) => b.item_name.localeCompare(a.item_name));
+        break;
+      default:
+        // no sorting or default order
+        break;
+    }
+
+    renderProducts(filteredProducts);
+  }
+
+  categoryFilter.addEventListener('change', applyFilters);
+  sortSelect.addEventListener('change', applyFilters);
+
   const closeBtn = document.getElementById("popupCloseBtn");
+  const popup = document.getElementById("popupNotification");
 
-  closeBtn.addEventListener("click", () => {
-    closePopup();
-  });
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closePopup);
+  }
 
   window.addEventListener("click", (e) => {
     if (e.target === popup) {
       closePopup();
     }
   });
-});
-
-wishlistBtn.addEventListener("click", () => {
-  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  const exists = wishlist.some(item => item.title === title);
-  if (!exists) {
-    wishlist.push({ title, price, img });
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    addToWishlist(title, price, img);
-    showPopup(`${title} has been added to your Favorites.`);
-    const product = { title, price, img };
-    fetch("add_to_wishlist.php", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(product)
-    });
-
-  } else {
-    showPopup("Already in Favorites.");
-  }
-});
-
-//   cartBtn.addEventListener("click", () => {
-//     const product = { title, price, img };
-//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-//     const alreadyInCart = cart.some(item => item.title === title);
-//     if (!alreadyInCart) {
-//       cart.push(product);
-//       localStorage.setItem("cart", JSON.stringify(cart));
-//       showPopup(`${title} has been added to your cart.`);
-
-//       // Call backend function to add to DB
-//       addToCart(title, 1, price);
-//     } else {
-//       showPopup("Already in cart.");
-//     }
-//   });
-
-
-
-
-
-//   // ibutang sa ang details to their containers
-
-//   imgDiv.appendChild(imgP);
-
-//   titleContainer.appendChild(titleP);
-//   categContainer.appendChild(categP);
-//   rateContainer.appendChild(rateP);
-//   rateContainer.appendChild(rateStar);
-//   priceContainer.appendChild(priceP);
-
-
-//   //ibutang ang detail containers sa product container
-//   infoContainer.appendChild(imgDiv);
-//   infoContainer.appendChild(titleContainer);
-//   infoContainer.appendChild(categContainer);
-//   infoContainer.appendChild(rateContainer);
-//   buttonCont.appendChild(priceContainer);
-//   newCont.appendChild(cartBtn);
-//   wishlistBtn.appendChild(wishlistImg);
-//   newCont.appendChild(wishlistBtn);
-//   buttonCont.appendChild(newCont);
-//   productContainer.appendChild(infoContainer);
-//   productContainer.appendChild(buttonCont);
-
-//   // return ang product container
-//   return productContainer;
-// }
-
-function handleSearch() {
-  const searchTerm = document.getElementById("searchBar").value.toLowerCase();
-
-  if (searchTerm.trim() === "") {
-    renderProducts(allProducts); // Show all if search bar is empty
-    return;
-  }
-
-  const filtered = allProducts.filter(product =>
-    product.item_name.toLowerCase().includes(searchTerm) ||
-    product.description.toLowerCase().includes(searchTerm) ||
-    product.category.toLowerCase().includes(searchTerm)
-  );
-
-  renderProducts(filtered);
-}
-
-
-const renderProducts = (products) => {
-  currentProducts = products; // <-- Save the current displayed list
-  const productsSection = document.getElementById("productsSection");
-  productsSection.innerHTML = "";
-
-  products.forEach(product => {
-    const productContainer = createProduct(
-      product.id,
-      product.title,
-      product.description,
-      product.category,
-      product.price,
-      product.image,
-      product.rating.rate
-    );
-    productsSection.appendChild(productContainer);
-  });
-};
-
-
-const USER_ID = 1; // Replace this with the actual logged-in user's ID
-
-async function loadRecentlyViewed() {
-  const response = await fetch('get_recently_viewed.php');
-  const recentProducts = await response.json();
-  renderProducts(recentProducts);
-}
-
-
-
-
-const displayProducts = async () => {
-  await fetchCartFromDB();
-  await fetchWishlistFromDB();
-  const productsSection = document.getElementById("productsSection");
-  productsSection.innerHTML = '<h1>Loading...<h1>';
-
-  try {
-    const data = await fetchProducts();
-    allProducts = data;
-    renderProducts(data);
-    productsSection.classList = "pSection";
-    productsSection.innerHTML = '';
-
-    document.getElementById("sortSelect").addEventListener("change", async function () {
-      const value = this.value;
-
-      if (value === "recently-viewed") {
-        await loadRecentlyViewed(); // Load from DB and render
-      } else {
-        let sortedProducts = [...allProducts];
-
-        if (value === "price-asc") {
-          sortedProducts.sort((a, b) => a.price - b.price);
-        } else if (value === "price-desc") {
-          sortedProducts.sort((a, b) => b.price - a.price);
-        } else if (value === "name-asc") {
-          sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (value === "name-desc") {
-          sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
-        }
-
-        renderProducts(sortedProducts);
-      }
-    });
-
-
-    data.forEach(product => {
-      const productContainer = createProduct(product.id, product.title, product.description, product.category, product.price, product.image, product.rating.rate);
-      productsSection.appendChild(productContainer);
-    });
-
-
-
-    productsSection.classList = "pSection";
-
-  } catch {
-    productsSection.innerHTML = '<p>Failed to load products.</p>';
-  }
-
-
-
-
-
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-
-
-  const modalBox = document.getElementById("productModal");
-  const closeBtn = modalBox.querySelector(".close");
-
-
-  closeBtn.addEventListener("click", () => {
-    modalBox.classList.add("hidden");
-  });
-
-
-  modalBox.addEventListener("click", (e) => {
-    if (e.target === modalBox) {
-      modalBox.classList.add("hidden");
-    }
-  });
-
-  const modalCartBtn = document.getElementById("modalCartBtn");
-  const modalWishlistBtn = document.getElementById("modalWishlistBtn");
-
-  modalCartBtn.addEventListener("click", () => {
-    if (!currentModalProduct) return;
-    const { title, price, img } = currentModalProduct;
-
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const alreadyInCart = cart.some(item => item.title === title);
-    if (!alreadyInCart) {
-      cart.push({ title, price, img });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      showPopup(`${title} has been added to your cart.`);
-      addToCart(title, 1, price);
-    } else {
-      showPopup("Already in cart.");
-    }
-  });
-
-  modalWishlistBtn.addEventListener("click", () => {
-    if (!currentModalProduct) return;
-    const { title, price, img } = currentModalProduct;
-
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const exists = wishlist.some(item => item.title === title);
-    if (!exists) {
-      wishlist.push({ title, price, img });
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-      addToWishlist(title, price, img);
-      showPopup(`${title} has been added to your Favorites.`);
-      fetch("add_to_wishlist.php", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ title, price, img })
-      });
-    } else {
-      showPopup("Already in Favorites.");
-    }
-  });
-
-
-
-  displayProducts();
-  const searchInput = document.getElementById("searchBar");
-  if (searchInput) {
-    searchInput.addEventListener("input", handleSearch);
-  }
 
 });
-
-
-
-function checkLoginStatus() {
-  return fetch('check_session.php', { credentials: 'include' })
-    .then(response => response.json())
-    .then(data => data.loggedIn)
-    .catch(() => false);
-}
-
-function addToCartClicked(button) {
-  checkLoginStatus().then(isLoggedIn => {
-    if (!isLoggedIn) {
-      showPopup(`You must be logged in to add items to cart.`);
-      window.location.href = "login.html";
-      return;
-    }
-
-    // Find product container relative to the button clicked
-    const productContainer = button.closest('.products');
-    if (!productContainer) {
-      return;
-    }
-
-    // Extract product info
-    const productNameEl = productContainer.querySelector('.product-name');
-    if (!productNameEl) {
-      return;
-    }
-    const productName = productNameEl.textContent.trim();
-
-    const qtyInput = productContainer.querySelector('.product-quantity');
-    const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
-    if (isNaN(quantity) || quantity < 1) {
-      return;
-    }
-
-    const priceEl = productContainer.querySelector('.product-price');
-    if (!priceEl) {
-      return;
-    }
-    const price = parseFloat(priceEl.textContent);
-    if (isNaN(price) || price < 0) {
-      return;
-    }
-
-    const imgEl = productContainer.querySelector('img');
-    const img = imgEl ? imgEl.src : "sample.png"; // fallback image if none
-
-    // Update localStorage cart
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingIndex = cart.findIndex(item => item.title === productName);
-
-    if (existingIndex >= 0) {
-      cart[existingIndex].quantity += quantity;
-    } else {
-      cart.push({
-        title: productName,
-        price: price,
-        quantity: quantity,
-        img: img
-      });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    // Also send to backend to save in database
-    addToCart(productName, quantity, price);
-  });
-}
-
-function addToCart(product, quantity, price) {
-  fetch('add_to_cart.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    credentials: 'include',
-    body: `product=${encodeURIComponent(product)}&quantity=${quantity}&price=${price}`
-  })
-    .then(response => response.text())
-    .catch(error => {
-      showPopup('Failed to add item to cart.');
-      console.error('Error adding to cart:', error);
-    });
-}
-
-// Attach event listeners to all add-to-cart buttons (assuming class .cartBtn)
-document.addEventListener("DOMContentLoaded", () => {
-  const cartButtons = document.querySelectorAll('.cartBtn');
-  cartButtons.forEach(button => {
-    button.addEventListener('click', () => addToCartClicked(button));
-  });
-});
-
-
-heartIcon.addEventListener('click', function (event) {
-  event.preventDefault(); // prevent link action
-  isFilled = !isFilled;
-
-  heartIcon.src = isFilled ? 'darken-heart.jpg' : 'heart-outline.png';
-});
-
-
-
-async function fetchCartFromDB() {
-  try {
-    const response = await fetch('get_cart.php', { credentials: 'include' });
-    if (!response.ok) throw new Error('Failed to fetch cart');
-    const cart = await response.json();
-    localStorage.setItem('cart', JSON.stringify(cart));
-    return cart;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchWishlistFromDB() {
-  try {
-    const response = await fetch('get_wishlist.php', { credentials: 'include' });
-    if (!response.ok) throw new Error('Failed to fetch Favorites');
-    const wishlist = await response.json();
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    return wishlist;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-
-function addToWishlist(title, price, img) {
-  fetch('add_to_wishlist.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ product: { title, price: Number(price), img } })
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        showPopup(`${title} has been added to your Favorites.`);
-      } else {
-        showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
-      }
-    })
-    .catch(error => {
-      console.error('Error adding to Favorites:', error);
-      showPopup('Failed to add to Favorites.');
-    });
-}
-
-

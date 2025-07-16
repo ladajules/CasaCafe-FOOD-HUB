@@ -64,9 +64,12 @@
             </select>
         </div>
 
-        <div id="recently-viewed">
-            <button href="recent.html" target="_self">Recently Viewed</button>
-        </div> 
+        <div id="filterControls" style="margin-bottom: 10px;">
+            <label for="categoryFilter">Filter by category:</label>
+            <select id="categoryFilter">
+              <option value="">All Categories</option>
+            </select>
+          </div>
 
 <div class="box-container">
     <div id="menuContainer"></div>
@@ -118,12 +121,11 @@
 
     <!-- Popup Container -->
     <div id="popupNotification" class="popup">
-        <div class="popup-content">
-            <span id="popupMessage"></span>
-            <br>
-            <button id="popupCloseBtn">OK</button>
-        </div>
-    </div>
+  <div class="popup-content">
+    <span id="popupCloseBtn" class="close-btn">&times;</span>
+    <p id="popupMessage">Message goes here</p>
+  </div>
+</div>
 
 
 

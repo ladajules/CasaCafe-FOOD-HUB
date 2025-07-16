@@ -84,9 +84,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-fetch("getUser.php")
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("usernameDisplay").textContent = data.username;
-    })
-    .catch(err => console.error(err));
+document.addEventListener('DOMContentLoaded', () => {
+    fetch("getUser.php")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("usernameDisplay").textContent = data.username;
+            editUsernameInput.value = data.username;
+
+            document.querySelector('.edit-btn').addEventListener('click', () => {
+                openModal('editModal');
+            });
+        })
+        .catch(err => console.error(err));
+});
+
+const editModal = document.getElementById("editModal");
+const editUsernameInput = document.getElementById("editUsernameInput");
+
+function openModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+document.getElementById('saveEditBtn').addEventListener('click', () => {
+    const newUsername = editUsernameInput.value.trim();
+    if (newUsername) {
+        fetch('edit_users.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `Username=${encodeURIComponent(newUsername)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                closeModal('editModal');
+                location.reload();
+            } else {
+                alert('Edit failed: ' + data.error);
+            }
+        });
+    }
+});

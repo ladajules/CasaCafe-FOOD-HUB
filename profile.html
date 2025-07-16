@@ -40,6 +40,7 @@
             <img src="profile.png" id="profImg">
             <div class="text-content">
                 <h2 id="usernameDisplay"></h2>
+                <button class="edit-btn"><i class="fas fa-pen"></i></button>
                 <p>Edit Profile</p>
             </div>
         </div>
@@ -54,6 +55,17 @@
     </div>
     </section>
     <!--a href="cart.html">My Purchase</a-->
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+          <h3>Edit Username</h3>
+          <input type="text" id="editUsernameInput" />
+          <div>
+            <button class="confirm-btn" id="saveEditBtn">Save</button>
+            <button class="cancel-btn" onclick="closeModal('editModal')">Cancel</button>
+          </div>
+        </div>
+    </div>
 
     <section class="orderHistory">
   <div>
@@ -70,7 +82,7 @@
 
   <section class="footer">
 
-    <div class="credit"> created by <span> Althea Telmo ,Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+    <div class="credit"> Created by <span> Althea Telmo, Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
   </section>
   <script src="script.js"></script>
   <script src="profile.js"></script>
