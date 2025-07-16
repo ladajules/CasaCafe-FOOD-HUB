@@ -339,7 +339,7 @@
             const params = new URLSearchParams(window.location.search);
             const orderId = params.get("order_id");
 
-            fetch(`get_order_details.php?order_id=${orderId}`)
+            fetch(`admin_get_order_details.php?order_id=${orderId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -380,7 +380,7 @@
             function updateStatus() {
             const newStatus = document.getElementById("statusSelect").value;
 
-            fetch("update_order_status.php", {
+            fetch("admin_update_order_status.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: `order_id=${orderId}&status=${newStatus}`
