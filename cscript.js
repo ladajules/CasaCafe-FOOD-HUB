@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
             credentials: 'include',
             body: new URLSearchParams({
               product: product.title,
-              quantity: product.quantity,
+              quantity: 1,
               price: product.price,
               variant: product.variant || ''
             })
