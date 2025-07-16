@@ -10,7 +10,7 @@ if (!isset($_SESSION['UserID'])) {
 
 $userId = $_SESSION['UserID'];
 
-$stmt = $conn->prepare("SELECT product_name, price, quantity, img FROM cart WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT product_name, price, quantity, img, variant FROM cart WHERE user_id = ?");
 if (!$stmt) {
     echo json_encode(["error" => "Failed to prepare statement."]);
     exit;
@@ -26,7 +26,8 @@ while ($row = $result->fetch_assoc()) {
         "title" => $row["product_name"],
         "price" => (float)$row["price"],
         "quantity" => (int)$row["quantity"],
-        "img" => $row["img"]
+        "img" => $row["img"],
+        "variant" => $row["variant"] ?? null
     ];
 }
 

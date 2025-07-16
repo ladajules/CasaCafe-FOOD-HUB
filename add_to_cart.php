@@ -48,18 +48,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Check if product already exists in cart
-        $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_name = ?");
-        $stmt->execute([$userID, $product]);
+            $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_name = ? AND variant = ?");
+            $stmt->execute([$userID, $product, $variant]);
+
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($existing) {
             $newQty = $existing['quantity'] + $quantity;
-            $updateStmt = $pdo->prepare("UPDATE cart SET quantity = ?, price = ?, img = ? WHERE user_id = ? AND product_name = ?");
-            $updateStmt->execute([$newQty, $price, $img, $userID, $product]);
+            $updateStmt = $pdo->prepare("UPDATE cart SET quantity = ?, price = ?, img = ?, variant = ? WHERE user_id = ? AND product_name = ?");
+            $updateStmt->execute([$newQty, $price, $img, $variant, $userID, $product]);
+
             echo "Cart updated successfully.";
         } else {
-            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, product_name, quantity, price, img) VALUES (?, ?, ?, ?, ?)");
-            $insertStmt->execute([$userID, $product, $quantity, $price, $img]);
+            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, product_name, quantity, price, img, variant) VALUES (?, ?, ?, ?, ?, ?)");
+            $insertStmt->execute([$userID, $product, $quantity, $price, $img, $variant]);
+
             echo "Item added to cart successfully.";
         }
     } catch (PDOException $e) {

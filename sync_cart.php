@@ -23,6 +23,8 @@ foreach ($data['cart'] as $item) {
     $price = floatval($item['price']);
     $quantity = intval($item['quantity'] ?? 1);
     $img = $conn->real_escape_string($item['img']);
+    $variant = strip_tags(trim($_POST['variant'] ?? ''));
+
 
     // Check if item already exists in the cart
     $check = $conn->prepare("SELECT id FROM cart WHERE user_id = ? AND product_name = ?");
