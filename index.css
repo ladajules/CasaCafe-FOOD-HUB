@@ -754,6 +754,7 @@ POP UP WISHLIST AND CART   */
 }
 
 .popup-content {
+    display: flex;
     font-size: 1.5rem;
     color: #333;
 }

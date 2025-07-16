@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.remove();
 
         if (wishlist.length === 0) {
-          wishlistSection.innerHTML = "<p>Your wishlist is empty.</p>";
+          wishlistSection.innerHTML = "<p>You currently have no favorites</p>";
         }
       });
   }
