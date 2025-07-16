@@ -224,85 +224,23 @@ function getSelectedText(select) {
 
 // Your existing showPopup function
 function showPopup(message) {
-  // Your existing popup implementation
+  function showPopup(message) {
+  const popup = document.getElementById("popupNotification");
+  const popupMessage = document.getElementById("popupMessage");
+  
+  if (popup && popupMessage) {
+    popupMessage.textContent = message;
+    popup.style.display = "block";
+
+
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 3000);
+  }
 }
 
+}
 
-
-
-// const createProduct = (id, title, description, category, price, img, rate) => {
-//   // himuon ug variable
-//   const productContainer = document.createElement("div");
-//   productContainer.setAttribute("data-id", id);
-//   const titleContainer = document.createElement("div");
-//   const titleP = document.createElement("p");
-
-//   const descContainer = document.createElement("div");
-//   const descP = document.createElement("p");
-
-//   const categContainer = document.createElement("div");
-//   const categP = document.createElement("p");
-
-//   const priceContainer = document.createElement("div");
-//   const priceP = document.createElement("p");
-
-//   const imgDiv = document.createElement("button");
-//   const imgP = document.createElement("img");
-
-//   const rateContainer = document.createElement("div");
-//   const rateP = document.createElement("p");
-//   const rateStar = document.createElement("p");
-
-
-
-//   const infoContainer = document.createElement("section");
-//   const heartIcon = document.getElementById('heartIcon');
-//   let isFilled = false;
-
-//   // const wishlistIcon = document.createElement("i");
-
-
-
-//   // textContent
-//   titleP.textContent = title;
-//   descP.textContent = description;
-//   categP.textContent = category;
-//   priceP.textContent = `$${price.toFixed(2)}`;
-//   rateP.textContent = rate;
-//   rateStar.textContent = "⭐";
-//   imgP.src = img;
-//   imgP.alt = title;
-
-
-
-//   // pang himo ug class sa each details
-//   wishlistImg.classList = "wishlistImg";
-//   titleP.classList = "titleP";
-//   descP.classList = "descP";
-//   categP.classList = "categP";
-//   priceP.classList = "priceP";
-//   rateP.classList = "rateP";
-//   rateStar.classList = "rateStar";
-//   imgDiv.classList = "imgDiv";
-//   imgP.classList = "imgP";
-//   cartBtn.classList = "cartBtn";
-//   wishlistBtn.classList = "wishlistBtn";
-
-//   //class sa containers
-//   titleContainer.classList = "titleContainer";
-//   descContainer.classList = "descContainer";
-//   categContainer.classList = "categContainer";
-//   priceContainer.classList = "priceContainer";
-//   rateContainer.classList = "rateContainer";
-//   productContainer.classList = "productContainer";
-//   infoContainer.classList = "infoContainer";
-//   newCont.classList = "newCont";
-//   buttonCont.classList = "buttonCont";
-
-
-
-
-//   //eventlistener nga mogawas ang specific product
 
 imgDiv.addEventListener("click", () => {
   currentModalProduct = { item_name: title, item_price: price, item_image: img };
