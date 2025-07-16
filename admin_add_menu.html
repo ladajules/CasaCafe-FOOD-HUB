@@ -432,12 +432,20 @@
 
                     <div class="button-group">
                       <button type="button" class="btn btn-secondary">Clear All</button>
-                      <button type="submit" class="btn btn-primary">Save</button>
+                      <button type="submit" class="btn btn-primary">Add</button>
                     </div>
                 </div>
                 
             </form>
         </div>
+      
+      <div id="successPopup" class="modal">
+        <div class="modal-content">
+          <h3>Item added successfully!</h3>
+          <button onclick="closeModal('successPopup')" class="confirm-btn">OK</button>
+        </div>
+      </div>
+
 
       <script>
             const toggle = document.getElementById("dropdownToggle");
@@ -460,6 +468,54 @@
             document.querySelector('.menu-toggle').addEventListener('click', () => {
                 const submenu = document.querySelector('.submenu');
                 submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            function closeModal(id) {
+              document.getElementById(id).classList.remove("active");
+            }
+
+            function openModal(id) {
+              document.getElementById(id).classList.add("active");
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+              const form = document.getElementById("editItemForm");
+              const clearBtn = document.querySelector(".btn.btn-secondary");
+
+              form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const data = {
+                  name: document.getElementById("edit_item_name").value.trim(),
+                  category: document.getElementById("edit_item_category").value.trim(),
+                  image: document.getElementById("edit_item_image").value.trim(),
+                  price: document.getElementById("edit_item_price").value.trim(),
+                  description: document.getElementById("edit_item_description").value.trim()
+                };
+
+                fetch("add_menu_item.php", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(data)
+                })
+                .then(res => res.json())
+                .then(response => {
+                  if (response.success) {
+                    openModal("successPopup");
+                    form.reset();
+                  } else {
+                    alert("Failed to add item: " + response.error);
+                  }
+                })
+                .catch(err => {
+                  console.error("Error:", err);
+                  alert("An error occurred while adding the item.");
+                });
+              });
+
+              clearBtn.addEventListener("click", () => {
+                form.reset();
+              });
             });
 
       </script>
