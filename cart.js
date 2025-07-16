@@ -95,14 +95,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 img: item.img
             }));
 
-            // Show GCash QR if selected and not confirmed yet
             if (paymentMethod === "Gcash" && !pendingGcash) {
                 showPopup(`
-                    <h3>Scan to Pay with GCash</h3>
-                    <img src="gcash_qr.png" alt="GCash QR Code" style="max-width: 300px; width: 100%; margin-top: 10px;">
-                    <br><br>
-                    <button onclick="confirmGcashPayment()" style="padding: 10px 20px; font-weight: bold;">I have paid</button>
-                `);
+    <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
+    <img src="gcash_qr.png" alt="GCash QR Code"
+         style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
+    <button onclick="confirmGcashPayment()" 
+            style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+        I have paid
+    </button>
+`);
+
                 pendingGcash = true;
                 return;
             }
