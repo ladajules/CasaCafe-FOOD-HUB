@@ -288,7 +288,7 @@ label {
     font-size: 2.5rem;
     color: var(--pink);
     font-weight: bolder;
-    color: #e9d36c;
+    color: black;
     padding-top: 1rem;
 }
 
@@ -371,7 +371,7 @@ label {
     margin: 5px;
     background-color: #98D2C0;
     color: white;
-    padding: 5px;
+    padding: 10px 15px;
     border-radius: 5px;
 }
 
@@ -385,7 +385,7 @@ label {
 .cartBtn:hover {
     cursor: pointer;
     background-color: #e9d36c;
-    padding: 5px;
+    padding: 10px 15px;
     border-radius: 5px;
 }
 
@@ -1015,7 +1015,7 @@ POP UP WISHLIST AND CART   */
 /* total price display */
 #totalPriceDisplay {
     font-size: 2.5rem;
-    color: #e9d36c;
+    color: black;
     font-weight: bolder;
     text-align: center;
     width: 100%;
