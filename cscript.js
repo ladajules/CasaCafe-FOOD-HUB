@@ -67,6 +67,7 @@ checkLoginStatus().then(loggedIn => {
 
 document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
+  const imageBasePath = 'https://casacafe.dcism.org/IMAGES/'; //  your actual online image path
 
   fetch('menu_api.php')
     .then(response => {
@@ -77,32 +78,36 @@ document.addEventListener('DOMContentLoaded', function () {
       container.innerHTML = ''; // Clear old content
 
       data.forEach(item => {
-        // Create card container
         const card = document.createElement('div');
         card.classList.add('menu-item');
 
         // Item Image
         const img = document.createElement('img');
-        img.src = item.item_image ? `IMAGES/${item.item_image}` : 'fallback.png';
+        img.src = item.item_image ? imageBasePath + item.item_image : 'fallback.png';
         img.alt = item.item_name;
         img.classList.add('item-img');
+
+        // Show fallback image if the image fails to load
+        img.onerror = () => {
+          img.src = 'fallback.png';
+        };
 
         // Item Name
         const name = document.createElement('h3');
         name.textContent = item.item_name;
         name.classList.add('item-name');
 
-        // Item Description
+        // Description
         const desc = document.createElement('p');
         desc.textContent = item.item_description;
         desc.classList.add('item-desc');
 
-        // Item Price
+        // Base Price
         const price = document.createElement('p');
         price.classList.add('item-price');
         price.textContent = `₱${item.item_price}`;
 
-        // Variants Dropdown
+        // Variants
         const variantContainer = document.createElement('div');
         variantContainer.classList.add('variant-container');
 
@@ -130,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
             variantSelect.appendChild(option);
           });
 
+          // Update price on selection
           variantSelect.addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
             const variantPrice = selectedOption.getAttribute('data-price') || 0;
@@ -142,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
           variantContainer.appendChild(variantSelect);
         }
 
-        // Action Buttons
+        // Buttons
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("button-container");
 
@@ -155,12 +161,12 @@ document.addEventListener('DOMContentLoaded', function () {
         wishlistBtn.textContent = "♡";
         wishlistBtn.classList.add("wishlistBtn");
 
-        // Add to Cart Logic
+        // Cart Logic
         cartBtn.addEventListener("click", () => {
           const product = {
             title: item.item_name,
             price: price.textContent.replace('₱', ''),
-            img: item.item_image ? `IMAGES/${item.item_image}` : 'fallback.png',
+            img: item.item_image ? imageBasePath + item.item_image : 'fallback.png',
             variant: variantSelect ? variantSelect.value : null
           };
 
@@ -177,14 +183,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         wishlistBtn.addEventListener("click", () => {
-          // Optional: Add wishlist logic here
           showPopup("Added to wishlist (logic not yet implemented)");
         });
 
         buttonContainer.appendChild(cartBtn);
         buttonContainer.appendChild(wishlistBtn);
 
-        // Assemble card
+        // Build card
         card.appendChild(img);
         card.appendChild(name);
         card.appendChild(desc);
@@ -200,6 +205,27 @@ document.addEventListener('DOMContentLoaded', function () {
       container.innerHTML = '<p class="error-message">Failed to load menu.</p>';
     });
 });
+
+// Helper: Get selected text from dropdown
+function getSelectedText(select) {
+  return select && select.selectedIndex > 0
+    ? `(${select.options[select.selectedIndex].text})`
+    : '';
+}
+
+// Popup
+function showPopup(message) {
+  const popup = document.getElementById("popupNotification");
+  const messageBox = document.getElementById("popupMessage");
+  const closeBtn = document.getElementById("popupCloseBtn");
+
+  messageBox.textContent = message;
+  popup.classList.add("show");
+
+  closeBtn.onclick = () => popup.classList.remove("show");
+}
+
+
 
 // Helper function
 function getSelectedText(select) {
