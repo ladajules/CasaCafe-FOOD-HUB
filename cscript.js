@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
             title: item.item_name,
             price: price.textContent.replace('₱', ''),
             img: item.item_image || 'fallback.png',
-            variant: variantSelect.value
+            variant: variantSelect ? variantSelect.value : null
           };
           
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -201,8 +201,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Helper function to get selected variant text
 function getSelectedText(select) {
-  return select.options[select.selectedIndex].text;
+  return select && select.selectedIndex > 0
+    ? select.options[select.selectedIndex].text
+    : '';
 }
+
 
 // Your existing showPopup function
 function showPopup(message) {
