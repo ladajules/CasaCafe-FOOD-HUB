@@ -64,6 +64,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const price = document.createElement("p");
       price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
       price.classList = "priceP";
+      
+      const addBtn           = document.createElement("button");
+    addBtn.textContent     = "Add to Cart";
+    addBtn.className       = "cartBtn";
+    addBtn.addEventListener("click", () => {
+      addToCart(product.title, 1, product.price);          // back‑end
+      // update localStorage cart
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (!cart.some(i => i.title === product.title)) {
+        cart.push({ title: product.title, price: product.price, img: product.img });
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+      alert(`${product.title} added to cart ✔`);
+    });
 
       const removeBtn = document.createElement("button");
       removeBtn.textContent = "Remove";
@@ -77,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cartDescription.appendChild(title);
       cartDescription.appendChild(price);
       container.appendChild(cartDescription);
+      container.appendChild(addBtn);
       container.appendChild(removeBtn);
 
       wishlistSection.appendChild(container);
