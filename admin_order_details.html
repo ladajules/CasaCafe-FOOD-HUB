@@ -338,6 +338,7 @@
 
             const params = new URLSearchParams(window.location.search);
             const orderId = params.get("order_id");
+            const purchaseDate = params.get("purchase_date");
 
             fetch(`admin_get_order_details.php?order_id=${orderId}&purchase_date=${purchaseDate}`)
             .then(res => res.json())
