@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
           item.variants.forEach(variant => {
             const option = document.createElement('option');
             option.value = variant.variant_id;
-            option.textContent = `${variant.variant_name}`;
+            option.textContent = `${variant.variant_name} (+₱${variant.variant_price})`;
             option.setAttribute('data-price', variant.variant_price);
             variantSelect.appendChild(option);
           });
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wishlistBtn.textContent = "♡";
         wishlistBtn.classList.add("wishlistBtn");
 
-        // Button event handlers (unchanged from your original)
+        // Button event handlers
         cartBtn.addEventListener("click", () => {
           const product = {
             title: item.item_name,
