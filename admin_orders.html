@@ -252,6 +252,11 @@
                     toggle.classList.remove("open");
                 }
             });
+            
+            document.querySelector('.menu-toggle').addEventListener('click', () => {
+                const submenu = document.querySelector('.submenu');
+                submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            });
 
             document.addEventListener("DOMContentLoaded", () => {
                 const tableBody = document.getElementById("orderTableBody");

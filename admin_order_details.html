@@ -314,7 +314,81 @@
         </div>
 
       <script>
+            const toggle = document.getElementById("dropdownToggle");
+            const menu = document.getElementById("dropdownMenu");
+            const arrow = document.getElementById("dropdownArrow");
 
+            toggle.addEventListener("click", () => {
+                const isVisible = menu.style.display === "block";
+                menu.style.display = isVisible ? "none" : "block";
+                toggle.classList.toggle("open", !isVisible);
+            });
+
+            window.addEventListener("click", (e) => {
+                if (!document.getElementById("profileDropdown").contains(e.target)) {
+                    menu.style.display = "none";
+                    toggle.classList.remove("open");
+                }
+            });
+
+            document.querySelector('.menu-toggle').addEventListener('click', () => {
+                const submenu = document.querySelector('.submenu');
+                submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get("order_id");
+
+            fetch(`get_order_details.php?order_id=${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                const details = data.details;
+
+                document.getElementById("orderId").textContent = orderId;
+                document.getElementById("userId").textContent = details[0].user_id;
+                document.getElementById("purchaseDate").textContent = details[0].purchase_date;
+                document.getElementById("fullName").textContent = details[0].full_name;
+                document.getElementById("phoneNumber").textContent = details[0].phone_number;
+                document.getElementById("deliveryType").textContent = details[0].delivery_type;
+                document.getElementById("fullAddress").textContent =
+                    `${details[0].address_line}, ${details[0].city}, ${details[0].postal_code}`;
+
+                document.getElementById("statusSelect").value = details[0].status;
+
+                let total = 0;
+                const tbody = document.getElementById("itemsTableBody");
+                details.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td>${item.product_name}</td>
+                    <td><img src="${item.img}" alt="" style="width: 50px;"></td>
+                    <td>${item.quantity}</td>
+                    <td>₱${parseFloat(item.price).toFixed(2)}</td>
+                    <td>₱${(item.price * item.quantity).toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(row);
+                    total += item.price * item.quantity;
+                });
+
+                document.getElementById("totalAmount").textContent = total.toFixed(2);
+                } else {
+                alert("Order not found.");
+                }
+            });
+
+            function updateStatus() {
+            const newStatus = document.getElementById("statusSelect").value;
+
+            fetch("update_order_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `order_id=${orderId}&status=${newStatus}`
+            })
+                .then(res => res.text())
+                .then(msg => alert("Status updated."))
+                .catch(err => alert("Failed to update status."));
+            }
       </script>
     </body>
 </html>
