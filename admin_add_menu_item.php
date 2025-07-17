@@ -11,7 +11,7 @@ $image_url = $input['image_url'] ?? '';
 $price = $input['price'] ?? '';
 $description = $input['description'] ?? '';
 
-if ($name && $category && $image && $price && $description) {
+if ($name && $category && $image_url && $price && $description) {
     $stmt = $conn->prepare("INSERT INTO items (name, category, image_url, price, description) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssds", $name, $category, $image_url, $price, $description);
 
