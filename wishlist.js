@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const wishlistSection = document.getElementById("wishlistSection");
 
-  fetch('check_login.php', { credentials: 'include' })
+  fetch('check_session.php', { credentials: 'include' })
     .then(res => res.json())
     .then(data => {
       if (data.loggedIn) {
