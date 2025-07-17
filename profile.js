@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 document.getElementById("usernameDisplay").textContent = data.username;
                 editUsernameInput.value = data.username;
-                currentUserID = data.userID;
+                currentUserID = data.user_id;
 
                 document.querySelector('.edit-btn').addEventListener('click', () => {
                     openModal('editModal');
@@ -81,8 +81,8 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
     if (newUsername && currentUserID) {
         const bodyData = new URLSearchParams({
-            Username: newUsername,
-            UserID: currentUserID
+            username: newUsername,
+            user_id: currentUserID
         });
 
         fetch('edit_users.php', {

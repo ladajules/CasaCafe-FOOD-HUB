@@ -4,14 +4,14 @@ require 'db_connection.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("Raw POST: " . json_encode($_POST));
 
-    $userID = $_POST['UserID'] ?? '';
-    $newUsername = $_POST['Username'] ?? '';
+    $user_id = $_POST['user_id'] ?? '';
+    $newUsername = $_POST['username'] ?? '';
 
-    error_log("UserID: " . $userID);
-    error_log("Username: " . $newUsername);
+    error_log("user_id: " . $userID);
+    error_log("username: " . $newUsername);
 
-    if (!empty($userID) && !empty($newUsername)) {
-        $stmt = $conn->prepare("UPDATE login SET Username = ? WHERE UserID = ?");
+    if (!empty($user_id) && !empty($newUsername)) {
+        $stmt = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
         $stmt->bind_param("si", $newUsername, $userID);
 
         if ($stmt->execute()) {
