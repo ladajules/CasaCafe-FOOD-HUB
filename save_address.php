@@ -2,13 +2,13 @@
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Not logged in']);
     exit;
 }
 
-$user_id = $_SESSION['UserID'];
+$user_id = $_SESSION['user_id'];
 
 $fullName = $_POST['fullName'] ?? '';
 $addressLine = $_POST['addressLine'] ?? '';

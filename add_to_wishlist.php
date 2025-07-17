@@ -3,13 +3,13 @@ session_start();
 header('Content-Type: application/json');
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'User not logged in']);
     exit;
 }
 
-$user_id = $_SESSION['UserID'];
+$user_id = $_SESSION['user_id'];
 
 $data = json_decode(file_get_contents('php://input'), true);
 

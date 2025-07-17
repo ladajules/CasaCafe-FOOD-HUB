@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo "Not logged in.";
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $userID = $_SESSION['UserID'];
+    $userID = $_SESSION['user_id'];
     $product = strip_tags(trim($_POST['product'] ?? ''));
     $quantity = intval($_POST['quantity'] ?? 0);
     $price = floatval($_POST['price'] ?? 0);

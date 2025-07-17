@@ -3,12 +3,12 @@ header('Content-Type: application/json');
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "error" => "Not logged in"]);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $wishlist = json_decode(file_get_contents('php://input'), true)['wishlist'] ?? [];
 
 if (!is_array($wishlist)) {

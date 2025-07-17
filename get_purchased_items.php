@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit;
 }
@@ -14,7 +14,7 @@ if ($conn->connect_errno) {
     exit;
 }
 
-$user_id = $_SESSION['UserID'];
+$user_id = $_SESSION['user_id'];
 $sql = "SELECT product_name, quantity, price, img FROM purchases WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
 

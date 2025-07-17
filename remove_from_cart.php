@@ -11,12 +11,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo "User not logged in.";
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $product = strip_tags(trim($_POST['product_name'] ?? ''));
 $variant = strip_tags(trim($_POST['variant'] ?? ''));
 

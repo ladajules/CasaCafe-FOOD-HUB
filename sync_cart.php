@@ -5,12 +5,12 @@ header('Content-Type: application/json');
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'User not logged in.']);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!isset($data['cart'])) {
