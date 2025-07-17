@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = $roleRow['role'] ?? 'Customer';
 
         header("Location: login.html?success=Account+successfully+created!+Please+log+in.");
+        exit;
     } else {
         echo json_encode(['success' => false, 'error' => 'Registration failed']);
     }
