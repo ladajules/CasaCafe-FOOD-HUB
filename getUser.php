@@ -23,7 +23,6 @@ if ($stmt->execute()) {
     if ($result && $result->num_rows === 1) {
         $row = $result->fetch_assoc();
         echo json_encode([
-            "success" => true,
             "user_id" => $row['user_id'],
             "username" => $row['username']
         ]);
