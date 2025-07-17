@@ -2,40 +2,27 @@
 session_start();
 require 'db_connection.php';
 
-$debug = [];
+$user_id = $_COOKIE['user_id'] ?? null;
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode([
-        "success" => false,
-        "error" => "Guest users are not allowed to access this page"
-    ]);
-    exit();
+if (!$user_id) {
+    echo json_encode(['success' => false, 'error' => 'User not found']);
+    exit;
 }
 
-$userID = $_SESSION['user_id'];
-$debug['session'] = $_SESSION;
-
-$stmt = $conn->prepare("SELECT user_id, username FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT user_id, username, role FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
-if ($stmt->execute()) {
-    $result = $stmt->get_result();
-    if ($result && $result->num_rows === 1) {
-        $row = $result->fetch_assoc();
-        echo json_encode([
-            "success" => true,
-            "user_id" => $row['user_id'],
-            "username" => $row['username']
-        ]);
-    } else {
-        $debug['error'] = "User not found with ID $user_id";
-        echo json_encode(["success" => false, "error" => "User not found"]);
-    }
+if ($user) {
+    echo json_encode([
+        'success' => true,
+        'user_id' => $user['user_id'],
+        'username' => $user['username'],
+        'role' => $user['role']
+    ]);
 } else {
-    $debug['error'] = "Query failed: " . $stmt->error;
-    echo json_encode(["success" => false, "error" => "Query error"]);
+    echo json_encode(['success' => false, 'error' => 'User not found']);
 }
-
-$stmt->close();
-$conn->close();
 ?>
