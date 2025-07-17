@@ -15,7 +15,7 @@ if (!isset($data['item_id']) || !is_numeric($data['item_id'])) {
 
 $item_id = intval($data['item_id']);
 
-$stmt = $conn->prepare("DELETE FROM item_table WHERE item_id = ?");
+$stmt = $conn->prepare("DELETE FROM items WHERE item_id = ?");
 $stmt->bind_param("i", $item_id);
 
 if ($stmt->execute()) {

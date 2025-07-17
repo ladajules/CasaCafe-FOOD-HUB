@@ -15,7 +15,7 @@ $total = $conn->query("SELECT COUNT(DISTINCT CONCAT(user_id, '|', purchase_date)
 $total_count = $total->fetch_assoc()['total'] ?? 0;
 
 //TOTAL PRODUCTS 
-$products = $conn->query("SELECT COUNT(*) AS total FROM item_table");
+$products = $conn->query("SELECT COUNT(*) AS total FROM items");
 $products_count = $products->fetch_assoc()['total'] ?? 0;
 
 // TOTAL CUSTOMERS 

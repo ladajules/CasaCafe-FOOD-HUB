@@ -2,7 +2,7 @@
 session_start();
 require 'db_connection.php'; 
 
-$sql = "SELECT item_id, item_name, item_category, item_description, item_price, item_image FROM item_table ORDER BY item_id ASC";
+$sql = "SELECT item_id, name, category, description, price, image_url FROM items ORDER BY item_id ASC";
 $result = $conn->query($sql);
 
 $users = [];

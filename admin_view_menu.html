@@ -513,11 +513,11 @@
 
             function openEditItemModal(item) {
               document.getElementById('edit_item_id').value = item.item_id;
-              document.getElementById('edit_item_name').value = item.item_name;
-              document.getElementById('edit_item_category').value = item.item_category;
-              document.getElementById('edit_item_description').value = item.item_description;
-              document.getElementById('edit_item_price').value = item.item_price;
-              document.getElementById('edit_item_image').value = item.item_image;
+              document.getElementById('edit_item_name').value = item.name;
+              document.getElementById('edit_item_category').value = item.category;
+              document.getElementById('edit_item_description').value = item.description;
+              document.getElementById('edit_item_price').value = item.price;
+              document.getElementById('edit_item_image').value = item.image_url;
               openModal('editItemModal');
             };
 
@@ -550,11 +550,11 @@
             e.preventDefault();
             const data = {
               item_id: document.getElementById('edit_item_id').value,
-              item_name: document.getElementById('edit_item_name').value,
-              item_category: document.getElementById('edit_item_category').value,
-              item_description: document.getElementById('edit_item_description').value,
-              item_price: document.getElementById('edit_item_price').value,
-              item_image: document.getElementById('edit_item_image').value
+              name: document.getElementById('edit_item_name').value,
+              category: document.getElementById('edit_item_category').value,
+              description: document.getElementById('edit_item_description').value,
+              price: document.getElementById('edit_item_price').value,
+              image_url: document.getElementById('edit_item_image').value
             };
 
             fetch('admin_edit_menu.php', {
