@@ -7,12 +7,12 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $name = $input['name'] ?? '';
 $category = $input['category'] ?? '';
-$image = $input['image'] ?? '';
+$image_url = $input['image_url'] ?? '';
 $price = $input['price'] ?? '';
 $description = $input['description'] ?? '';
 
 if ($name && $category && $image && $price && $description) {
-    $stmt = $conn->prepare("INSERT INTO item_table (item_name, item_category, item_image, item_price, item_description) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO items (name, category, image_url, price, description) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssds", $name, $category, $image, $price, $description);
 
     if ($stmt->execute()) {

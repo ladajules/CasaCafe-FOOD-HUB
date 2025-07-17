@@ -14,11 +14,11 @@ $completed_count = $completed->fetch_assoc()['total'] ?? 0;
 $total = $conn->query("SELECT COUNT(DISTINCT CONCAT(user_id, '|', purchase_date)) AS total FROM purchases");
 $total_count = $total->fetch_assoc()['total'] ?? 0;
 
-//TOTAL PRODUCTS 
+//TOTAL PRODUCTS MAANAAAA
 $products = $conn->query("SELECT COUNT(*) AS total FROM items");
 $products_count = $products->fetch_assoc()['total'] ?? 0;
 
-// TOTAL CUSTOMERS 
+// TOTAL CUSTOMERS MANAAAA
 $customers = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'Customer'");
 $customers_count = $customers->fetch_assoc()['total'] ?? 0;
 
