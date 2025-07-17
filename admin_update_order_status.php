@@ -6,23 +6,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$user_id = $_POST['user_id'] ?? null;
-$purchase_date = $_POST['purchase_date'] ?? null;
+$order_id = $_POST['order_id'] ?? null;
 $status = $_POST['status'] ?? null;
 
-if (!$user_id || !$purchase_date || !$status) {
+if (!$order_id || !$status) {
     echo "Missing fields";
     exit;
 }
 
-if (!in_array($status, ['Pending', 'Completed'])) {
+if (!in_array($status, ['Pending', 'Paid', 'Preparing', 'Completed', 'Cancelled'])) {
     echo "Invalid status value";
     exit;
 }
 
-$sql = "UPDATE purchases SET status = ? WHERE user_id = ? AND purchase_date = ?";
+$sql = "UPDATE orders SET status = ? WHERE order_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sis", $status, $user_id, $purchase_date);
+$stmt->bind_param("si", $status, $user_id);
 
 if ($stmt->execute()) {
     echo "Status updated";

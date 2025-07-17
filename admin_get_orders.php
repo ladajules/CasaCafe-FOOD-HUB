@@ -3,18 +3,18 @@ require 'db_connection.php';
 header('Content-Type: application/json');
 
 $sql = "SELECT 
-            MIN(p.id) AS order_id,
-            p.user_id,
-            p.full_name,
-            p.phone_number,
-            p.purchase_date,
-            p.status,
-            SUM(p.price * p.quantity) AS total_amount
-        FROM purchases p
-        GROUP BY p.user_id, p.purchase_date
-        ORDER BY CASE 
-            WHEN p.status = 'Pending' THEN 0 ELSE 1 END,
-            p.purchase_date DESC";
+            o.order_id,
+            o.user_id,
+            o.address_id,
+            o.status,
+            o.created_at,
+            o.delivery_type,
+            o.payment_method,
+            SUM(oi.price * oi.quantity) AS total_amount
+        FROM orders o
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        GROUP BY o.order_id
+        ORDER BY FIELD (o.status, 'Pending', 'Paid', 'Preparing', 'Completed', 'Cancelled'), o.created_at DESC";
 
 $result = $conn->query($sql);
 $orders = [];
@@ -24,11 +24,10 @@ if ($result && $result->num_rows > 0) {
         $orders[] = [
             "order_id" => $row["order_id"],
             "user_id" => $row["user_id"],
-            "name" => $row["full_name"],
-            "phone" => $row["phone_number"],
-            "date" => $row["purchase_date"],
-            "status" => $row["status"],
-            "total" => $row["total_amount"]
+            "address_id" => $row["address_id"],
+            "total" => $row["total_amount"],
+            "date" => $row["created_at"],
+            "status" => $row["status"]
         ];
     }
     echo json_encode(["success" => true, "orders" => $orders]);

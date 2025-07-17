@@ -268,9 +268,9 @@
             <div class="section" id="customerInfo">
                 <h2>Customer & Order Info</h2>
                 <div class="row">
-                <div class="col"><span class="label">Order ID:</span> <span id="orderId"></span></div>
-                <div class="col"><span class="label">User ID:</span> <span id="userId"></span></div>
-                <div class="col"><span class="label">Purchase Date:</span> <span id="purchaseDate"></span></div>
+                <div class="col"><span class="label">Order ID:</span> <span id="order_id"></span></div>
+                <div class="col"><span class="label">User ID:</span> <span id="user_id"></span></div>
+                <div class="col"><span class="label">Date:</span> <span id="purchaseDate"></span></div>
                 </div>
                 <div class="row">
                 <div class="col"><span class="label">Full Name:</span> <span id="fullName"></span></div>
@@ -338,17 +338,16 @@
             });
 
             const params = new URLSearchParams(window.location.search);
-            const orderId = params.get("order_id");
-            const purchaseDate = params.get("purchase_date");
+            const order_id = params.get("order_id");
 
-            fetch(`admin_get_order_details.php?order_id=${orderId}&purchase_date=${purchaseDate}`)
+            fetch(`admin_get_order_details.php?order_id=${order_id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
                 const details = data.details;
 
-                document.getElementById("orderId").textContent = orderId;
-                document.getElementById("userId").textContent = details[0].user_id;
+                document.getElementById("order_id").textContent = order_id;
+                document.getElementById("user_id").textContent = details[0].user_id;
                 document.getElementById("purchaseDate").textContent = details[0].purchase_date;
                 document.getElementById("fullName").textContent = details[0].full_name;
                 document.getElementById("phoneNumber").textContent = details[0].phone_number;
@@ -386,7 +385,7 @@
             fetch("admin_update_order_status.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `user_id=${orderId}&purchase_date=${encodeURIComponent(purchaseDate)}&status=${newStatus}`
+                body: `order_id=${order_id}&status=${newStatus}`
             })
                 .then(res => res.text())
                 .then(msg => alert("Status updated."))
