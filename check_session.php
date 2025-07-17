@@ -2,6 +2,6 @@
 session_start();
 header('Content-Type: application/json');
 echo json_encode([
-    "UserID" => $_SESSION['UserID'] ?? null
+    "user_id" => $_SESSION['user_id'] ?? null
 ]);
 ?>
