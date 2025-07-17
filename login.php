@@ -17,6 +17,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
          $_SESSION['username'] = $user['username'];
          $_SESSION['role'] = $user['role']; 
 
+         setcookie("user_id", $user['user_id'], time() + 3600, "/");
+         setcookie("username", $user['username'], time() + 3600, "/");
+         setcookie("role", $user['role'], time() + 3600, "/");
+
          if ($user['role'] === 'Admin') {
             header("Location: admin_dashboard.html");
          } else {

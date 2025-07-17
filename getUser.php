@@ -16,7 +16,7 @@ $userID = $_SESSION['user_id'];
 $debug['session'] = $_SESSION;
 
 $stmt = $conn->prepare("SELECT user_id, username FROM users WHERE user_id = ?");
-$stmt->bind_param("i", $userID);
+$stmt->bind_param("i", $user_id);
 
 if ($stmt->execute()) {
     $result = $stmt->get_result();
@@ -28,7 +28,7 @@ if ($stmt->execute()) {
             "username" => $row['username']
         ]);
     } else {
-        $debug['error'] = "User not found with ID $userID";
+        $debug['error'] = "User not found with ID $user_id";
         echo json_encode(["success" => false, "error" => "User not found"]);
     }
 } else {
