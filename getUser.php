@@ -1,28 +1,25 @@
 <?php
 session_start();
+header('Content-Type: application/json');
 require 'db_connection.php';
 
-$user_id = $_COOKIE['user_id'] ?? null;
-
-if (!$user_id) {
-    echo json_encode(['success' => false, 'error' => 'User not found']);
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['username' => 'Guest']);
     exit;
 }
 
-$stmt = $conn->prepare("SELECT user_id, username, role FROM users WHERE user_id = ?");
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT username FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$user = $result->fetch_assoc();
 
-if ($user) {
-    echo json_encode([
-        'success' => true,
-        'user_id' => $user['user_id'],
-        'username' => $user['username'],
-        'role' => $user['role']
-    ]);
-} else {
-    echo json_encode(['success' => false, 'error' => 'User not found']);
+$username = "Guest";
+if ($row = $result->fetch_assoc()) {
+    $username = htmlspecialchars($row['username']);
 }
+
+echo json_encode(['username' => $username]);
+
 ?>
