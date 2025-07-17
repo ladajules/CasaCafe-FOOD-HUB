@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     try {
-        // Connect to database
         $pdo = new PDO(
             "mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8",
             "s24100966_LadaMart",
@@ -28,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Fetch product list from API
         $apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/menu_api.php';
         $apiData = file_get_contents($apiUrl);
         $productList = json_decode($apiData, true);
@@ -44,12 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        // If exact match found, update product name
         if ($exactTitle !== '') {
             $product = $exactTitle;
         }
 
-        // Check if product already exists in cart
             $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_name = ? AND variant = ?");
             $stmt->execute([$userID, $product, $variant]);
 

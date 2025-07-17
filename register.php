@@ -23,14 +23,14 @@ try {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM login WHERE Username = :username");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->execute([':username' => $username]);
 
     if ($stmt->fetch()) {
         header("Location: register.html?error=Username+already+taken");
     } else {
         $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
-        $insert = $pdo->prepare("INSERT INTO login (Username, Password) VALUES (:username, :password)");
+        $insert = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
         $insert->execute([':username' => $username, ':password' => $hashedPassword]);
 
         $_SESSION['registered'] = true;
