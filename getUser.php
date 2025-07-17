@@ -4,7 +4,7 @@ session_start();
 
 $debug = [];
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode([
         "success" => false,
         "error" => "Guest users are not allowed to access this page"
@@ -12,11 +12,11 @@ if (!isset($_SESSION['UserID'])) {
     exit();
 }
 
-$userID = $_SESSION['UserID'];
+$userID = $_SESSION['user_id'];
 $debug['session'] = $_SESSION;
 
-$stmt = $conn->prepare("SELECT UserID, Username FROM login WHERE UserID = ?");
-$stmt->bind_param("i", $userID);
+$stmt = $conn->prepare("SELECT user_id, username FROM users WHERE user_id = ?");
+$stmt->bind_param("i", $user_id);
 
 if ($stmt->execute()) {
     $result = $stmt->get_result();
@@ -24,11 +24,11 @@ if ($stmt->execute()) {
         $row = $result->fetch_assoc();
         echo json_encode([
             "success" => true,
-            "userID" => $row['UserID'],
-            "username" => $row['Username']
+            "user_id" => $row['user_id'],
+            "username" => $row['username']
         ]);
     } else {
-        $debug['error'] = "User not found with ID $userID";
+        $debug['error'] = "User not found with ID $user_id";
         echo json_encode(["success" => false, "error" => "User not found"]);
     }
 } else {
