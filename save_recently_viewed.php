@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not logged in']);
     exit;
 }
@@ -15,7 +15,7 @@ if ($product_id <= 0) {
     exit;
 }
 
-$user_id = $_SESSION['UserID'];
+$user_id = $_SESSION['user_id'];
 
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");

@@ -14,12 +14,12 @@ if ($conn->connect_error) {
     exit;
 }
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "error" => "User not logged in"]);
     exit;
 }
 
-$user_id = $_SESSION['UserID'];
+$user_id = $_SESSION['user_id'];
 
 
 $data = json_decode(file_get_contents("php://input"), true);

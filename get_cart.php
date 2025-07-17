@@ -3,12 +3,12 @@ header('Content-Type: application/json');
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["error" => "User not logged in."]);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("SELECT product_name, price, quantity, img, variant FROM cart WHERE user_id = ?");
 if (!$stmt) {

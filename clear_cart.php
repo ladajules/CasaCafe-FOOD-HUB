@@ -2,12 +2,12 @@
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo "User not logged in.";
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
 $stmt->bind_param("i", $userId);

@@ -15,12 +15,12 @@ if ($conn->connect_error) {
     exit;
 }
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "message" => "User not logged in."]);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $title = strip_tags(trim($_POST['title'] ?? ''));
 
 if (!$title) {

@@ -3,12 +3,12 @@ header('Content-Type: application/json');
 session_start();
 require 'db_connection.php';
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode([]);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $stmt = $conn->prepare("SELECT title, price, img FROM wishlist WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();

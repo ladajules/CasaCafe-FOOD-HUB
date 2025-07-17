@@ -4,12 +4,12 @@ require 'db_connection.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['UserID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "message" => "User not logged in."]);
     exit;
 }
 
-$userId = $_SESSION['UserID'];
+$userId = $_SESSION['user_id'];
 $product = strip_tags(trim($_POST['product_name'] ?? ''));
 $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 0;
 
