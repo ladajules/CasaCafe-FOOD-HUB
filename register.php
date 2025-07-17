@@ -12,9 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $check = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
-    $check->execute("s", $username);
+    $check->bind_param("s", $username);
+    $check->execute();
+    $result = $check->get_result();
 
-    if ($check->fetch()) {
+    if ($result->fetch_assoc()) {
         header("Location: register.html?error=Username+already+taken");
         exit;
     }
@@ -22,13 +24,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed = password_hash($password, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $success = $stmt->execute("ss", $username, $hashed);
+    $stmt->bind_param("ss", $username, $hashed);
+    $success = $stmt->execute();
 
     if ($success) {
-        $newUserId = $conn->lastInsertId();
+        $newUserId = $conn->insert_id;
 
-        $fetchRole = $conn->prepare("SELECT role FROM users WHERE user_id = ?");
-        $fetchRole->execute("i", $newUserId);
+        $roleStmt = $conn->prepare("SELECT role FROM users WHERE user_id = ?");
+        $roleStmt->bind_param("i", $newUserId);
+        $roleStmt->execute();
+        $roleResult = $roleStmt->get_result();
+        $roleRow = $roleResult->fetch_assoc();
 
         $_SESSION['user_id'] = $newUserId;
         $_SESSION['username'] = $username;

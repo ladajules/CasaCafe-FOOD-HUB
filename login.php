@@ -7,7 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
      $password = $_POST['password'] ?? '';
 
      $stmt = $conn->prepare("SELECT user_id, username, password, role FROM users WHERE username = ?");
-     $stmt->execute("s", $username);
+     $stmt->bind_param("s", $username);
+     $stmt->execute();
      $result = $stmt->get_result();
      $user = $result->fetch_assoc();
 
@@ -16,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
          $_SESSION['username'] = $user['username'];
          $_SESSION['role'] = $user['role']; 
 
-         if ($_SESSION['role'] === 'Admin') {
+         if ($user['role'] === 'Admin') {
             header("Location: admin_dashboard.html");
          } else {
             header("Location: index copy.html");
