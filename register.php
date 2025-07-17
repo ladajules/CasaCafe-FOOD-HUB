@@ -1,43 +1,46 @@
 <?php
 session_start();
+require 'db_connection.php';
 
-$host = "localhost";
-$dbname = "s24100966_LadaMart";
-$user = "s24100966_LadaMart";
-$password = "ciscocisco";
-
-try {
-    $$host = "localhost";
-    $dbname = "s24100966_LadaMart";       
-    $user = "s24100966_LadaMart";      
-    $password = "ciscocisco";     
-
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
-    $plainPassword = $_POST['password'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    if (!$username || !$plainPassword) {
+    if (!$username || !$password) {
         header("Location: register.html?error=Please+fill+in+both+fields");
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
-    $stmt->execute([':username' => $username]);
+    $check = $conn->prepare("SELECT user_id FROM users WHERE username = :username");
+    $check->execute([':username' => $username]);
 
-    if ($stmt->fetch()) {
+    if ($check->fetch()) {
         header("Location: register.html?error=Username+already+taken");
-    } else {
-        $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
-        $insert = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-        $insert->execute([':username' => $username, ':password' => $hashedPassword]);
-
-        $_SESSION['registered'] = true;
-        header("Location: login.html");
         exit;
     }
 
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    $hashed = password_hash($password, PASSWORD_DEFAULT);
+    
+    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
+    $success = $stmt->execute([
+        ':username' => $username,
+        ':password' => $hashed
+    ]);
+
+    if ($success) {
+        $newUserId = $conn->lastInsertId();
+
+        $fetchRole = $conn->prepare("SELECT role FROM users WHERE user_id = :user_id");
+        $fetchRole->execute([':user_id' => $newUserId]);
+        $roleRow = $fetchRole->fetch(PDO::FETCH_ASSOC);
+
+        $_SESSION['user_id'] = $newUserId;
+        $_SESSION['username'] = $username;
+        $_SESSION['role'] = $roleRow['role'] ?? 'Customer';
+
+        echo json_encode(['success' => true, 'role' => $_SESSION['role']]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Registration failed']);
+    }
 }
+?>

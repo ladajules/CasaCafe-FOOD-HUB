@@ -1,15 +1,12 @@
 <?php
 session_start();
+require 'db_connection.php';
 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-     $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart;charset=utf8", "s24100966_LadaMart", "ciscocisco");
-     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
      $username = $_POST['username'] ?? '';
      $password = $_POST['password'] ?? '';
 
-     $stmt = $pdo->prepare("SELECT user_id, password, role FROM users WHERE username = :username");
+     $stmt = $conn->prepare("SELECT user_id, username, password, role FROM users WHERE username = :username");
      $stmt->execute([':username' => $username]);
      $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
