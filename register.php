@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $roleRow['role'] ?? 'Customer';
 
-        echo json_encode(['success' => true, 'role' => $_SESSION['role']]);
+        header("Location: login.html");
     } else {
         echo json_encode(['success' => false, 'error' => 'Registration failed']);
     }
