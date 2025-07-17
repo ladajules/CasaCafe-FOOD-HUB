@@ -19,7 +19,7 @@ $products = $conn->query("SELECT COUNT(*) AS total FROM item_table");
 $products_count = $products->fetch_assoc()['total'] ?? 0;
 
 // TOTAL CUSTOMERS 
-$customers = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'User'");
+$customers = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'Customer'");
 $customers_count = $customers->fetch_assoc()['total'] ?? 0;
 
 echo json_encode([
