@@ -6,9 +6,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
      $username = $_POST['username'] ?? '';
      $password = $_POST['password'] ?? '';
 
-     $stmt = $conn->prepare("SELECT user_id, username, password, role FROM users WHERE username = :username");
-     $stmt->execute([':username' => $username]);
-     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+     $stmt = $conn->prepare("SELECT user_id, username, password, role FROM users WHERE username = ?");
+     $stmt->execute("s", $username);
+     $result = $stmt->get_result();
+     $user = $result->fetch_assoc();
 
      if ($user && password_verify($password, $user['password'])) {
          $_SESSION['user_id'] = $user['user_id'];

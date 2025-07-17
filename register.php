@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $check = $conn->prepare("SELECT user_id FROM users WHERE username = :username");
-    $check->execute([':username' => $username]);
+    $check = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+    $check->execute("s", $username);
 
     if ($check->fetch()) {
         header("Location: register.html?error=Username+already+taken");
@@ -20,19 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $hashed = password_hash($password, PASSWORD_DEFAULT);
-    
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-    $success = $stmt->execute([
-        ':username' => $username,
-        ':password' => $hashed
-    ]);
+
+    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+    $success = $stmt->execute("ss", $username, $hashed);
 
     if ($success) {
         $newUserId = $conn->lastInsertId();
 
-        $fetchRole = $conn->prepare("SELECT role FROM users WHERE user_id = :user_id");
-        $fetchRole->execute([':user_id' => $newUserId]);
-        $roleRow = $fetchRole->fetch(PDO::FETCH_ASSOC);
+        $fetchRole = $conn->prepare("SELECT role FROM users WHERE user_id = ?");
+        $fetchRole->execute("i", $newUserId);
 
         $_SESSION['user_id'] = $newUserId;
         $_SESSION['username'] = $username;
