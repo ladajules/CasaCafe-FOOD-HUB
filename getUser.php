@@ -1,6 +1,6 @@
 <?php
-require 'db_connection.php';
 session_start();
+require 'db_connection.php';
 
 $debug = [];
 
