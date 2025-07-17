@@ -310,38 +310,38 @@
 
     <script>
     const toggle = document.getElementById("dropdownToggle");
-  const menu = document.getElementById("dropdownMenu");
-  const arrow = document.getElementById("dropdownArrow");
+    const menu = document.getElementById("dropdownMenu");
+    const arrow = document.getElementById("dropdownArrow");
 
-  toggle.addEventListener("click", () => {
-    const isVisible = menu.style.display === "block";
-    menu.style.display = isVisible ? "none" : "block";
-    toggle.classList.toggle("open", !isVisible);
-  });
-
-  window.addEventListener("click", (e) => {
-    if (!document.getElementById("profileDropdown").contains(e.target)) {
-      menu.style.display = "none";
-      toggle.classList.remove("open");
-    }
-  });
-
-    document.querySelector('.menu-toggle').addEventListener('click', () => {
-        const submenu = document.querySelector('.submenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    toggle.addEventListener("click", () => {
+      const isVisible = menu.style.display === "block";
+      menu.style.display = isVisible ? "none" : "block";
+      toggle.classList.toggle("open", !isVisible);
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('admin_get_dashboard_stats.php')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('pendingCount').textContent = data.pending_orders;
-          document.getElementById('completedCount').textContent = data.completed_orders;
-          document.getElementById('totalOrdersCount').textContent = data.total_orders;
-          document.getElementById('productsCount').textContent = data.total_products;
-          document.getElementById('customersCount').textContent = data.total_customers;
-        });
+    window.addEventListener("click", (e) => {
+      if (!document.getElementById("profileDropdown").contains(e.target)) {
+        menu.style.display = "none";
+        toggle.classList.remove("open");
+      }
     });
+
+      document.querySelector('.menu-toggle').addEventListener('click', () => {
+          const submenu = document.querySelector('.submenu');
+          submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        fetch('admin_get_dashboard_stats.php')
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById('pendingCount').textContent = data.pending_orders;
+            document.getElementById('completedCount').textContent = data.completed_orders;
+            document.getElementById('totalOrdersCount').textContent = data.total_orders;
+            document.getElementById('productsCount').textContent = data.total_products;
+            document.getElementById('customersCount').textContent = data.total_customers;
+          });
+      });
     </script>
 </body>
 </html>

@@ -361,10 +361,10 @@
     users.forEach(user => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${user.UserID}</td>
-        <td style="text-transform: none;">${user.Username}</td>
+        <td>${user.user_id}</td>
+        <td style="text-transform: none;">${user.username}</td>
         <td>
-          <button class="delete-btn" data-id="${user.UserID}"><i class="fas fa-trash"></i></button>
+          <button class="delete-btn" data-id="${user.user_id}"><i class="fas fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -416,7 +416,7 @@
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-          body: `UserID=${selectedUserId}&Username=${encodeURIComponent(newUsername)}`
+          body: `user_id=${selectedUserId}&username=${encodeURIComponent(newUsername)}`
         })
         .then(res => res.json())
         .then(data => {
@@ -437,7 +437,7 @@
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-          body: `UserID=${selectedUserId}`
+          body: `user_id=${selectedUserId}`
         })
         .then(res => res.json())
         .then(data => {

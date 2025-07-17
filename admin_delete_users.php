@@ -2,11 +2,11 @@
 require 'db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userID = $_POST['UserID'] ?? '';
+    $user_id = $_POST['user_id'] ?? '';
 
-    if (!empty($userID)) {
-        $stmt = $conn->prepare("DELETE FROM login WHERE UserID = ?");
-        $stmt->bind_param("i", $userID);
+    if (!empty($user_id)) {
+        $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true]);
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt->close();
     } else {
-        echo json_encode(["success" => false, "error" => "Missing UserID"]);
+        echo json_encode(["success" => false, "error" => "Missing User ID"]);
     }
 } else {
     echo json_encode(["success" => false, "error" => "Invalid request"]);
