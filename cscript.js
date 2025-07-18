@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
           wishlist.push(product);
           localStorage.setItem('wishlist', JSON.stringify(wishlist));
           showPopup(`${product.title} has been added to your Favorites.`);
-          addToWishlist(product.title, product.price, product.img);
+          addToFavorites(item_id, product.title, variantText);
         } else {
           showPopup('Already in Favorites.');
         }
@@ -220,26 +220,28 @@ document.addEventListener('DOMContentLoaded', function () {
       : '';
   }
 
-  function addToWishlist(title, price, img, variant = '') {
-    fetch('add_to_wishlist.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ product: { title, price: Number(price), img, variant } })
+ function addToFavorites(item_id, title = '', variant = '') {
+  fetch('add_to_favorites.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    credentials: 'include',
+    body: new URLSearchParams({ item_id })
+  })
+    .then(response => response.text())
+    .then(msg => {
+      if (msg.includes("successfully")) {
+        showPopup(`${title} (${variant || 'Default'}) added to Favorites`);
+      } else if (msg.includes("already")) {
+        showPopup(`${title} is already in your Favorites.`);
+      } else {
+        showPopup(`Failed to add to Favorites: ${msg}`);
+      }
     })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.success) {
-          showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
-        } else {
-          showPopup(`${title} (${variant || 'Default'}) added to Favorites ✔`);
-        }
-      })
-      .catch(error => {
-        console.error('Error adding to Favorites:', error);
-        showPopup('Failed to add to Favorites.');
-      });
-  }
+    .catch(error => {
+      console.error('Error adding to Favorites:', error);
+      showPopup('Failed to add to Favorites.');
+    });
+}
 
 
   // Unified filtering (search + category + sort)
