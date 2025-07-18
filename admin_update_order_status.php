@@ -7,14 +7,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $order_id = $_POST['order_id'] ?? null;
-$status = $_POST['status'] ?? null;
+$status = $_POST['newStatus'] ?? null;
 
 if (!$order_id || !$status) {
     echo "Missing fields";
     exit;
 }
 
-if (!in_array($status, ['Pending', 'Paid', 'Preparing', 'Completed', 'Cancelled'])) {
+if (!in_array($status, ['Pending', 'Preparing', 'Completed'])) {
     echo "Invalid status value";
     exit;
 }

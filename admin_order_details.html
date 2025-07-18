@@ -303,7 +303,6 @@
                 <h2>Update Order Status</h2>
                 <select id="statusSelect" class="status-select">
                 <option value="Pending">Pending</option>
-                <option value="Pending">Paid</option>
                 <option value="Pending">Preparing</option>
                 <option value="Completed">Completed</option>
                 </select>
@@ -382,16 +381,16 @@
             });
 
             function updateStatus() {
-            const newStatus = document.getElementById("statusSelect").value;
+              const newStatus = document.getElementById("statusSelect").value;
 
-            fetch("admin_update_order_status.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `order_id=${order_id}&status=${newStatus}`
-            })
-                .then(res => res.text())
-                .then(msg => alert("Status updated."))
-                .catch(err => alert("Failed to update status."));
+              fetch("admin_update_order_status.php", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                  body: `order_id=${order_id}&status=${newStatus}`
+              })
+                  .then(res => res.text())
+                  .then(msg => alert("Status updated."))
+                  .catch(err => alert("Failed to update status."));
             }
       </script>
     </body>
