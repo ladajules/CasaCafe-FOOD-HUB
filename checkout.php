@@ -1,12 +1,10 @@
 <?php
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 header("Content-Type: application/json");
 
 session_start();
-
 require 'db_connection.php';
 
 if ($conn->connect_error) {
@@ -20,97 +18,88 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-
-
 $data = json_decode(file_get_contents("php://input"), true);
 
-$deliveryType = $data['deliveryType'] ?? 'Delivery'; 
-$paymentMethod = $data['paymentMethod'] ?? 'Cash on Delivery';
-
-
-if (!$data || !isset($data['cart'], $data['user_address'])) {
-    echo json_encode(["success" => false, "error" => "Invalid JSON or missing fields"]);
+if (!$data || !isset($data['cart']) || (!isset($data['address_id']) && !isset($data['user_address']))) {
+    echo json_encode(["success" => false, "error" => "Missing cart or address ID"]);
     exit;
 }
 
 $cart = $data['cart'];
-$address = $data['user_address'];
-
-$required = ['fullName', 'addressLine', 'city', 'postalCode', 'phoneNumber'];
-foreach ($required as $field) {
-    if (empty($address[$field])) {
-        echo json_encode(["success" => false, "error" => "Missing address field: $field"]);
-        exit;
-    }
-}
-
+$deliveryType = $data['deliveryType'] ?? 'Delivery';
+$paymentMethod = $data['paymentMethod'] ?? 'Cash on Delivery';
+$address_id = 0;
 
 $conn->begin_transaction();
 
 try {
-    $stmt = $conn->prepare("INSERT INTO purchases 
-    (user_id, product_name, quantity, price, img, full_name, address_line, city, postal_code, phone_number, delivery_type, payment_method, purchase_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    // New address
+    if (isset($data['user_address'])) {
+        $addr = $data['user_address'];
+        $required = ['fullName', 'addressLine', 'city', 'postalCode', 'phoneNumber'];
+        foreach ($required as $field) {
+            if (empty($addr[$field])) {
+                echo json_encode(["success" => false, "error" => "Missing address field: $field"]);
+                exit;
+            }
+        }
 
+        // Validate and clean phone number
+        $cleanNumber = str_replace(' ', '', $addr['phoneNumber']);
+        if (!preg_match('/^09\d{9}$/', $cleanNumber)) {
+            echo json_encode(["success" => false, "error" => "Phone number must start with 09 and be 11 digits (spaces ignored)"]);
+            exit;
+        }
 
-    foreach ($cart as $item) {
+        $stmt = $conn->prepare("INSERT INTO user_addresses (user_id, full_name, address_line, city, postal_code, phone_number) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param(
-            "isidssssssss",
+            "isssss",
             $user_id,
-            $item['product_name'],
-            $item['quantity'],
-            $item['price'],
-            $item['img'],
-            $address['fullName'],
-            $address['addressLine'],
-            $address['city'],
-            $address['postalCode'],
-            $address['phoneNumber'],
-            $deliveryType,
-            $paymentMethod
+            $addr['fullName'],
+            $addr['addressLine'],
+            $addr['city'],
+            $addr['postalCode'],
+            $cleanNumber
         );
 
-
         if (!$stmt->execute()) {
-            throw new Exception("Failed to insert purchase: " . $stmt->error);
+            throw new Exception("Failed to save address: " . $stmt->error);
         }
+
+        $address_id = $stmt->insert_id;
+        $stmt->close();
+    } else {
+        $address_id = (int)$data['address_id'];
+        if ($address_id <= 0) {
+            echo json_encode(["success" => false, "error" => "Invalid address ID"]);
+            exit;
+        }
+    }
+
+    // Compute total
+    $totalPrice = 0;
+    foreach ($cart as $item) {
+        $totalPrice += $item['price'] * $item['quantity'];
+    }
+
+    // Insert into orders
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, address_id, total_price, status, delivery_type, payment_method, created_at) VALUES (?, ?, ?, 'Pending', ?, ?, NOW())");
+    $stmt->bind_param("iisss", $user_id, $address_id, $totalPrice, $deliveryType, $paymentMethod);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to insert order: " . $stmt->error);
+    }
+    $order_id = $stmt->insert_id;
+    $stmt->close();
+
+    // Clear cart
+    $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to clear cart: " . $stmt->error);
     }
     $stmt->close();
 
-    // Save address if requested
-    if (!empty($address['saveAddress'])) {
-        $stmt2 = $conn->prepare("INSERT INTO user_addresses 
-            (user_id, full_name, address_line, city, postal_code, phone_number)
-            VALUES (?, ?, ?, ?, ?, ?)");
-
-        $stmt2->bind_param(
-            "isssss",
-            $user_id,
-            $address['fullName'],
-            $address['addressLine'],
-            $address['city'],
-            $address['postalCode'],
-            $address['phoneNumber']
-        );
-
-        if (!$stmt2->execute()) {
-            throw new Exception("Failed to save address: " . $stmt2->error);
-        }
-
-        $stmt2->close();
-    }
-
-    // Clear the user's cart
-    $stmt3 = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
-    $stmt3->bind_param("i", $user_id);
-
-    if (!$stmt3->execute()) {
-        throw new Exception("Failed to clear cart: " . $stmt3->error);
-    }
-    $stmt3->close();
-
     $conn->commit();
-
     echo json_encode(["success" => true, "message" => "Checkout successful"]);
 
 } catch (Exception $e) {
@@ -119,5 +108,3 @@ try {
 }
 
 $conn->close();
-
-?>

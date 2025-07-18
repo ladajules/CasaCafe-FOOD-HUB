@@ -119,19 +119,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    cart: cartForCheckout,
-                    deliveryType,
-                    paymentMethod,
-                    user_address: {
-                        fullName,
-                        addressLine,
-                        city,
-                        postalCode,
-                        phoneNumber,
-                        saveAddress
-                    }
-                })
+                body: JSON.stringify(
+                    savedAddressesSelect && savedAddressesSelect.value
+                        ? {
+                            cart: cartForCheckout,
+                            deliveryType,
+                            paymentMethod,
+                            address_id: parseInt(savedAddressesSelect.value)
+                        }
+                        : {
+                            cart: cartForCheckout,
+                            deliveryType,
+                            paymentMethod,
+                            user_address: {
+                                fullName,
+                                addressLine,
+                                city,
+                                postalCode,
+                                phoneNumber,
+                                saveAddress
+                            }
+                        }
+                )
+
             })
                 .then(res => res.text())
                 .then(text => {
@@ -230,7 +240,7 @@ function renderCart() {
                 quantity.value = product.quantity || 1;
                 quantity.classList = "qty-input";
 
-                
+
                 quantity.addEventListener("change", (e) => {
                     const newQty = parseInt(e.target.value);
                     if (newQty < 1) {
