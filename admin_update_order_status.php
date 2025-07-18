@@ -21,7 +21,7 @@ if (!in_array($status, ['Pending', 'Paid', 'Preparing', 'Completed', 'Cancelled'
 
 $sql = "UPDATE orders SET status = ? WHERE order_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("si", $status, $user_id);
+$stmt->bind_param("si", $status, $order_id);
 
 if ($stmt->execute()) {
     echo "Status updated";
