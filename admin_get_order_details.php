@@ -46,7 +46,7 @@ if ($result && $result->num_rows > 0) {
             "payment_method" => $row["payment_method"]
         ];
     }
-    echo json_encode(["success" => true, "orders" => $orders]);
+    echo json_encode(["success" => true, "orders" => $order_details]);
 } else {
     echo json_encode(["success" => false, "orders" => []]);
 }
