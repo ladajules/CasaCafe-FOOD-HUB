@@ -9,7 +9,22 @@ if (!isset($_GET['order_id'])) {
 
 $order_id = intval($_GET['order_id']); 
 
-$sql = "SELECT * FROM orders WHERE order_id = ?";
+$sql = "SELECT 
+            o.order_id,
+            o.user_id,
+            ua.full_name,
+            ua.phone_number,
+            ua.address_line,
+            ua.city,
+            ua.postal_code,
+            o.status,
+            o.created_at,
+            o.delivery_type,
+            o.payment_method,
+            SUM(oi.price * oi.quantity) AS total_amount
+        FROM orders o
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        LEFT JOIN user_addresses ua ON o.address_id = ua.address_id";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $order_id);
 

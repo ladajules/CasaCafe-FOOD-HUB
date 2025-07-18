@@ -270,7 +270,7 @@
                 <div class="row">
                 <div class="col"><span class="label">Order ID:</span> <span id="order_id"></span></div>
                 <div class="col"><span class="label">User ID:</span> <span id="user_id"></span></div>
-                <div class="col"><span class="label">Date:</span> <span id="purchaseDate"></span></div>
+                <div class="col"><span class="label">Date:</span> <span id="date"></span></div>
                 </div>
                 <div class="row">
                 <div class="col"><span class="label">Full Name:</span> <span id="fullName"></span></div>
@@ -348,7 +348,7 @@
 
                 document.getElementById("order_id").textContent = order_id;
                 document.getElementById("user_id").textContent = details[0].user_id;
-                document.getElementById("purchaseDate").textContent = details[0].purchase_date;
+                document.getElementById("date").textContent = details[0].created_at;
                 document.getElementById("fullName").textContent = details[0].full_name;
                 document.getElementById("phoneNumber").textContent = details[0].phone_number;
                 document.getElementById("deliveryType").textContent = details[0].delivery_type;
