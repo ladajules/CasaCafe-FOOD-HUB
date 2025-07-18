@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $order_id = $_POST['order_id'] ?? null;
-$status = $_POST['newStatus'] ?? null;
+$status = $_POST['status'] ?? null;
 
 if (!$order_id || !$status) {
     echo "Missing fields";
