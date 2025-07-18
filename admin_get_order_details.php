@@ -24,9 +24,13 @@ $sql = "SELECT
             SUM(oi.price * oi.quantity) AS total_amount
         FROM orders o
         LEFT JOIN order_items oi ON o.order_id = oi.order_id
-        LEFT JOIN user_addresses ua ON o.address_id = ua.address_id";
+        LEFT JOIN user_addresses ua ON o.address_id = ua.address_id
+        WHERE order_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $order_id);
 
-$result = $conn->query($sql);
+$stmt->execute();
+$result = $stmt->get_result();
 $order_details = [];
 
 if ($result && $result->num_rows > 0) {
