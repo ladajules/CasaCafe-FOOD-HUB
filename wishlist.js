@@ -77,14 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
       addBtn.className = "cartBtn";
       addBtn.addEventListener("click", () => {
         addBtn.disabled = true;
-        addToCart(product.title, 1, product.price, product.variant || '')
+        addToCart(product)
           .then(() => {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (!cart.some(i => i.title === product.title)) {
               cart.push({ title: product.title, price: product.price, img: product.img });
               localStorage.setItem("cart", JSON.stringify(cart));
             }
-            showPopup(`${product.title} added to cart ✔`);
+            showPopup(`${product.title} added to cart`);
           })
           .catch(err => {
             console.error(err);
@@ -129,23 +129,29 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 3000);
     }
   }
-  function addToCart(product, quantity, price, variant = '') {
-    return fetch('add_to_cart.php', {   // <-- Add 'return' here
+
+  function addToCart(product) {
+    return fetch('add_to_cart.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       credentials: 'include',
       body: new URLSearchParams({
-        product,
-        quantity,
-        price,
-        variant
+        item_id: product.item_id,
+        quantity: 1,
+        variant_id: product.variant_id ?? ''
       })
     })
       .then(response => response.text())
       .then(text => {
-        if (!text.includes('successfully')) {
-          throw new Error(text);
+        if (text.includes('successfully')) {
+          showPopup(`${product.title} ${product.variant || ''} added to cart`);
+        } else {
+          showPopup(`Failed to add to cart: ${text}`);
         }
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        showPopup('Error adding to cart.');
       });
   }
 

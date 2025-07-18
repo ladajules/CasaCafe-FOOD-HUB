@@ -173,26 +173,30 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error adding to cart:', error);
             showPopup('Error adding to cart.');
           });
-
       });
 
       wishlistBtn.addEventListener('click', () => {
+        const selectedVariantText = getSelectedText(variantSelect); // grab variant
         const product = {
+          item_id: item.item_id,
           title: item.item_name,
           price: item.item_price,
-          img: item.item_image || 'fallback.png'
+          img: item.item_image || 'fallback.png',
+          variantText: selectedVariantText
         };
+
         let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         const exists = wishlist.some(p => p.title === product.title);
         if (!exists) {
           wishlist.push(product);
           localStorage.setItem('wishlist', JSON.stringify(wishlist));
           showPopup(`${product.title} has been added to your Favorites.`);
-          addToFavorites(item_id, product.title, variantText);
+          addToFavorites(product.item_id, product.title, product.variantText); // ✅ use proper values
         } else {
           showPopup('Already in Favorites.');
         }
       });
+
 
       buttonContainer.appendChild(cartBtn);
       buttonContainer.appendChild(wishlistBtn);
@@ -220,28 +224,28 @@ document.addEventListener('DOMContentLoaded', function () {
       : '';
   }
 
- function addToFavorites(item_id, title = '', variant = '') {
-  fetch('add_to_favorites.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    credentials: 'include',
-    body: new URLSearchParams({ item_id })
-  })
-    .then(response => response.text())
-    .then(msg => {
-      if (msg.includes("successfully")) {
-        showPopup(`${title} (${variant || 'Default'}) added to Favorites`);
-      } else if (msg.includes("already")) {
-        showPopup(`${title} is already in your Favorites.`);
-      } else {
-        showPopup(`Failed to add to Favorites: ${msg}`);
-      }
+  function addToFavorites(item_id, title = '', variant = '') {
+    fetch('add_to_favorites.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      credentials: 'include',
+      body: new URLSearchParams({ item_id })
     })
-    .catch(error => {
-      console.error('Error adding to Favorites:', error);
-      showPopup('Failed to add to Favorites.');
-    });
-}
+      .then(response => response.text())
+      .then(msg => {
+        if (msg.includes("successfully")) {
+          showPopup(`${title} (${variant || 'Default'}) added to Favorites`);
+        } else if (msg.includes("already")) {
+          showPopup(`${title} is already in your Favorites.`);
+        } else {
+          showPopup(`Failed to add to Favorites: ${msg}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding to Favorites:', error);
+        showPopup('Failed to add to Favorites.');
+      });
+  }
 
 
   // Unified filtering (search + category + sort)
