@@ -26,7 +26,8 @@ if ($result && $result->num_rows > 0) {
         $orders[] = [
             "order_id" => $row["order_id"],
             "user_id" => $row["user_id"],
-            "address_id" => $row["address_id"],
+            "full_name" => $row["full_name"],
+            "phone_number" => $row["phone_number"],
             "total" => $row["total_amount"],
             "date" => $row["created_at"],
             "status" => $row["status"]
