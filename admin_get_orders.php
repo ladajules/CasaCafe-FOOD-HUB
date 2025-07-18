@@ -5,7 +5,8 @@ header('Content-Type: application/json');
 $sql = "SELECT 
             o.order_id,
             o.user_id,
-            o.address_id,
+            ua.full_name,
+            ua.phone_number,
             o.status,
             o.created_at,
             o.delivery_type,
@@ -13,6 +14,7 @@ $sql = "SELECT
             SUM(oi.price * oi.quantity) AS total_amount
         FROM orders o
         LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        JOIN user_addresses ua ON o.address_id = ua.address_id
         GROUP BY o.order_id
         ORDER BY FIELD (o.status, 'Pending', 'Paid', 'Preparing', 'Completed', 'Cancelled'), o.created_at DESC";
 
