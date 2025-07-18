@@ -1,4 +1,5 @@
-let pendingGcash = false;
+
+let savedAddresses = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     const cartSection = document.getElementById("cartSection");
@@ -11,22 +12,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const thankYouMessage = document.getElementById("thankYouMessage");
     const popup = document.getElementById("popupNotification");
     const popupMessage = document.getElementById("popupMessage");
+    const deliveryInputs = document.querySelectorAll('input[name="deliveryType"]');
+    const addressLineContainer = document.getElementById("addressLineContainer");
+    const addressLineInput = document.getElementById("addressLine");
+    let pendingGcash = false;
+    let checkoutPayload = null;
+
+    function updateAddressLineVisibility() {
+        const selectedDeliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+        if (selectedDeliveryType === "Pickup") {
+            addressLineContainer.style.display = "none";
+            addressLineInput.required = false;
+        } else {
+            addressLineContainer.style.display = "block";
+            addressLineInput.required = true;
+        }
+    }
+
+    updateAddressLineVisibility();
+
+    deliveryInputs.forEach(input => {
+        input.addEventListener("change", updateAddressLineVisibility);
+    });
 
     if (thankYouMessage) thankYouMessage.classList.remove("show");
 
-    function showPopup(message, autoClose = true) {
+    function showPopup(message) {
         const popup = document.getElementById("popupNotification");
         const popupMessage = document.getElementById("popupMessage");
 
         if (popup && popupMessage) {
             popupMessage.innerHTML = message;
             popup.style.display = "block";
-
-            if (autoClose) {
-                setTimeout(() => {
-                    popup.style.display = "none";
-                }, 7000);
-            }
         }
     }
 
@@ -37,37 +54,166 @@ document.addEventListener("DOMContentLoaded", () => {
         addressForm.requestSubmit();
     };
 
-if (savedAddressesSelect) {
-    fetch('get_addresses.php', { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success || !Array.isArray(data.addresses)) return;
+    function showGcashQrPopup() {
+        showPopup(`
+        <div id="qrPopupContent">
+            <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
+            <img src="gcash_qr.png" alt="GCash QR Code"
+                style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
+            <button id="nextToConfirmBtn"
+                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                Next
+            </button>
+        </div>
+    `);
 
-            const addresses = data.addresses;
+        setTimeout(() => {
+            const nextBtn = document.getElementById("nextToConfirmBtn");
+            if (nextBtn) {
+                nextBtn.addEventListener("click", showOrderConfirmationPopup);
+            }
+        }, 50);
+    }
 
-            addresses.forEach(addr => {
-                const option = document.createElement("option");
-                option.value = addr.address_id;
-                option.textContent = `${addr.full_name}, ${addr.address_line}, ${addr.city}, ${addr.postal_code}, ${addr.phone_number}`;
-                savedAddressesSelect.appendChild(option);
-            });
 
-            savedAddressesSelect.addEventListener("change", (e) => {
-                const selectedId = e.target.value;
-                if (!selectedId) return;
+    function showOrderConfirmationPopup() {
+        const cartItems = checkoutPayload.cart.map(item =>
+            `<li>${item.quantity} x ${item.product_name} — ₱${item.price}</li>`).join("");
 
-                const selectedAddress = addresses.find(addr => addr.address_id == selectedId);
-                if (!selectedAddress) return;
+        let addressHTML = "";
 
-                document.getElementById("fullName").value = selectedAddress.full_name;
-                document.getElementById("addressLine").value = selectedAddress.address_line;
-                document.getElementById("city").value = selectedAddress.city;
-                document.getElementById("postalCode").value = selectedAddress.postal_code;
-                document.getElementById("phoneNumber").value = selectedAddress.phone_number;
-            });
+        if (checkoutPayload.deliveryType === "Pickup") {
+            addressHTML = "<p><strong>Pickup:</strong> No address needed.</p>";
+        } else if (checkoutPayload.address_id) {
+            const savedAddr = savedAddresses.find(addr => addr.address_id == checkoutPayload.address_id);
+            if (savedAddr) {
+                addressHTML = `
+        <p>
+            <strong>Name:</strong> ${savedAddr.full_name}<br>
+            <strong>Location Address:</strong> ${savedAddr.address_line}, ${savedAddr.city}<br>
+            <strong>Postal Code:</strong> ${savedAddr.postal_code}<br>
+            <strong>Phone:</strong> ${savedAddr.phone_number}
+        </p>`;
+            } else {
+                addressHTML = "<p><strong>Saved address not found.</strong></p>";
+            }
+        } else if (checkoutPayload.user_address) {
+            const addr = checkoutPayload.user_address;
+            addressHTML = `
+    <p>
+        <strong>Name:</strong> ${addr.fullName}<br>
+        <strong>Location Address:</strong> ${addr.addressLine}, ${addr.city}<br>
+        <strong>Postal Code:</strong> ${addr.postalCode}<br>
+        <strong>Phone:</strong> ${addr.phoneNumber}
+    </p>`;
+        }
+
+
+
+        showPopup(`
+        <h3>Confirm Your Order</h3>
+        <p><strong>Payment:</strong> ${checkoutPayload.paymentMethod}</p>
+        <p><strong>Delivery:</strong> ${checkoutPayload.deliveryType}</p>
+        <div><strong>Address Details:</strong> ${addressHTML}</div>
+        <ul style="text-align:left;">${cartItems}</ul>
+        <div style="margin-top: 20px;">
+            <button id="backToQrBtn" style="margin-right: 10px;">Back</button>
+            <a href="profile.html"><button id="confirmationButton">Confirm</button></a>
+        </div>
+    `);
+
+        setTimeout(() => {
+            const backBtn = document.getElementById("backToQrBtn");
+            if (backBtn) {
+                backBtn.addEventListener("click", showGcashQrPopup);
+            }
+        }, 50);
+
+        const confirmationButton = document.getElementById("confirmationButton");
+        if (confirmationButton) {
+            confirmationButton.addEventListener("click", submitFinalOrder)
+        }
+    }
+
+
+
+    function submitFinalOrder() {
+        fetch("checkout.php", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(checkoutPayload)
         })
-        .catch(err => console.error("Failed to load saved addresses:", err));
-}
+            .then(res => res.text())
+            .then(text => {
+                console.log("Raw response:", text);
+                return JSON.parse(text);
+            })
+            .then(data => {
+                if (data.success) {
+                    localStorage.removeItem("cart");
+                    cartSection.innerHTML = "";
+                    totalPriceDisplay.textContent = "";
+                    addressModal.classList.add("hidden");
+                    checkoutBtn.classList.add("hidden");
+
+                    if (thankYouMessage) {
+                        thankYouMessage.classList.add("show");
+                        thankYouMessage.innerHTML = `
+                        <h3>Thank you for your order!</h3>
+                        <p>Your order has been placed successfully.</p>
+                        <p><strong>Status:</strong> ${checkoutPayload.paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
+                        <a href="profile.html">
+                            <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                                Go to Orders
+                            </button>
+                        </a>
+                    `;
+                    }
+                    document.getElementById("cartWrapper").style.display = "none";
+                    document.getElementById("homeBtn").classList.add("show");
+                    document.getElementById("statusBtn").classList.add("show");
+                } else {
+                    showPopup("Checkout failed: " + data.error);
+                }
+            })
+            .catch(err => {
+                console.error("Checkout error:", err);
+                showPopup("Something went wrong during checkout.");
+            });
+    }
+    if (savedAddressesSelect) {
+        fetch('get_addresses.php', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success || !Array.isArray(data.addresses)) return;
+
+                savedAddresses = data.addresses;
+                const addresses = data.addresses;
+
+                addresses.forEach(addr => {
+                    const option = document.createElement("option");
+                    option.value = addr.address_id;
+                    option.textContent = `${addr.full_name}, ${addr.address_line}, ${addr.city}, ${addr.postal_code}, ${addr.phone_number}`;
+                    savedAddressesSelect.appendChild(option);
+                });
+
+                savedAddressesSelect.addEventListener("change", (e) => {
+                    const selectedId = e.target.value;
+                    if (!selectedId) return;
+
+                    const selectedAddress = addresses.find(addr => addr.address_id == selectedId);
+                    if (!selectedAddress) return;
+
+                    document.getElementById("fullName").value = selectedAddress.full_name;
+                    document.getElementById("addressLine").value = selectedAddress.address_line;
+                    document.getElementById("city").value = selectedAddress.city;
+                    document.getElementById("postalCode").value = selectedAddress.postal_code;
+                    document.getElementById("phoneNumber").value = selectedAddress.phone_number;
+                });
+            })
+            .catch(err => console.error("Failed to load saved addresses:", err));
+    }
 
     if (checkoutBtn) {
         checkoutBtn.addEventListener("click", () => {
@@ -86,7 +232,6 @@ if (savedAddressesSelect) {
             addressModal.classList.add("hidden");
         }
     });
-
     if (addressForm) {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -108,22 +253,34 @@ if (savedAddressesSelect) {
                 img: item.img
             }));
 
-            if (paymentMethod === "Gcash") {
-                if (!pendingGcash) {
-                    pendingGcash = true;
-                    showPopup(`
-            <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
-            <img src="gcash_qr.png" alt="GCash QR Code"
-                style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
-            <button onclick="confirmGcashPayment()"
-                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                I have paid
-            </button>
-        `);
-                    return;
-                }
-                pendingGcash = false;
+            const payload = {
+                cart: cartForCheckout,
+                deliveryType,
+                paymentMethod
+            };
+
+            if (deliveryType === "Pickup") {
+            } else if (savedAddressesSelect && savedAddressesSelect.value) {
+                payload.address_id = parseInt(savedAddressesSelect.value);
+            } else {
+                payload.user_address = {
+                    fullName,
+                    addressLine,
+                    city,
+                    postalCode,
+                    phoneNumber,
+                    saveAddress
+                };
             }
+
+
+
+            if (paymentMethod === "Gcash") {
+                checkoutPayload = payload;
+                showGcashQrPopup();
+                return;
+            }
+
 
 
             fetch("checkout.php", {
@@ -132,29 +289,7 @@ if (savedAddressesSelect) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(
-                    savedAddressesSelect && savedAddressesSelect.value
-                        ? {
-                            cart: cartForCheckout,
-                            deliveryType,
-                            paymentMethod,
-                            address_id: parseInt(savedAddressesSelect.value)
-                        }
-                        : {
-                            cart: cartForCheckout,
-                            deliveryType,
-                            paymentMethod,
-                            user_address: {
-                                fullName,
-                                addressLine,
-                                city,
-                                postalCode,
-                                phoneNumber,
-                                saveAddress
-                            }
-                        }
-                )
-
+                body: JSON.stringify(payload)
             })
                 .then(res => res.text())
                 .then(text => {
@@ -168,7 +303,21 @@ if (savedAddressesSelect) {
                         totalPriceDisplay.textContent = "";
                         addressModal.classList.add("hidden");
                         checkoutBtn.classList.add("hidden");
-                        if (thankYouMessage) thankYouMessage.classList.add("show");
+
+                        if (thankYouMessage) {
+                            showPopup(`
+                            <h3 style="margin-top: 0;">Order Details</h3>
+                            <button onclick="showQrCode()"
+                                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                                Back
+                            </button>
+                            <a href="profile.html"><button onclick="confirmGcashPayment()"
+                                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                                Confirm
+                            </button></a>
+                        `);
+                        }
+
                         document.getElementById("cartWrapper").style.display = "none";
                         document.getElementById("homeBtn").classList.add("show");
                         document.getElementById("statusBtn").classList.add("show");

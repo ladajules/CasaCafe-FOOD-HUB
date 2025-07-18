@@ -75,7 +75,6 @@
                     <option value="">-- Select an address --</option>
                 </select>
                 <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
-                <input type="text" id="addressLine" name="addressLine" placeholder="Address Line" required>
                 <div>
                     <input type="text" id="city" name="city" required placeholder="City"
                         style="width: 145px; margin-right: 15px">
@@ -88,6 +87,9 @@
                     <label for="deliveryOption">Delivery</label>
                     <input type="radio" name="deliveryType" value="Pickup" id="pickupOption">
                     <label for="pickupOption">Pickup</label>
+                </div>
+                <div id="addressLineContainer">
+                    <input type="text" id="addressLine" name="addressLine" placeholder="Address Line" required>
                 </div>
                 <div>
                     <label for="paymentMethod">Choose payment method:</label>
