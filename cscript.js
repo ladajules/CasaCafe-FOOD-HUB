@@ -81,9 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let variantSelect = null;
       if (item.variants && item.variants.length > 0) {
-        const variantLabel = document.createElement('label');
-        variantLabel.textContent = '';
-        variantLabel.classList.add('variant-label');
 
         variantSelect = document.createElement('select');
         variantSelect.classList.add('variant-dropdown');
@@ -111,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
             price.textContent = `₱${parseFloat(item.item_price).toFixed(2)}`;
           }
         });
-
-
-        variantContainer.appendChild(variantLabel);
         variantContainer.appendChild(variantSelect);
       }
 
@@ -132,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedVariantId = variantSelect ? variantSelect.value : null;
         const selectedVariantText = getSelectedText(variantSelect);
 
-        // Prevent adding if variant is required and not selected
+        
         if (variantSelect && selectedVariantId === "") {
           showPopup("Please select a variant before adding to cart.");
           return;
@@ -191,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       wishlistBtn.addEventListener('click', () => {
-        const selectedVariantText = getSelectedText(variantSelect); // grab variant
+        const selectedVariantText = getSelectedText(variantSelect);
         const product = {
           item_id: item.item_id,
           title: item.item_name,
@@ -205,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!exists) {
           wishlist.push(product);
           localStorage.setItem('wishlist', JSON.stringify(wishlist));
-          addToFavorites(product.item_id, product.title, product.variantText); // ✅ use proper values
+          addToFavorites(product.item_id, product.title, product.variantText);
         } else {
           showPopup('Already in Favorites.');
         }
@@ -248,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(response => response.text())
       .then(msg => {
         if (msg.includes("successfully")) {
-          showPopup(`${title} (${variant || 'Default'}) added to Favorites`);
+          showPopup(`${title} added to Favorites`);
         } else if (msg.includes("already")) {
           showPopup(`${title} is already in your Favorites.`);
         } else {
@@ -262,7 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  // Unified filtering (search + category + sort)
   function applyAllFilters() {
     const searchQuery = document.getElementById("searchBar").value.toLowerCase();
     const selectedCategory = categoryFilter.value;
@@ -298,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderProducts(filtered);
   }
 
-  // Event listeners
+
   categoryFilter.addEventListener('change', applyAllFilters);
   sortSelect.addEventListener('change', applyAllFilters);
 
