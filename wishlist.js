@@ -18,20 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("get_wishlist.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
-        if (!Array.isArray(data)) {
+         if (!data.success || !Array.isArray(data.wishlist)) {
           wishlistSection.innerHTML = "<p>Failed to load wishlist.</p>";
           return;
         }
-        localStorage.setItem("wishlist", JSON.stringify(data));
-        updateWishlistUI(data);
+        localStorage.setItem("wishlist", JSON.stringify(data.wishlist));
+        updateWishlistUI(data.wishlist);
       })
       .catch(() => {
         wishlistSection.innerHTML = "<p>Failed to load wishlist from server.</p>";
       });
   }
-
+  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
   function loadFromLocalStorage() {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     updateWishlistUI(wishlist);
   }
 
@@ -81,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .then(() => {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (!cart.some(i => i.title === product.title)) {
-              cart.push({ title: product.title, price: product.price, img: product.img });
+              cart.push({ item_id: product.item_id, title: product.title, price: product.price, img: product.img });
               localStorage.setItem("cart", JSON.stringify(cart));
             }
             showPopup(`${product.title} added to cart`);

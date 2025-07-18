@@ -16,6 +16,7 @@ $query = "
         c.quantity,
         i.name AS product_name,
         i.price AS price,
+        i.item_id, 
         i.image_url AS img,
         v.name AS variant,
         c.variant_id
@@ -38,6 +39,7 @@ $result = $stmt->get_result();
 $cart = [];
 while ($row = $result->fetch_assoc()) {
     $cart[] = [
+        'item_id' => $row['item_id'],
         "title" => $row["product_name"],
         "price" => (float)$row["price"],
         "quantity" => (int)$row["quantity"],

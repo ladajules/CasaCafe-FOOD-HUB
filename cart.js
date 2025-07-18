@@ -230,6 +230,7 @@ function renderCart() {
                 quantity.value = product.quantity || 1;
                 quantity.classList = "qty-input";
 
+                
                 quantity.addEventListener("change", (e) => {
                     const newQty = parseInt(e.target.value);
                     if (newQty < 1) {
@@ -279,24 +280,23 @@ function updateCartQuantity(item_id, quantity, variant_id = null) {
         credentials: 'include',
         body: formData.toString()
     })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error("Update failed:", data.message);
-            return;
-        }
+        .then(async response => {
+            const data = await response.json();
+            if (!data.success) {
+                console.error("Update failed:", data.message);
+                throw new Error(data.message);
+            }
+            return fetch('get_cart.php', { credentials: 'include' });
+        })
+        .then(res => res.json())
+        .then(cart => {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateTotalPrice(cart);
+        })
+        .catch(error => {
+            console.error("Error updating quantity or syncing cart:", error);
+        });
 
-        // Resync cart
-        return fetch('get_cart.php', { credentials: 'include' });
-    })
-    .then(res => res.json())
-    .then(cart => {
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateTotalPrice(cart);
-    })
-    .catch(error => {
-        console.error("Error updating quantity or syncing cart:", error);
-    });
 }
 
 
@@ -313,15 +313,15 @@ function removeFromCart(item_id, variant_id = null) {
         credentials: 'include',
         body: body.toString()
     })
-    .then(() => fetch('get_cart.php', { credentials: 'include' }))
-    .then(res => res.json())
-    .then(cart => {
-        localStorage.setItem("cart", JSON.stringify(cart));
-        renderCart();
-    })
-    .catch(error => {
-        console.error("Error removing item or syncing cart:", error);
-    });
+        .then(() => fetch('get_cart.php', { credentials: 'include' }))
+        .then(res => res.json())
+        .then(cart => {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+        })
+        .catch(error => {
+            console.error("Error removing item or syncing cart:", error);
+        });
 }
 
 const toggle = document.getElementById("dropdownToggle");

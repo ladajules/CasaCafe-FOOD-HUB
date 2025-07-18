@@ -18,7 +18,7 @@ function showPopup(message) {
   }
 }
 
-function closePopup() { 
+function closePopup() {
   const popup = document.getElementById("popupNotification");
   popup.style.display = "none";
 }
@@ -165,6 +165,21 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(text => {
             if (text.includes('successfully')) {
               showPopup(`${product.title} ${product.variantText} added to cart`);
+              let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+              const exists = cart.some(p => p.item_id === product.item_id && p.variant_id == product.variant_id);
+              if (!exists) {
+                cart.push({
+                  item_id: product.item_id,    
+                  title: product.title,
+                  price: product.price,
+                  img: product.img,
+                  quantity: 1,
+                  variant: product.variantText,
+                  variant_id: product.variant_id
+                });
+                localStorage.setItem('cart', JSON.stringify(cart));
+              }
             } else {
               showPopup(`Failed to add to cart: ${text}`);
             }
