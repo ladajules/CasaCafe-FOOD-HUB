@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT title, price, img FROM wishlist WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT title, price, img FROM favorites WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();

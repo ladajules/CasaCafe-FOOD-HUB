@@ -60,21 +60,22 @@ document.addEventListener('DOMContentLoaded', function () {
       card.classList.add('menu-item');
 
       const img = document.createElement('img');
-      img.src = item.item_image || 'fallback.png';
-      img.alt = item.item_name;
+      img.src = item.image_url || 'fallback.png';
+      img.alt = item.name;
       img.classList.add('item-img');
 
       const name = document.createElement('h3');
-      name.textContent = item.item_name;
+      name.textContent = item.name;
       name.classList.add('item-name');
 
       const desc = document.createElement('p');
-      desc.textContent = item.item_description;
+      desc.textContent = item.description;
       desc.classList.add('item-desc');
 
       const price = document.createElement('p');
       price.classList.add('item-price');
-      price.textContent = `₱${item.item_price}`;
+      price.textContent = `₱${parseFloat(item.price).toFixed(2)}`;
+
 
       const variantContainer = document.createElement('div');
       variantContainer.classList.add('variant-container');
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (variantPrice) {
             price.textContent = `₱${parseFloat(variantPrice).toFixed(2)}`;
           } else {
-            price.textContent = `₱${parseFloat(item.item_price).toFixed(2)}`;
+            price.textContent = `₱${parseFloat(item.price).toFixed(2)}`;
           }
         });
 
@@ -139,15 +140,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const variantPrice = variantSelect
-          ? variantSelect.options[variantSelect.selectedIndex].getAttribute("data-price") || item.item_price
-          : item.item_price;
+          ? variantSelect.options[variantSelect.selectedIndex].getAttribute("data-price") || item.price
+          : item.price;
 
         const product = {
-          title: item.item_name,
+          item_id: item.item_id,
+          title: item.name,
           price: parseFloat(variantPrice).toFixed(2),
-          img: item.item_image || 'fallback.png',
-          variant: selectedVariantId,
-          variantText: selectedVariantText,
+          img: item.image_url || 'fallback.png',
+          variant_id: selectedVariantId !== '' ? selectedVariantId : null,
+          variantText: selectedVariantText
         };
 
         fetch('add_to_cart.php', {
@@ -155,10 +157,9 @@ document.addEventListener('DOMContentLoaded', function () {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           credentials: 'include',
           body: new URLSearchParams({
-            product: product.title,
+            item_id: product.item_id,
             quantity: 1,
-            price: product.price,
-            variant: selectedVariantText || ''
+            variant_id: product.variant_id ?? ''
           })
         })
           .then(response => response.text())
@@ -173,13 +174,14 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error adding to cart:', error);
             showPopup('Error adding to cart.');
           });
+
       });
 
       wishlistBtn.addEventListener('click', () => {
         const product = {
-          title: item.item_name,
-          price: item.item_price,
-          img: item.item_image || 'fallback.png'
+          title: item.name,
+          price: item.price,
+          img: item.image_url || 'fallback.png'
         };
         let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         const exists = wishlist.some(p => p.title === product.title);
@@ -220,25 +222,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function addToWishlist(title, price, img, variant = '') {
-  fetch('add_to_wishlist.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ product: { title, price: Number(price), img, variant } })
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (!data.success) {
-        showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
-      } else {
-        showPopup(`${title} (${variant || 'Default'}) added to Favorites ✔`);
-      }
+    fetch('add_to_wishlist.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ product: { title, price: Number(price), img, variant } })
     })
-    .catch(error => {
-      console.error('Error adding to Favorites:', error);
-      showPopup('Failed to add to Favorites.');
-    });
-}
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          showPopup(`Failed to add to Favorites: ${data.error || 'Unknown error'}`);
+        } else {
+          showPopup(`${title} (${variant || 'Default'}) added to Favorites ✔`);
+        }
+      })
+      .catch(error => {
+        console.error('Error adding to Favorites:', error);
+        showPopup('Failed to add to Favorites.');
+      });
+  }
 
 
   // Unified filtering (search + category + sort)
@@ -249,28 +251,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let filtered = allProducts.filter(product => {
       const matchesSearch =
-        product.item_name.toLowerCase().includes(searchQuery) ||
-        product.item_description.toLowerCase().includes(searchQuery) ||
-        product.item_category.toLowerCase().includes(searchQuery);
+        product.name.toLowerCase().includes(searchQuery) ||
+        product.description.toLowerCase().includes(searchQuery) ||
+        product.category.toLowerCase().includes(searchQuery);
 
       const matchesCategory =
-        !selectedCategory || product.item_category === selectedCategory;
+        !selectedCategory || product.category === selectedCategory;
 
       return matchesSearch && matchesCategory;
     });
 
     switch (sortValue) {
       case 'price-asc':
-        filtered.sort((a, b) => parseFloat(a.item_price) - parseFloat(b.item_price));
+        filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
         break;
       case 'price-desc':
-        filtered.sort((a, b) => parseFloat(b.item_price) - parseFloat(a.item_price));
+        filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
         break;
       case 'name-asc':
-        filtered.sort((a, b) => a.item_name.localeCompare(b.item_name));
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'name-desc':
-        filtered.sort((a, b) => b.item_name.localeCompare(a.item_name));
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
         break;
     }
 

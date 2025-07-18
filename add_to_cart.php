@@ -8,14 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $userID = $_SESSION['user_id'];
-    $product = strip_tags(trim($_POST['product'] ?? ''));
+    $itemID = intval($_POST['item_id'] ?? 0);
+    $variantID = isset($_POST['variant_id']) && $_POST['variant_id'] !== '' ? intval($_POST['variant_id']) : null;
     $quantity = intval($_POST['quantity'] ?? 0);
-    $price = floatval($_POST['price'] ?? 0);
-    $variant = strip_tags(trim($_POST['variant'] ?? ''));
-    $variant = $variant ?: '';
 
-    if ($product === '' || $quantity <= 0 || $price <= 0) {
-        echo "Invalid product, quantity, or price.";
+    if ($itemID <= 0 || $quantity <= 0) {
+        echo "Invalid item ID or quantity.";
         exit;
     }
 
@@ -27,43 +25,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/menu_api.php';
-        $apiData = file_get_contents($apiUrl);
-        $productList = json_decode($apiData, true);
-
-        $img = '';
-        $exactTitle = '';
-
-        foreach ($productList as $item) {
-            if (strcasecmp($item['item_name'], $product) === 0) {
-                $img = $item['item_image'];
-                $exactTitle = $item['item_name'];
-                break;
-            }
-        }
-
-        if ($exactTitle !== '') {
-            $product = $exactTitle;
-        }
-
-            $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_name = ? AND variant = ?");
-            $stmt->execute([$userID, $product, $variant]);
+        // Check if item already exists in cart with same variant
+        $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND item_id = ? AND variant_id " . ($variantID !== null ? "= ?" : "IS NULL"));
+        $params = $variantID !== null ? [$userID, $itemID, $variantID] : [$userID, $itemID];
+        $stmt->execute($params);
 
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($existing) {
             $newQty = $existing['quantity'] + $quantity;
-            $updateStmt = $pdo->prepare("UPDATE cart SET quantity = ?, price = ?, img = ?, variant = ? WHERE user_id = ? AND product_name = ? AND variant = ?");
-            $updateStmt->execute([$newQty, $price, $img, $variant, $userID, $product, $variant]);
-            
+            $updateStmt = $pdo->prepare(
+                "UPDATE cart SET quantity = ? WHERE user_id = ? AND item_id = ? AND variant_id " . ($variantID !== null ? "= ?" : "IS NULL")
+            );
+            $updateParams = $variantID !== null ? [$newQty, $userID, $itemID, $variantID] : [$newQty, $userID, $itemID];
+            $updateStmt->execute($updateParams);
 
             echo "Cart updated successfully.";
         } else {
-            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, product_name, quantity, price, img, variant) VALUES (?, ?, ?, ?, ?, ?)");
-            $insertStmt->execute([$userID, $product, $quantity, $price, $img, $variant]);
+            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, item_id, variant_id, quantity) VALUES (?, ?, ?, ?)");
+            $insertStmt->execute([$userID, $itemID, $variantID, $quantity]);
 
             echo "Item added to cart successfully.";
         }
+
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage();
     }

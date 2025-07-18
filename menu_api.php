@@ -2,9 +2,19 @@
 
 $pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart", "s24100966_LadaMart", "ciscocisco");
 
-$sql = "SELECT i.*, v.variant_id, v.variant_name, v.variant_price
-        FROM item_table i
+$sql = "SELECT 
+            i.item_id,
+            i.name AS item_name,
+            i.category,
+            i.description,
+            i.image_url,
+            i.price AS item_price,
+            v.variant_id,
+            v.name AS variant_name,
+            v.price AS variant_price
+        FROM items i
         LEFT JOIN item_variants v ON i.item_id = v.item_id";
+
 
 $stmt = $pdo->query($sql);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -15,14 +25,13 @@ foreach ($rows as $row) {
     $id = $row['item_id'];
     
     if (!isset($grouped[$id])) {
-        // Copy all item_table columns
         $grouped[$id] = [
             "item_id" => $row["item_id"],
             "item_name" => $row["item_name"],
-            "item_category" => $row["item_category"],
-            "item_description" => $row["item_description"],
+            "item_category" => $row["category"],
+            "item_description" => $row["description"],
             "item_price" => $row["item_price"],
-            "item_image" => $row["item_image"],
+            "item_image" => $row["image_url"],
             "variants" => []
         ];
     }
