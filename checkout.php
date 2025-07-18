@@ -47,7 +47,7 @@ try {
         // Validate and clean phone number
         $cleanNumber = str_replace(' ', '', $addr['phoneNumber']);
         if (!preg_match('/^09\d{9}$/', $cleanNumber)) {
-            echo json_encode(["success" => false, "error" => "Phone number must start with 09 and be 11 digits (spaces ignored)"]);
+            echo json_encode(["success" => false, "error" => "Please input a proper phone number"]);
             exit;
         }
 

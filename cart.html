@@ -56,8 +56,10 @@
         <button id="checkoutBtn">Checkout</button><br>
     </div>
     <div class="checkout">
-        <p id="thankYouMessage">Thank you for your purchase!</p>
+        <p id="thankYouMessage">Thank you for your purchase! We'll change your status below once we've got your order
+        </p>
         <a href="index copy.html"><button id="homeBtn">Home</button></a>
+        <a href="profile.html"><button id="statusBtn">Check your status here</button></a>
     </div>
 
     <script src="cart.js"></script>
@@ -109,14 +111,11 @@
         </div>
     </div>
 
-    <div id="popupOverlay"
-        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
-    </div>
-
-    <div id="popupNotification"
-        style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-    background:white; padding:20px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:1000; text-align:center; max-width:90%; border-radius:10px;">
-        <div id="popupMessage"></div>
+    <div id="popupNotification" class="popup">
+        <div class="popup-content">
+            <span id="popupCloseBtn" class="close-btn">&times;</span>
+            <p id="popupMessage">Message goes here</p>
+        </div>
     </div>
 
 
@@ -136,6 +135,31 @@
     #cartSubmit:hover {
         cursor: pointer;
         background-color: rgb(209, 209, 209);
+    }
+
+    #statusBtn {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        background: #f0d76c;
+        margin-top: 15px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: white
+    }
+
+    #statusBtn.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #statusBtn.show:hover {
+        cursor: pointer;
+        background-color: #dac155;
+        padding: 10px 20px;
+        border-radius: 10px;
+        opacity: 1;
+        visibility: visible;
     }
 </style>
 

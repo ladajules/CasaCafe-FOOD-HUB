@@ -18,19 +18,11 @@ $city         = $_POST['city'] ?? '';
 $postalCode   = $_POST['postalCode'] ?? '';
 $phoneNumber  = $_POST['phoneNumber'] ?? '';
 
-// Basic validation
 if (empty($fullName) || empty($addressLine) || empty($city) || empty($postalCode) || empty($phoneNumber)) {
     echo json_encode(['error' => 'Please fill all required fields']);
     exit;
 }
 
-// Validate phone number: must start with 09 and be 11 digits long
-if (!preg_match('/^09\d{9}$/', $phoneNumber)) {
-    echo json_encode(['error' => 'Please input a proper phone number']);
-    exit;
-}
-
-// Check if address already exists for this user
 $stmt = $conn->prepare("SELECT address_id FROM addresses WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

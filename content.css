@@ -82,6 +82,23 @@
   visibility: visible;
 }
 
+#statusBtn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#statusBtn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#statusBtn.show:hover {
+  background-color: #dac155;
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Optional: smooth fade-out for checkout button */
 #checkoutBtn {
   transition: opacity 0.5s ease;

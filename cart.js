@@ -11,50 +11,63 @@ document.addEventListener("DOMContentLoaded", () => {
     const thankYouMessage = document.getElementById("thankYouMessage");
     const popup = document.getElementById("popupNotification");
     const popupMessage = document.getElementById("popupMessage");
-    const popupOverlay = document.getElementById("popupOverlay");
 
     if (thankYouMessage) thankYouMessage.classList.remove("show");
 
-    function showPopup(content) {
-        popupMessage.innerHTML = content;
-        popup.style.display = "block";
-        popupOverlay.style.display = "block";
+    function showPopup(message, autoClose = true) {
+        const popup = document.getElementById("popupNotification");
+        const popupMessage = document.getElementById("popupMessage");
+
+        if (popup && popupMessage) {
+            popupMessage.innerHTML = message;
+            popup.style.display = "block";
+
+            if (autoClose) {
+                setTimeout(() => {
+                    popup.style.display = "none";
+                }, 7000);
+            }
+        }
     }
 
+    document.getElementById("popupCloseBtn").addEventListener("click", closePopup);
     window.confirmGcashPayment = function () {
         popup.style.display = "none";
         popupOverlay.style.display = "none";
         addressForm.requestSubmit();
     };
 
-    if (savedAddressesSelect) {
-        fetch('get_addresses.php', { credentials: 'include' })
-            .then(res => res.json())
-            .then(addresses => {
-                if (!Array.isArray(addresses)) return;
-                addresses.forEach(addr => {
-                    const option = document.createElement("option");
-                    option.value = addr.id;
-                    option.textContent = `${addr.full_name}, ${addr.address_line}, ${addr.city}, ${addr.postal_code}, ${addr.phone_number}`;
-                    savedAddressesSelect.appendChild(option);
-                });
+if (savedAddressesSelect) {
+    fetch('get_addresses.php', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success || !Array.isArray(data.addresses)) return;
 
-                savedAddressesSelect.addEventListener("change", (e) => {
-                    const selectedId = e.target.value;
-                    if (!selectedId) return;
+            const addresses = data.addresses;
 
-                    const selectedAddress = addresses.find(addr => addr.id == selectedId);
-                    if (!selectedAddress) return;
+            addresses.forEach(addr => {
+                const option = document.createElement("option");
+                option.value = addr.address_id;
+                option.textContent = `${addr.full_name}, ${addr.address_line}, ${addr.city}, ${addr.postal_code}, ${addr.phone_number}`;
+                savedAddressesSelect.appendChild(option);
+            });
 
-                    document.getElementById("fullName").value = selectedAddress.full_name;
-                    document.getElementById("addressLine").value = selectedAddress.address_line;
-                    document.getElementById("city").value = selectedAddress.city;
-                    document.getElementById("postalCode").value = selectedAddress.postal_code;
-                    document.getElementById("phoneNumber").value = selectedAddress.phone_number;
-                });
-            })
-            .catch(err => console.error("Failed to load saved addresses:", err));
-    }
+            savedAddressesSelect.addEventListener("change", (e) => {
+                const selectedId = e.target.value;
+                if (!selectedId) return;
+
+                const selectedAddress = addresses.find(addr => addr.address_id == selectedId);
+                if (!selectedAddress) return;
+
+                document.getElementById("fullName").value = selectedAddress.full_name;
+                document.getElementById("addressLine").value = selectedAddress.address_line;
+                document.getElementById("city").value = selectedAddress.city;
+                document.getElementById("postalCode").value = selectedAddress.postal_code;
+                document.getElementById("phoneNumber").value = selectedAddress.phone_number;
+            });
+        })
+        .catch(err => console.error("Failed to load saved addresses:", err));
+}
 
     if (checkoutBtn) {
         checkoutBtn.addEventListener("click", () => {
@@ -158,13 +171,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (thankYouMessage) thankYouMessage.classList.add("show");
                         document.getElementById("cartWrapper").style.display = "none";
                         document.getElementById("homeBtn").classList.add("show");
+                        document.getElementById("statusBtn").classList.add("show");
                     } else {
-                        alert("Checkout failed: " + data.error);
+                        showPopup("Checkout failed: " + data.error);
                     }
                 })
                 .catch(err => {
                     console.error("Checkout error:", err);
-                    alert("Something went wrong during checkout.");
+                    showPopup("Something went wrong during checkout.");
                 });
         });
     }
@@ -307,6 +321,10 @@ function updateCartQuantity(item_id, quantity, variant_id = null) {
             console.error("Error updating quantity or syncing cart:", error);
         });
 
+}
+function closePopup() {
+    const popup = document.getElementById("popupNotification");
+    popup.style.display = "none";
 }
 
 
