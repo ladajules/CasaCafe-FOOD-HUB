@@ -60,22 +60,21 @@ document.addEventListener('DOMContentLoaded', function () {
       card.classList.add('menu-item');
 
       const img = document.createElement('img');
-      img.src = item.image_url || 'fallback.png';
-      img.alt = item.name;
+      img.src = item.item_image || 'fallback.png';
+      img.alt = item.item_name;
       img.classList.add('item-img');
 
       const name = document.createElement('h3');
-      name.textContent = item.name;
+      name.textContent = item.item_name;
       name.classList.add('item-name');
 
       const desc = document.createElement('p');
-      desc.textContent = item.description;
+      desc.textContent = item.item_description;
       desc.classList.add('item-desc');
 
       const price = document.createElement('p');
       price.classList.add('item-price');
-      price.textContent = `₱${parseFloat(item.price).toFixed(2)}`;
-
+      price.textContent = `₱${item.item_price}`;
 
       const variantContainer = document.createElement('div');
       variantContainer.classList.add('variant-container');
@@ -109,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (variantPrice) {
             price.textContent = `₱${parseFloat(variantPrice).toFixed(2)}`;
           } else {
-            price.textContent = `₱${parseFloat(item.price).toFixed(2)}`;
+            price.textContent = `₱${parseFloat(item.item_price).toFixed(2)}`;
           }
         });
 
@@ -145,9 +144,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const product = {
           item_id: item.item_id,
-          title: item.name,
+          title: item.item_name,
           price: parseFloat(variantPrice).toFixed(2),
-          img: item.image_url || 'fallback.png',
+          img: item.item_image || 'fallback.png',
           variant_id: selectedVariantId !== '' ? selectedVariantId : null,
           variantText: selectedVariantText
         };
@@ -179,9 +178,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       wishlistBtn.addEventListener('click', () => {
         const product = {
-          title: item.name,
-          price: item.price,
-          img: item.image_url || 'fallback.png'
+          title: item.item_name,
+          price: item.item_price,
+          img: item.item_image || 'fallback.png'
         };
         let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         const exists = wishlist.some(p => p.title === product.title);
@@ -251,28 +250,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let filtered = allProducts.filter(product => {
       const matchesSearch =
-        product.name.toLowerCase().includes(searchQuery) ||
-        product.description.toLowerCase().includes(searchQuery) ||
-        product.category.toLowerCase().includes(searchQuery);
+        product.item_name.toLowerCase().includes(searchQuery) ||
+        product.item_description.toLowerCase().includes(searchQuery) ||
+        product.item_category.toLowerCase().includes(searchQuery);
 
       const matchesCategory =
-        !selectedCategory || product.category === selectedCategory;
+        !selectedCategory || product.item_category === selectedCategory;
 
       return matchesSearch && matchesCategory;
     });
 
     switch (sortValue) {
       case 'price-asc':
-        filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        filtered.sort((a, b) => parseFloat(a.item_price) - parseFloat(b.item_price));
         break;
       case 'price-desc':
-        filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        filtered.sort((a, b) => parseFloat(b.item_price) - parseFloat(a.item_price));
         break;
       case 'name-asc':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        filtered.sort((a, b) => a.item_name.localeCompare(b.item_name));
         break;
       case 'name-desc':
-        filtered.sort((a, b) => b.name.localeCompare(a.name));
+        filtered.sort((a, b) => b.item_name.localeCompare(a.item_name));
         break;
     }
 
