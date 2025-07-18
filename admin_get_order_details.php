@@ -25,7 +25,7 @@ $sql = "SELECT
         FROM orders o
         LEFT JOIN order_items oi ON o.order_id = oi.order_id
         LEFT JOIN user_addresses ua ON o.address_id = ua.address_id
-        WHERE order_id = ?";
+        WHERE o.order_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $order_id);
 
