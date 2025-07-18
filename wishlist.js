@@ -5,13 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.json())
     .then(data => {
       if (data.loggedIn) {
-        fetchWishlistFromDB(); // only pull from DB
+        fetchWishlistFromDB();
       } else {
-        loadFromLocalStorage(); // fallback if not logged in
+        loadFromLocalStorage();
       }
     })
     .catch(() => {
-      loadFromLocalStorage(); // fallback if error
+      loadFromLocalStorage();
     });
 
   function fetchWishlistFromDB() {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
           wishlistSection.innerHTML = "<p>Failed to load wishlist.</p>";
           return;
         }
-        localStorage.setItem("wishlist", JSON.stringify(data)); // overwrite localStorage
+        localStorage.setItem("wishlist", JSON.stringify(data));
         updateWishlistUI(data);
       })
       .catch(() => {
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       removeBtn.textContent = "Remove";
       removeBtn.classList = "remove-btn";
       removeBtn.addEventListener("click", () => {
-        removeFromWishlistByTitle(product.title, container);
+        removeFromWishlistById(product.item_id, container);
       });
 
       imageCont.appendChild(img);
@@ -157,12 +157,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  function removeFromWishlistByTitle(title, container) {
+  function removeFromWishlistById(item_id, container) {
     fetch('remove_from_wishlist.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       credentials: 'include',
-      body: `title=${encodeURIComponent(title)}`
+      body: `item_id=${encodeURIComponent(item_id)}`
     })
       .then(res => res.json())
       .then(data => {
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .finally(() => {
         let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-        wishlist = wishlist.filter(item => item.title !== title);
+        wishlist = wishlist.filter(item => item.item_id != item_id);
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
         container.remove();
 

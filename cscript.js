@@ -14,11 +14,11 @@ function showPopup(message) {
 
     setTimeout(() => {
       popup.style.display = "none";
-    }, 3000);
+    }, 7000);
   }
 }
 
-function closePopup() {
+function closePopup() { 
   const popup = document.getElementById("popupNotification");
   popup.style.display = "none";
 }
@@ -190,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!exists) {
           wishlist.push(product);
           localStorage.setItem('wishlist', JSON.stringify(wishlist));
-          showPopup(`${product.title} has been added to your Favorites.`);
           addToFavorites(product.item_id, product.title, product.variantText); // ✅ use proper values
         } else {
           showPopup('Already in Favorites.');

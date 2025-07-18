@@ -238,14 +238,14 @@ function renderCart() {
                     }
                     product.quantity = newQty;
                     updateTotalPrice(cart);
-                    updateCartQuantity(product.title, newQty);
+                    updateCartQuantity(product.item_id, newQty, product.variant_id || null);
                 });
 
                 const removeBtn = document.createElement("button");
                 removeBtn.textContent = "Remove";
                 removeBtn.classList = "remove-btn";
                 removeBtn.addEventListener("click", () => {
-                    removeFromCart(product.title, product.variant || '');
+                    removeFromCart(product.item_id, product.variant_id || null);
                 });
 
                 imageCont.appendChild(img);
@@ -267,47 +267,63 @@ function renderCart() {
         });
 }
 
-function updateCartQuantity(product_name, quantity) {
+function updateCartQuantity(item_id, quantity, variant_id = null) {
+    const formData = new URLSearchParams();
+    formData.append("item_id", item_id);
+    formData.append("quantity", quantity);
+    if (variant_id !== null) formData.append("variant_id", variant_id);
+
     fetch('update_cart_quantity.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'include',
-        body: `product_name=${encodeURIComponent(product_name)}&quantity=${quantity}`
+        body: formData.toString()
     })
-        .then(response => response.text())
-        .then(() => {
-            return fetch('get_cart.php', { credentials: 'include' });
-        })
-        .then(res => res.json())
-        .then(cart => {
-            localStorage.setItem("cart", JSON.stringify(cart));
-            updateTotalPrice(cart);
-        })
-        .catch(error => {
-            console.error("Error updating quantity or syncing cart:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            console.error("Update failed:", data.message);
+            return;
+        }
+
+        // Resync cart
+        return fetch('get_cart.php', { credentials: 'include' });
+    })
+    .then(res => res.json())
+    .then(cart => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateTotalPrice(cart);
+    })
+    .catch(error => {
+        console.error("Error updating quantity or syncing cart:", error);
+    });
 }
 
-function removeFromCart(productName, variant = '') {
+
+
+function removeFromCart(item_id, variant_id = null) {
+    const body = new URLSearchParams({ item_id });
+    if (variant_id !== null) {
+        body.append("variant_id", variant_id);
+    }
+
     fetch('remove_from_cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'include',
-        body: `product_name=${encodeURIComponent(productName)}&variant=${encodeURIComponent(variant)}`
+        body: body.toString()
     })
-        .then(response => response.text())
-        .then(() => {
-            return fetch('get_cart.php', { credentials: 'include' });
-        })
-        .then(res => res.json())
-        .then(cart => {
-            localStorage.setItem("cart", JSON.stringify(cart));
-            renderCart();
-        })
-        .catch(error => {
-            console.error("Error removing item or syncing cart:", error);
-        });
+    .then(() => fetch('get_cart.php', { credentials: 'include' }))
+    .then(res => res.json())
+    .then(cart => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
+    })
+    .catch(error => {
+        console.error("Error removing item or syncing cart:", error);
+    });
 }
+
 const toggle = document.getElementById("dropdownToggle");
 const menu = document.getElementById("dropdownMenu");
 const arrow = document.getElementById("dropdownArrow");
