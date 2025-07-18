@@ -344,7 +344,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                const details = data.details;
+                const details = data.orders;
 
                 document.getElementById("order_id").textContent = order_id;
                 document.getElementById("user_id").textContent = details[0].user_id;
