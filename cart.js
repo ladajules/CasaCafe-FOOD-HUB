@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <ul style="text-align:left;">${cartItems}</ul>
         <div style="margin-top: 20px;">
             <button id="backToQrBtn" style="margin-right: 10px;">Back</button>
-            <a href="profile.html"><button id="confirmationButton">Confirm</button></a>
+            <a href="profile.html"><button id="confirmationButton" style="background-color: green;">Confirm</button></a>
         </div>
     `);
 
@@ -260,6 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             if (deliveryType === "Pickup") {
+                // there must be something here ciscow
             } else if (savedAddressesSelect && savedAddressesSelect.value) {
                 payload.address_id = parseInt(savedAddressesSelect.value);
             } else {
