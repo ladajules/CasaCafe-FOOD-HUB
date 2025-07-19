@@ -58,5 +58,5 @@ while ($row = $items_result->fetch_assoc()) {
 $items_stmt->close();
 $conn->close();
 
-echo json_encode(["success" => true, "order" => $order_details, "items" => $order_items]);
+echo json_encode(["success" => true, "order" => $order, "items" => $order_items]);
 ?>
