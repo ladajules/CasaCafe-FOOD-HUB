@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 18px;"><span class="label">Order ID:</span> ${order.order_id}</p>
                     <p style="font-size: 18px;"><span class="label">Delivery Type:</span> ${order.delivery_type}</p>
                     <p style="font-size: 18px;"><span class="label">Payment Method:</span> ${order.payment_method}</p>
-                    <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_amount}</p>
+                    <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_price}</p>
                 </div>
             `;
 
