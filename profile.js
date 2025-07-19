@@ -118,13 +118,15 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch('get_current_order.php')
         .then(response => response.json())
         .then(order => {
-            if (!order || !order.status || (order.status !== "Pending" && order.status !== "Preparing")) {
+            if (!data.success || !data.order || (data.order.status !== "Pending" && data.order.status !== "Preparing")) {
                 orderTrackingSection.innerHTML = `
                     <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
                     <h2 style="font-size: 18px;">No orders yet :(</h2>
                 `;
                 return;
             }
+
+            const order = data.order;
 
             const progressSteps = {
                 "Pending": [true, false, false],
