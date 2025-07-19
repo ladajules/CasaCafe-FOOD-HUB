@@ -1,65 +1,72 @@
 <?php
-require 'db_connection.php';
+require_once 'db_connection.php';
 header('Content-Type: application/json');
 
-if (!isset($_GET['order_id'])) {
-    echo json_encode(["success" => false, "error" => "Missing order ID"]);
+$order_id = isset($_GET['order_id']) ? $_GET['order_id'] : (isset($_POST['order_id']) ? $_POST['order_id'] : null);
+
+if (!$order_id) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Missing order_id."
+    ]);
     exit;
 }
 
-$order_id = intval($_GET['order_id']); 
+// kani e fetch ang orders and ang customer info yeryerr
+$order_sql = "
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.delivery_type,
+        o.payment_method,
+        o.created_at,
+        a.full_name,
+        a.phone_number,
+        a.address_line,
+        a.city,
+        a.postal_code
+    FROM orders o
+    JOIN user_addresses a ON o.address_id = a.address_id
+    WHERE o.order_id = ?
+    LIMIT 1
+";
 
-$sql = "SELECT 
-            o.order_id,
-            o.user_id,
-            ua.full_name,
-            ua.phone_number,
-            ua.address_line,
-            ua.city,
-            ua.postal_code,
-            o.status,
-            o.created_at,
-            o.delivery_type,
-            o.payment_method,
-            SUM(oi.price * oi.quantity) AS total_amount
-        FROM orders o
-        LEFT JOIN order_items oi ON o.order_id = oi.order_id
-        LEFT JOIN user_addresses ua ON o.address_id = ua.address_id
-        WHERE o.order_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $order_id);
+$order_stmt = $conn->prepare($order_sql);
+$order_stmt->bind_param("i", $order_id);
+$order_stmt->execute();
+$order_result = $order_stmt->get_result();
 
-$stmt->execute();
-$result = $stmt->get_result();
-$order_details = [];
+$order_details = $order_result->fetch_assoc();
+$order_stmt->close();
 
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $order_details[] = $row;
-    }
+// fetch ang items with variants?
+$items_sql = "
+    SELECT 
+        i.name AS item_name,
+        i.image_url,
+        v.name AS variant_name,
+        oi.quantity,
+        oi.price
+    FROM order_items oi
+    JOIN items i ON oi.item_id = i.item_id
+    LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
+    WHERE oi.order_id = ?
+";
 
-    echo json_encode(["success" => true, "order_details" => $order_details]);
-} else {
-    echo json_encode(["success" => false, "message" => "No order found with ID $order_id."]);
+$items_stmt = $conn->prepare($items_sql);
+$items_stmt->bind_param("i", $order_id);
+$items_stmt->execute();
+$items_result = $items_stmt->get_result();
+
+$order_items = [];
+while ($row = $items_result->fetch_assoc()) {
+    $order_items[] = $row;
 }
 
-$stmt->close();
+$items_stmt->close();
 $conn->close();
 
-// $stmt = $conn->prepare($sql);
-// $stmt->bind_param("i", $order_id);
-
-// $stmt->execute();
-// $result = $stmt->get_result();
-
-// $details = [];
-// while ($row = $result->fetch_assoc()) {
-//     $details[] = $row;
-// }
-
-// if (count($details) > 0) {
-//     echo json_encode(["success" => true, "details" => $details]);
-// } else {
-//     echo json_encode(["success" => false, "error" => "No data found"]);
-// }
+echo json_encode(["success" => true, "order" => $order_details, "items" => $order_items]);
 ?>
