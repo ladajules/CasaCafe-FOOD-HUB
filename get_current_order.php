@@ -10,7 +10,13 @@ if (!$user_id) {
     exit;
 }
 
-$orderQuery = $conn->prepare("SELECT o.*, a.full_name, a.address_line, a.city, a.postal_code, a.phone_number
+$orderQuery = $conn->prepare("SELECT 
+                                o.*, 
+                                a.full_name, 
+                                a.address_line, 
+                                a.city, 
+                                a.postal_code, 
+                                a.phone_number
                             FROM orders o
                             JOIN user_addresses a ON o.address_id = a.address_id
                             WHERE o.user_id = ? AND o.status IN ('Pending', 'Preparing')
@@ -26,9 +32,16 @@ if ($orderResult->num_rows === 0) {
 
 $order = $orderResult->fetch_assoc();
 
-$itemQuery = $conn->prepare("SELECT oi.quantity, oi.price, i.name, i.image_url, SUM(oi.price * oi.quantity) as total_amount
+$itemQuery = $conn->prepare("SELECT 
+                                oi.quantity, 
+                                oi.price, 
+                                i.name as item_name, 
+                                v.name as variant_name, 
+                                i.image_url, 
+                                SUM(oi.price * oi.quantity) as total_amount
                             FROM order_items oi
                             JOIN items i ON oi.item_id = i.item_id
+                            LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
                             WHERE oi.order_id = ?");
 $itemQuery->bind_param("i", $order['order_id']);
 $itemQuery->execute();

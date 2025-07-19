@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const itemsHTML = order.items.map(item => `
                 <tr>
-                    <td>${item.name}</td>
-                    <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 60px;"></td>
+                    <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
+                    <td><img src="${item.image_url}" alt="${item.item_name}" style="max-width: 60px;"></td>
                     <td>${item.quantity}</td>
                     <td>₱${item.price}</td>
                     <td>₱${item.quantity * item.price}</td>
