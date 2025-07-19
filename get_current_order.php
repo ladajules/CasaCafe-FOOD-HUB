@@ -11,7 +11,7 @@ if (!$user_id) {
 
 $orderQuery = $conn->prepare("SELECT o.*, a.full_name, a.address_line, a.city, a.postal_code, a.phone_number
                                 FROM orders o
-                                JOIN user_addresses a ON o.address_id = a.id
+                                JOIN user_addresses a ON o.address_id = a.address_id
                                 WHERE o.user_id = ? AND o.status IN ('Pending', 'Paid', 'Preparing')
                                 ORDER BY o.created_at DESC LIMIT 1");
 $orderQuery->bind_param("i", $user_id);
