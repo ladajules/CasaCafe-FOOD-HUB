@@ -357,7 +357,7 @@ function renderCart() {
             cartSection.innerHTML = "";
 
             if (!Array.isArray(cart) || cart.length === 0) {
-                cartSection.innerHTML = "<p>Your cart is empty.</p>";
+                cartSection.innerHTML = `<p style="font-size: 17px;">Your cart is empty :(</p>`;
                 totalPriceDisplay.textContent = "";
                 const checkoutBtn = document.getElementById("checkoutBtn");
                 if (checkoutBtn) {
