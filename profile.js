@@ -110,64 +110,89 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
     }
 });
 
-function fetchCurrentOrder() {
-  fetch('get_current_order.php')
-    .then(res => res.json())
-    .then(data => {
-      const orderTrackingSection = document.querySelector('.orderTracking-section');
-      const orderIdSpan = document.getElementById('order_id');
-      const itemsTable = document.getElementById('itemsTableBody');
-      const totalAmount = document.getElementById('totalAmount');
+document.addEventListener("DOMContentLoaded", () => {
+    const orderTrackingSection = document.querySelector(".orderTracking");
+    const noOrdersMsg = orderTrackingSection.querySelector("h2:nth-of-type(2)");
+    const orderDetailsHTML = orderTrackingSection.innerHTML;
 
-      if (!data.success || !data.order) {
-        orderTrackingSection.innerHTML = `<h2>No current orders :(</h2>`;
-        return;
-      }
+    fetch('get_current_order.php')
+        .then(response => response.json())
+        .then(order => {
+            if (!order || !order.status || (order.status !== "Pending" && order.status !== "Preparing")) {
+                orderTrackingSection.innerHTML = `
+                    <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+                    <h2 style="font-size: 18px;">No orders yet :(</h2>
+                `;
+                return;
+            }
 
-      const order = data.order;
-      orderIdSpan.textContent = order.order_id;
-      totalAmount.textContent = order.total_price;
+            const progressSteps = {
+                "Pending": [true, false, false],
+                "Preparing": [true, true, false],
+                "Completed": [true, true, true],
+            }[order.status] || [false, false, false];
 
-      itemsTable.innerHTML = '';
-      order.items.forEach(item => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${item.name}</td>
-          <td><img src="${item.image_url}" style="width: 50px; height: 50px;"></td>
-          <td>${item.quantity}</td>
-          <td>₱${item.price}</td>
-          <td>₱${(item.price * item.quantity).toFixed(2)}</td>
-        `;
-        itemsTable.appendChild(row);
-      });
+            const stepsHTML = `
+                <div class="progressBar">
+                  <div class="progressStep ${progressSteps[0] ? "active" : ""}"><i class="fa-solid fa-clipboard-list"></i> Order Processed</div>
+                  <div class="progressStep ${progressSteps[1] ? "active" : ""}"><i class="fa-solid fa-utensils"></i> Kitchen Is Preparing</div>
+                  <div class="progressStep ${progressSteps[2] ? "active" : ""}"><i class="fa-solid fa-check"></i> Order Completed</div>
+                </div>`;
 
-      const statusBar = document.createElement('div');
-      statusBar.classList.add('progressBar');
-      const stages = ['Pending', 'Preparing', 'Completed'];
-      const currentIndex = stages.indexOf(order.status);
+            const itemsHTML = order.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td><img src="${item.image}" alt="${item.name}" style="max-width: 60px;"></td>
+                    <td>${item.quantity}</td>
+                    <td>₱${item.price}</td>
+                    <td>₱${item.quantity * item.price}</td>
+                </tr>
+            `).join('');
 
-      stages.forEach((stage, i) => {
-        const step = document.createElement('div');
-        step.className = 'progressStep';
-        step.textContent = stage;
-        if (i <= currentIndex) step.classList.add('active');
-        statusBar.appendChild(step);
-      });
+            const trackingContent = `
+                <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+                <h2 style="font-size: 20px; margin-bottom: 5px;"><span class="label">Order ID:</span> ${order.order_id}</h2>
 
-      const shippingBlock = document.createElement('div');
-      shippingBlock.className = 'shippingAddress';
-      shippingBlock.innerHTML = `
-        <h4>Shipping Address</h4>
-        <p>${order.full_name}</p>
-        <p>${order.address_line}</p>
-        <p>${order.city}, ${order.postal_code}</p>
-        <p>${order.phone_number}</p>
-      `;
+                <div class="orderTracking-section">
+                    <h2>Kitchen Is ${order.status}...</h2>
+                    ${stepsHTML}
+                    <h2>Shipping Address</h2>
+                    <h2 style="color: gray; font-weight: 100; font-size: 15px;"><i class="fa-solid fa-location-dot"></i> ${order.address}</h2>
+                </div>
 
-      orderTrackingSection.innerHTML = `<h2>Status: ${order.status}</h2>`;
-      orderTrackingSection.appendChild(statusBar);
-      orderTrackingSection.appendChild(shippingBlock);
-    });
-}
+                <div class="orderTracking-section">
+                    <h2>Order Items</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHTML}</tbody>
+                    </table>
+                </div>
 
-document.addEventListener('DOMContentLoaded', fetchCurrentOrder);
+                <div class="orderTracking-section">
+                    <h2>Order Summary</h2>
+                    <p style="font-size: 18px;"><span class="label">Order ID:</span> ${order.order_id}</p>
+                    <p style="font-size: 18px;"><span class="label">Delivery Type:</span> ${order.delivery_type}</p>
+                    <p style="font-size: 18px;"><span class="label">Payment Method:</span> ${order.payment_method}</p>
+                    <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total}</p>
+                </div>
+            `;
+
+            orderTrackingSection.innerHTML = trackingContent;
+        })
+        .catch(err => {
+            console.error("Error fetching order:", err);
+            orderTrackingSection.innerHTML = `
+                <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+                <h2 style="font-size: 18px;">No orders yet :(</h2>
+            `;
+        });
+});
+
