@@ -1,4 +1,3 @@
-
 let savedAddresses = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const deliveryInputs = document.querySelectorAll('input[name="deliveryType"]');
     const addressLineContainer = document.getElementById("addressLineContainer");
     const addressLineInput = document.getElementById("addressLine");
-    let pendingGcash = false;
+    let pendingGcash = false; // This variable seems unused, consider removing if not needed
     let checkoutPayload = null;
 
     function updateAddressLineVisibility() {
@@ -48,11 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("popupCloseBtn").addEventListener("click", closePopup);
-    window.confirmGcashPayment = function () {
-        popup.style.display = "none";
-        popupOverlay.style.display = "none";
-        addressForm.requestSubmit();
-    };
+    // window.confirmGcashPayment = function () { // This function seems unused, confirm if it's needed
+    //     popup.style.display = "none";
+    //     popupOverlay.style.display = "none"; // popupOverlay is not defined in this context
+    //     addressForm.requestSubmit();
+    // };
 
     function showGcashQrPopup() {
         showPopup(`
@@ -118,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <ul style="text-align:left;">${cartItems}</ul>
         <div style="margin-top: 20px;">
             <button id="backToQrBtn" style="margin-right: 10px;">Back</button>
-            <a href="profile.html"><button id="confirmationButton" style="background-color: green;">Confirm</button></a>
+            <button id="confirmationButton" style="background-color: green;">Confirm</button>
         </div>
     `);
 
@@ -138,50 +137,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function submitFinalOrder() {
-        fetch("checkout.php", {
+        // This function is called after GCash QR confirmation.
+        // The checkoutPayload already contains the necessary cart and address info.
+
+        fetch("create_order.php", {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(checkoutPayload)
+            body: JSON.stringify(checkoutPayload) // Use the stored checkoutPayload
         })
-            .then(res => res.text())
-            .then(text => {
-                console.log("Raw response:", text);
+        .then(async res => {
+            // Check if the response is OK (status 200-299)
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
+            }
+            const text = await res.text();
+            try {
                 return JSON.parse(text);
-            })
-            .then(data => {
-                if (data.success) {
-                    localStorage.removeItem("cart");
-                    cartSection.innerHTML = "";
-                    totalPriceDisplay.textContent = "";
-                    addressModal.classList.add("hidden");
-                    checkoutBtn.classList.add("hidden");
+            } catch (error) {
+                console.error("Failed to parse response JSON from create_order.php (GCash flow):", text);
+                throw new Error("Invalid JSON response from server during order creation.");
+            }
+        })
+        .then(data => {
+            if (data.success && data.order_id) {
+                const order_id = data.order_id;
+                console.log("Order created successfully with ID (GCash flow):", order_id);
 
-                    if (thankYouMessage) {
-                        thankYouMessage.classList.add("show");
-                        thankYouMessage.innerHTML = `
+                // Now, add the order items using the obtained order_id
+                const orderItemsPayload = {
+                    order_id: order_id,
+                    cart: checkoutPayload.cart // Use the cart from the stored checkoutPayload
+                };
+
+                return fetch("add_order_items.php", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(orderItemsPayload)
+                });
+            } else {
+                throw new Error("Order creation failed: " + (data.error || "Unknown error"));
+            }
+        })
+        .then(async res => {
+            // Check if the response is OK (status 200-299)
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
+            }
+            const text = await res.text();
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                console.error("Failed to parse response JSON from add_order_items.php (GCash flow):", text);
+                throw new Error("Invalid JSON response from server during adding order items.");
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                // All steps successful: order created and items added
+                localStorage.removeItem("cart");
+                cartSection.innerHTML = "";
+                totalPriceDisplay.textContent = "";
+                addressModal.classList.add("hidden");
+                checkoutBtn.classList.add("hidden");
+
+                if (thankYouMessage) {
+                    thankYouMessage.classList.add("show");
+                    thankYouMessage.innerHTML = `
                         <h3>Thank you for your order!</h3>
                         <p>Your order has been placed successfully.</p>
                         <p><strong>Status:</strong> ${checkoutPayload.paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
-                        <a href="profile.html">
-                            <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                                Go to Orders
-                            </button>
-                        </a>
+                        <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                            Go to Orders
+                        </button>
                     `;
-                    }
-                    document.getElementById("cartWrapper").style.display = "none";
-                    document.getElementById("homeBtn").classList.add("show");
-                    document.getElementById("statusBtn").classList.add("show");
-                } else {
-                    showPopup("Checkout failed: " + data.error);
                 }
-            })
-            .catch(err => {
-                console.error("Checkout error:", err);
-                showPopup("Something went wrong during checkout.");
-            });
+                document.getElementById("cartWrapper").style.display = "none";
+                document.getElementById("homeBtn").classList.add("show");
+                document.getElementById("statusBtn").classList.add("show");
+            } else {
+                throw new Error("Checkout failed: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(err => {
+            console.error("Checkout error (GCash flow):", err);
+            showPopup("Something went wrong during checkout: " + err.message);
+        });
     }
+    
     if (savedAddressesSelect) {
         fetch('get_addresses.php', { credentials: 'include' })
             .then(res => res.json())
@@ -232,6 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
             addressModal.classList.add("hidden");
         }
     });
+    // ... (previous code)
+
     if (addressForm) {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -247,12 +297,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
             const cartForCheckout = cartFromStorage.map(item => ({
+                item_id: item.item_id,
+                variant_id: item.variant_id || null, // Ensure variant_id is included
                 product_name: item.title,
                 quantity: item.quantity,
                 price: item.price,
                 img: item.img
             }));
-
+            
             const payload = {
                 cart: cartForCheckout,
                 deliveryType,
@@ -260,7 +312,8 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             if (deliveryType === "Pickup") {
-                // there must be something here ciscow
+                // No specific address details needed for pickup in the payload for create_order.php
+                // create_order.php will handle creating a 'CasaCafe' address if it doesn't exist.
             } else if (savedAddressesSelect && savedAddressesSelect.value) {
                 payload.address_id = parseInt(savedAddressesSelect.value);
             } else {
@@ -274,17 +327,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             }
 
-
-
             if (paymentMethod === "Gcash") {
-                checkoutPayload = payload;
+                checkoutPayload = payload; // Store payload for later use after QR scan
                 showGcashQrPopup();
                 return;
             }
 
+            // --- Start of Modified Logic ---
 
-
-            fetch("checkout.php", {
+            // First, create the order to get the order_id
+            fetch("create_order.php", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -292,46 +344,94 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify(payload)
             })
-                .then(res => res.text())
-                .then(text => {
-                    console.log("Raw response text:", text);
+            .then(async res => {
+                // Check if the response is OK (status 200-299)
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
+                }
+                const text = await res.text();
+                try {
                     return JSON.parse(text);
-                })
-                .then(data => {
-                    if (data.success) {
-                        localStorage.removeItem("cart");
-                        cartSection.innerHTML = "";
-                        totalPriceDisplay.textContent = "";
-                        addressModal.classList.add("hidden");
-                        checkoutBtn.classList.add("hidden");
+                } catch (error) {
+                    console.error("Failed to parse response JSON from create_order.php:", text);
+                    throw new Error("Invalid JSON response from server during order creation.");
+                }
+            })
+            .then(data => {
+                if (data.success && data.order_id) {
+                    const order_id = data.order_id;
+                    console.log("Order created successfully with ID:", order_id);
 
-                        if (thankYouMessage) {
-                            showPopup(`
-                            <h3 style="margin-top: 0;">Order Details</h3>
-                            <button onclick="showQrCode()"
-                                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                                Back
+                    // Now, add the order items using the obtained order_id
+                    const orderItemsPayload = {
+                        order_id: order_id,
+                        cart: cartForCheckout // Use the same cart data
+                    };
+
+                    return fetch("add_order_items.php", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(orderItemsPayload)
+                    });
+                } else {
+                    throw new Error("Order creation failed: " + (data.error || "Unknown error"));
+                }
+            })
+            .then(async res => {
+                // Check if the response is OK (status 200-299)
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
+                }
+                const text = await res.text();
+                try {
+                    return JSON.parse(text);
+                } catch (error) {
+                    console.error("Failed to parse response JSON from add_order_items.php:", text);
+                    throw new new Error("Invalid JSON response from server during adding order items.");
+                }
+            })
+            .then(data => {
+                if (data.success) {
+                    // All steps successful: order created and items added
+                    localStorage.removeItem("cart");
+                    cartSection.innerHTML = "";
+                    totalPriceDisplay.textContent = "";
+                    addressModal.classList.add("hidden");
+                    checkoutBtn.classList.add("hidden");
+
+                    if (thankYouMessage) {
+                        thankYouMessage.classList.add("show");
+                        thankYouMessage.innerHTML = `
+                            <h3>Thank you for your order!</h3>
+                            <p>Your order has been placed successfully.</p>
+                            <p><strong>Status:</strong> ${paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
+                            <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                                Go to Orders
                             </button>
-                            <a href="profile.html"><button onclick="confirmGcashPayment()"
-                                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                                Confirm
-                            </button></a>
-                        `);
-                        }
-
-                        document.getElementById("cartWrapper").style.display = "none";
-                        document.getElementById("homeBtn").classList.add("show");
-                        document.getElementById("statusBtn").classList.add("show");
-                    } else {
-                        showPopup("Checkout failed: " + data.error);
+                        `;
                     }
-                })
-                .catch(err => {
-                    console.error("Checkout error:", err);
-                    showPopup("Something went wrong during checkout.");
-                });
+                    document.getElementById("cartWrapper").style.display = "none";
+                    document.getElementById("homeBtn").classList.add("show");
+                    document.getElementById("statusBtn").classList.add("show");
+                } else {
+                    throw new Error("Checkout failed: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(err => {
+                console.error("Checkout process error:", err);
+                showPopup("Something went wrong during checkout: " + err.message);
+            });
+            // --- End of Modified Logic ---
         });
     }
+
+// ... (rest of the code)
+
 
     renderCart();
 });
