@@ -116,17 +116,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const orderDetailsHTML = orderTrackingSection.innerHTML;
 
     fetch('get_current_orders.php')
-        .then(response => response.json())
-        .then(data => {
-            const order = data.order;
-            if (!data.success || !order || (order.status !== "Pending" && order.status !== "Preparing")) {
-                orderTrackingSection.innerHTML = `
-                    <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
-                    <h2 style="font-size: 18px;">No orders yet :(</h2>
-                `;
-                return;
-            }
+    .then(response => response.json())
+    .then(data => {
+        const orderTrackingSection = document.querySelector(".orderTracking");
 
+        if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
+            orderTrackingSection.innerHTML = `
+                <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+                <h2 style="font-size: 18px;">No orders yet :(</h2>
+            `;
+            return;
+        }
+
+        let allTrackingHTML = `<h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>`;
+
+        data.orders.forEach(order => {
             const progressSteps = {
                 "Pending": [true, false, false],
                 "Preparing": [true, true, false],
@@ -135,9 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const stepsHTML = `
                 <div class="progressBar">
-                  <div class="progressStep ${progressSteps[0] ? "active" : ""}"><i class="fa-solid fa-clipboard-list"></i> Order Processed</div>
-                  <div class="progressStep ${progressSteps[1] ? "active" : ""}"><i class="fa-solid fa-utensils"></i> Kitchen Is Preparing</div>
-                  <div class="progressStep ${progressSteps[2] ? "active" : ""}"><i class="fa-solid fa-check"></i> Order Completed</div>
+                    <div class="progressStep ${progressSteps[0] ? "active" : ""}"><i class="fa-solid fa-clipboard-list"></i> Order Processed</div>
+                    <div class="progressStep ${progressSteps[1] ? "active" : ""}"><i class="fa-solid fa-utensils"></i> Kitchen Is Preparing</div>
+                    <div class="progressStep ${progressSteps[2] ? "active" : ""}"><i class="fa-solid fa-check"></i> Order Completed</div>
                 </div>`;
 
             const itemsHTML = order.items.map(item => `
@@ -145,24 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
                     <td><img src="${item.image_url}" alt="${item.item_name}" style="max-width: 60px;"></td>
                     <td>${item.quantity}</td>
-                    <td>₱${item.price}</td>
-                    <td>₱${item.quantity * item.price}</td>
+                    <td>₱${parseFloat(item.price).toFixed(2)}</td>
+                    <td>₱${(item.quantity * item.price).toFixed(2)}</td>
                 </tr>
             `).join('');
-
-            items.forEach(item => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
-                <td><img src="${item.image_url}" alt="" style="width: 50px;"></td>
-                <td>${item.quantity}</td>
-                <td>₱${parseFloat(item.price).toFixed(2)}</td>
-                <td>₱${(item.price * item.quantity).toFixed(2)}</td>
-                `;
-                tbody.appendChild(row);
-                total += item.price * item.quantity;
-            });
-
 
             let orderStatusMessage = "";
             if (order.status === "Pending") {
@@ -171,10 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 orderStatusMessage = "Kitchen is preparing...";
             } else if (order.status === "Completed") {
                 orderStatusMessage = "Order has been completed.";
-            } 
+            }
 
-            const trackingContent = `
-                <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+            allTrackingHTML += `
                 <h2 style="font-size: 20px; margin-bottom: 5px; display: flex; justify-content: space-between;">
                     <span><span class="label">Order ID:</span> ${order.order_id}</span>
                     <span><span class="label">Date:</span> ${order.created_at.split(" ")[0]}</span>
@@ -184,7 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h2>${orderStatusMessage}</h2>
                     ${stepsHTML}
                     <h2>Shipping Address</h2>
-                    <h2 style="color: gray; font-weight: 100; font-size: 15px;"><i class="fa-solid fa-location-dot"></i> ${order.address_line}, ${order.city}, ${order.postal_code}</h2>
+                    <h2 style="color: gray; font-weight: 100; font-size: 15px;">
+                        <i class="fa-solid fa-location-dot"></i> ${order.address_line}, ${order.city}, ${order.postal_code}
+                    </h2>
                 </div>
 
                 <div class="orderTracking-section">
@@ -211,15 +202,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_price}</p>
                 </div>
             `;
-
-            orderTrackingSection.innerHTML = trackingContent;
-        })
-        .catch(err => {
-            console.error("Error fetching order:", err);
-            orderTrackingSection.innerHTML = `
-                <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
-                <h2 style="font-size: 18px;">No orders yet :(</h2>
-            `;
         });
+
+        orderTrackingSection.innerHTML = allTrackingHTML;
+    })
+    .catch(err => {
+        console.error("Error fetching orders:", err);
+        document.querySelector(".orderTracking").innerHTML = `
+            <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+            <h2 style="font-size: 18px;">No orders yet :(</h2>
+        `;
+    });
 });
 
