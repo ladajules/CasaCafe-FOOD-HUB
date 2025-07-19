@@ -1103,22 +1103,20 @@ button:hover, button:active {
 
 .profileOptions {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
     margin-top: 20px;
     margin-left: 30px;
     gap: 10px;
     width: auto;
 }
 
-.profileOptionItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.profileOptionItem i {
+    margin-right: 5px;
+    width: 24px;
 }
 
-.profileOptions a {
-    font-size: 16px;
+.profileOptionItem a {
+    font-size: 17px;
     text-decoration: none;
     color: inherit;
     white-space: nowrap;
@@ -1134,7 +1132,6 @@ button:hover, button:active {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 60px;
     padding: 10px;
 }
 
