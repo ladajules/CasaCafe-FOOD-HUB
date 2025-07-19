@@ -47,11 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("popupCloseBtn").addEventListener("click", closePopup);
-    // window.confirmGcashPayment = function () { // This function seems unused, confirm if it's needed
-    //     popup.style.display = "none";
-    //     popupOverlay.style.display = "none"; // popupOverlay is not defined in this context
-    //     addressForm.requestSubmit();
-    // };
 
     function showGcashQrPopup() {
         showPopup(`
@@ -69,13 +64,73 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             const nextBtn = document.getElementById("nextToConfirmBtn");
             if (nextBtn) {
-                nextBtn.addEventListener("click", showOrderConfirmationPopup);
+                nextBtn.addEventListener("click", showOrderConfirmationGcashPopup);
             }
         }, 50);
     }
 
 
     function showOrderConfirmationPopup() {
+        const cartItems = checkoutPayload.cart.map(item =>
+            `<li>${item.quantity} x ${item.product_name} — ₱${item.price}</li>`).join("");
+
+        let addressHTML = "";
+
+        if (checkoutPayload.deliveryType === "Pickup") {
+            addressHTML = "<p><strong>Pickup:</strong> No address needed.</p>";
+        } else if (checkoutPayload.address_id) {
+            const savedAddr = savedAddresses.find(addr => addr.address_id == checkoutPayload.address_id);
+            if (savedAddr) {
+                addressHTML = `
+        <p>
+            <strong>Name:</strong> ${savedAddr.full_name}<br>
+            <strong>Location Address:</strong> ${savedAddr.address_line}, ${savedAddr.city}<br>
+            <strong>Postal Code:</strong> ${savedAddr.postal_code}<br>
+            <strong>Phone:</strong> ${savedAddr.phone_number}
+        </p>`;
+            } else {
+                addressHTML = "<p><strong>Saved address not found.</strong></p>";
+            }
+        } else if (checkoutPayload.user_address) {
+            const addr = checkoutPayload.user_address;
+            addressHTML = `
+    <p>
+        <strong>Name:</strong> ${addr.fullName}<br>
+        <strong>Location Address:</strong> ${addr.addressLine}, ${addr.city}<br>
+        <strong>Postal Code:</strong> ${addr.postalCode}<br>
+        <strong>Phone:</strong> ${addr.phoneNumber}
+    </p>`;
+        }
+
+
+
+        showPopup(`
+        <h3>Confirm Your Order</h3>
+        <p><strong>Payment:</strong> ${checkoutPayload.paymentMethod}</p>
+        <p><strong>Delivery:</strong> ${checkoutPayload.deliveryType}</p>
+        <div><strong>Address Details:</strong> ${addressHTML}</div>
+        <ul style="text-align:left;">${cartItems}</ul>
+        <div style="margin-top: 20px;">
+            <button id="closeConfirmBtn" style="margin-right: 10px;">Back</button>
+            <button id="confirmationButton" style="background-color: green;">Confirm</button>
+        </div>
+    `);
+
+        setTimeout(() => {
+            const closeConfirmBtnBtn = document.getElementById("closeConfirmBtn");
+            if (closeConfirmBtnBtn) {
+                closeConfirmBtnBtn.addEventListener("click", closePopup);
+            }
+        }, 50);
+
+        const confirmationButton = document.getElementById("confirmationButton");
+        if (confirmationButton) {
+            confirmationButton.addEventListener("click", submitFinalOrder)
+        }
+    }
+
+
+    function showOrderConfirmationGcashPopup() {
         const cartItems = checkoutPayload.cart.map(item =>
             `<li>${item.quantity} x ${item.product_name} — ₱${item.price}</li>`).join("");
 
@@ -137,17 +192,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function submitFinalOrder() {
-        // This function is called after GCash QR confirmation.
-        // The checkoutPayload already contains the necessary cart and address info.
-
         fetch("create_order.php", {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(checkoutPayload) // Use the stored checkoutPayload
+            body: JSON.stringify(checkoutPayload) 
         })
         .then(async res => {
-            // Check if the response is OK (status 200-299)
             if (!res.ok) {
                 const errorText = await res.text();
                 throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
@@ -164,13 +215,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.success && data.order_id) {
                 const order_id = data.order_id;
                 console.log("Order created successfully with ID (GCash flow):", order_id);
-
-                // Now, add the order items using the obtained order_id
                 const orderItemsPayload = {
                     order_id: order_id,
-                    cart: checkoutPayload.cart // Use the cart from the stored checkoutPayload
+                    cart: checkoutPayload.cart 
                 };
-
+    
                 return fetch("add_order_items.php", {
                     method: "POST",
                     credentials: "include",
@@ -184,7 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
         .then(async res => {
-            // Check if the response is OK (status 200-299)
             if (!res.ok) {
                 const errorText = await res.text();
                 throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
@@ -199,22 +247,22 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(data => {
             if (data.success) {
-                // All steps successful: order created and items added
                 localStorage.removeItem("cart");
                 cartSection.innerHTML = "";
                 totalPriceDisplay.textContent = "";
                 addressModal.classList.add("hidden");
                 checkoutBtn.classList.add("hidden");
-
+    
+                // Close the popup
+                closePopup();
+    
                 if (thankYouMessage) {
                     thankYouMessage.classList.add("show");
                     thankYouMessage.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center">
                         <h3>Thank you for your order!</h3>
                         <p>Your order has been placed successfully.</p>
-                        <p><strong>Status:</strong> ${checkoutPayload.paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
-                        <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                            Go to Orders
-                        </button>
+                    </div>
                     `;
                 }
                 document.getElementById("cartWrapper").style.display = "none";
@@ -280,12 +328,11 @@ document.addEventListener("DOMContentLoaded", () => {
             addressModal.classList.add("hidden");
         }
     });
-    // ... (previous code)
 
     if (addressForm) {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
-
+    
             const fullName = document.getElementById("fullName").value;
             const addressLine = document.getElementById("addressLine").value;
             const city = document.getElementById("city").value;
@@ -294,11 +341,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const saveAddress = document.getElementById("saveAddress").checked;
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-
+    
             const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
             const cartForCheckout = cartFromStorage.map(item => ({
                 item_id: item.item_id,
-                variant_id: item.variant_id || null, // Ensure variant_id is included
+                variant_id: item.variant_id || null,
                 product_name: item.title,
                 quantity: item.quantity,
                 price: item.price,
@@ -310,10 +357,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 deliveryType,
                 paymentMethod
             };
-
+    
             if (deliveryType === "Pickup") {
                 // No specific address details needed for pickup in the payload for create_order.php
-                // create_order.php will handle creating a 'CasaCafe' address if it doesn't exist.
             } else if (savedAddressesSelect && savedAddressesSelect.value) {
                 payload.address_id = parseInt(savedAddressesSelect.value);
             } else {
@@ -326,16 +372,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     saveAddress
                 };
             }
-
+    
+            // Show confirmation popup for Cash on Delivery
+            if (paymentMethod === "Cash on Delivery") {
+                checkoutPayload = payload; // Store payload for later use
+                showOrderConfirmationPopup(); // Show the confirmation popup directly
+                return;
+            }
+    
+            // Handle GCash payment
             if (paymentMethod === "Gcash") {
                 checkoutPayload = payload; // Store payload for later use after QR scan
                 showGcashQrPopup();
                 return;
             }
-
-            // --- Start of Modified Logic ---
-
-            // First, create the order to get the order_id
+    
+            // Create order for other payment methods
             fetch("create_order.php", {
                 method: "POST",
                 credentials: "include",
@@ -345,7 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(payload)
             })
             .then(async res => {
-                // Check if the response is OK (status 200-299)
                 if (!res.ok) {
                     const errorText = await res.text();
                     throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
@@ -362,13 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.success && data.order_id) {
                     const order_id = data.order_id;
                     console.log("Order created successfully with ID:", order_id);
-
-                    // Now, add the order items using the obtained order_id
+    
                     const orderItemsPayload = {
                         order_id: order_id,
-                        cart: cartForCheckout // Use the same cart data
+                        cart: cartForCheckout 
                     };
-
+    
                     return fetch("add_order_items.php", {
                         method: "POST",
                         credentials: "include",
@@ -382,7 +432,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             })
             .then(async res => {
-                // Check if the response is OK (status 200-299)
                 if (!res.ok) {
                     const errorText = await res.text();
                     throw new Error(`HTTP error! status: ${res.status}, message: ${errorText}`);
@@ -392,27 +441,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     return JSON.parse(text);
                 } catch (error) {
                     console.error("Failed to parse response JSON from add_order_items.php:", text);
-                    throw new new Error("Invalid JSON response from server during adding order items.");
+                    throw new Error("Invalid JSON response from server during adding order items.");
                 }
             })
             .then(data => {
                 if (data.success) {
-                    // All steps successful: order created and items added
                     localStorage.removeItem("cart");
                     cartSection.innerHTML = "";
                     totalPriceDisplay.textContent = "";
                     addressModal.classList.add("hidden");
                     checkoutBtn.classList.add("hidden");
-
+    
                     if (thankYouMessage) {
                         thankYouMessage.classList.add("show");
                         thankYouMessage.innerHTML = `
                             <h3>Thank you for your order!</h3>
                             <p>Your order has been placed successfully.</p>
                             <p><strong>Status:</strong> ${paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
-                            <button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                            <a href="profile.html"><button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
                                 Go to Orders
-                            </button>
+                            </button></a>
                         `;
                     }
                     document.getElementById("cartWrapper").style.display = "none";
@@ -426,11 +474,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Checkout process error:", err);
                 showPopup("Something went wrong during checkout: " + err.message);
             });
-            // --- End of Modified Logic ---
         });
     }
+    
 
-// ... (rest of the code)
 
 
     renderCart();
