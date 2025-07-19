@@ -70,14 +70,14 @@
 
     <div class="order-info">
       <!-- <section class="orderTracking"> 
-        Order Tracking
+        Order Tracking 
         <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
         <h2 style="font-size: 20px; margin-bottom: 5px;"> <span class="label">Order ID:</span> <span id="order_id"></span> </h2>
          <div class="orderTracking-section">
                 <h2>Pending order...</h2>
                 here will show a progress bar (Order Processed, Kitchen is Preparing, or Order Completed)
                 <h2>Shipping Address</h2>
-                address
+                 address 
          </div>
 
          <div class="orderTracking-section">
@@ -100,7 +100,30 @@
                 <h2>Order Summary</h2>
                 <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱<span id="totalAmount"></span></p>
           </div>
-      </section> -->
+        </section> -->
+
+        <div class="orderTracking-section">
+          <h2>Pending order...</h2>
+
+          <div>
+            <p><strong>Order ID:</strong> <span id="order_id">—</span></p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Image</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTableBody">
+                <!-- items will be injected here -->
+              </tbody>
+            </table>
+            <p><strong>Total:</strong> ₱<span id="totalAmount">0.00</span></p>
+          </div>
+        </div>
 
       <section class="orderHistory">
         <div>
