@@ -33,13 +33,18 @@ $stmt->execute();
 $result = $stmt->get_result();
 $order_details = [];
 
-while ($row = $result->fetch_assoc()) {
-    $order_details[] = $row;
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $order_details[] = $row;
+    }
+
+    echo json_encode(["success" => true, "order_details" => $order_details]);
+} else {
+    echo json_encode(["success" => false, "message" => "No order found with ID $order_id."]);
 }
 
-$order_details['order_details'] = $order_details;
-
-echo json_encode(['success' => true, 'order_details' => $order_details]);
+$stmt->close();
+$conn->close();
 
 // $stmt = $conn->prepare($sql);
 // $stmt->bind_param("i", $order_id);
