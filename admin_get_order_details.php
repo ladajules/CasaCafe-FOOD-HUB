@@ -37,6 +37,8 @@ while ($row = $result->fetch_assoc()) {
     $order_details[] = $row;
 }
 
+$order_details['order_details'] = $order_details;
+
 echo json_encode(['success' => true, 'order_details' => $order_details]);
 
 // $stmt = $conn->prepare($sql);
