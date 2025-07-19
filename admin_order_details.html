@@ -345,26 +345,27 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                const details = data.orders;
+                const order = data.order;
+                const items = data.items;
 
-                document.getElementById("order_id").textContent = order_id;
-                document.getElementById("user_id").textContent = details[0].user_id;
-                document.getElementById("date").textContent = details[0].date;
-                document.getElementById("fullName").textContent = details[0].full_name;
-                document.getElementById("phoneNumber").textContent = details[0].phone_number;
-                document.getElementById("deliveryType").textContent = details[0].delivery_type;
-                document.getElementById("paymentMethod").textContent = details[0].payment_method;
+                document.getElementById("order_id").textContent = order.order_id;
+                document.getElementById("user_id").textContent = order.user_id;
+                document.getElementById("date").textContent = order.date;
+                document.getElementById("fullName").textContent = order.full_name;
+                document.getElementById("phoneNumber").textContent = order.phone_number;
+                document.getElementById("deliveryType").textContent = order.delivery_type;
+                document.getElementById("paymentMethod").textContent = order.payment_method;
                 document.getElementById("fullAddress").textContent =
-                    `${details[0].address_line}, ${details[0].city}, ${details[0].postal_code}`;
+                    `${order.address_line}, ${order.city}, ${order.postal_code}`;
 
-                document.getElementById("statusSelect").value = details[0].status;
+                document.getElementById("statusSelect").value = order.status;
 
                 let total = 0;
                 const tbody = document.getElementById("itemsTableBody");
-                details.forEach(item => {
+                items.forEach(item => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                    <td>${item.product_name}</td>
+                    <td>${item.variant_name ? `${item.variant_name} ${item.product_name}` : item.product_name}</td>
                     <td><img src="${item.img}" alt="" style="width: 50px;"></td>
                     <td>${item.quantity}</td>
                     <td>₱${parseFloat(item.price).toFixed(2)}</td>
