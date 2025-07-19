@@ -32,27 +32,31 @@ if ($orderResult->num_rows === 0) {
 
 $order = $orderResult->fetch_assoc();
 
-$itemQuery = $conn->prepare("SELECT 
-                                oi.quantity, 
-                                oi.price, 
-                                i.name as item_name, 
-                                v.name as variant_name, 
-                                i.image_url, 
-                                SUM(oi.price * oi.quantity) as total_amount
-                            FROM order_items oi
-                            JOIN items i ON oi.item_id = i.item_id
-                            LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
-                            WHERE oi.order_id = ?");
-$itemQuery->bind_param("i", $order['order_id']);
-$itemQuery->execute();
-$itemsResult = $itemQuery->get_result();
+$items_sql = "
+    SELECT 
+        i.name AS item_name,
+        i.image_url,
+        v.name AS variant_name,
+        oi.quantity,
+        oi.price
+    FROM order_items oi
+    JOIN items i ON oi.item_id = i.item_id
+    LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
+    WHERE oi.order_id = ?
+";
 
-$items = [];
-while ($row = $itemsResult->fetch_assoc()) {
-    $items[] = $row;
+$items_stmt = $conn->prepare($items_sql);
+$items_stmt->bind_param("i", $order_id);
+$items_stmt->execute();
+$items_result = $items_stmt->get_result();
+
+$order_items = [];
+while ($row = $items_result->fetch_assoc()) {
+    $order_items[] = $row;
 }
 
-$order['items'] = $items;
+$items_stmt->close();
+$conn->close();
 
-echo json_encode(['success' => true, 'order' => $order]);
+echo json_encode(["success" => true, "order" => $order_details, "items" => $order_items]);
 ?>
