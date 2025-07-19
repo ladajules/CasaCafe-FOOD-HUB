@@ -26,7 +26,7 @@ if ($orderResult->num_rows === 0) {
 
 $order = $orderResult->fetch_assoc();
 
-$itemQuery = $conn->prepare("SELECT oi.quantity, oi.price, i.name, i.image_url
+$itemQuery = $conn->prepare("SELECT oi.quantity, oi.price, i.name, i.image_url, SUM(oi.price * oi.quantity) as total_amount
                             FROM order_items oi
                             JOIN items i ON oi.item_id = i.item_id
                             WHERE oi.order_id = ?");
