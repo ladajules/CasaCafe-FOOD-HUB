@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch('get_current_order.php')
         .then(response => response.json())
         .then(order => {
-            if (!order || !order.status || (order.status !== "Pending" && order.status !== "Preparing")) {
+            if (!order || !order.status || (order.status !== "Pending" || order.status !== "Preparing")) {
                 orderTrackingSection.innerHTML = `
                     <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
                     <h2 style="font-size: 18px;">No orders yet :(</h2>
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const itemsHTML = order.items.map(item => `
                 <tr>
                     <td>${item.name}</td>
-                    <td><img src="${item.image}" alt="${item.name}" style="max-width: 60px;"></td>
+                    <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 60px;"></td>
                     <td>${item.quantity}</td>
                     <td>₱${item.price}</td>
                     <td>₱${item.quantity * item.price}</td>
