@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const noOrdersMsg = orderTrackingSection.querySelector("h2:nth-of-type(2)");
     const orderDetailsHTML = orderTrackingSection.innerHTML;
 
-    fetch('get_current_order.php')
+    fetch('get_current_orders.php')
         .then(response => response.json())
         .then(data => {
             const order = data.order;
