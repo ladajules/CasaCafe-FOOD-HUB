@@ -140,15 +140,18 @@ document.addEventListener("DOMContentLoaded", () => {
                   <div class="progressStep ${progressSteps[2] ? "active" : ""}"><i class="fa-solid fa-check"></i> Order Completed</div>
                 </div>`;
 
-            const itemsHTML = order.items.map(item => `
-                <tr>
-                    <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
-                    <td><img src="${item.image_url}" alt="${item.item_name}" style="max-width: 60px;"></td>
-                    <td>${item.quantity}</td>
-                    <td>₱${item.price}</td>
-                    <td>₱${item.quantity * item.price}</td>
-                </tr>
-            `).join('');
+            const itemsHTML = items.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
+                <td><img src="${item.image_url}" alt="" style="width: 50px;"></td>
+                <td>${item.quantity}</td>
+                <td>₱${parseFloat(item.price).toFixed(2)}</td>
+                <td>₱${(item.price * item.quantity).toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+                total += item.price * item.quantity;
+            });
 
 
             let orderStatusMessage = "";
