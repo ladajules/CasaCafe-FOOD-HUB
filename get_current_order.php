@@ -32,30 +32,31 @@ if ($orderResult->num_rows === 0) {
 
 $order = $orderResult->fetch_assoc();
 
-$items_sql = "
-    SELECT 
-        i.name AS item_name,
-        i.image_url,
-        v.name AS variant_name,
-        oi.quantity,
-        oi.price
-    FROM order_items oi
-    JOIN items i ON oi.item_id = i.item_id
-    LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
-    WHERE oi.order_id = ?
-";
+$itemQuery = $conn->prepare("SELECT 
+                                i.name AS item_name,
+                                i.image_url,
+                                v.name AS variant_name,
+                                oi.quantity,
+                                oi.price
+                            FROM order_items oi
+                            JOIN items i ON oi.item_id = i.item_id
+                            LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
+                            WHERE oi.order_id = ?");
+$itemQuery->bind_param("i", $order_id);
+$itemQuery->execute();
+$itemResult = $itemQuery->get_result();
 
-$items_stmt = $conn->prepare($items_sql);
-$items_stmt->bind_param("i", $order_id);
-$items_stmt->execute();
-$items_result = $items_stmt->get_result();
+if ($itemResult->num_rows === 0) {
+    echo json_encode(['success' => false]);
+    exit;
+}
 
 $order_items = [];
-while ($row = $items_result->fetch_assoc()) {
+while ($row = $itemResult->fetch_assoc()) {
     $order_items[] = $row;
 }
 
-$items_stmt->close();
+$itemQuery->close();
 $conn->close();
 
 echo json_encode(["success" => true, "order" => $order, "items" => $order_items]);
