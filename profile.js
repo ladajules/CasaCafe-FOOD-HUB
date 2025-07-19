@@ -150,15 +150,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tr>
             `).join('');
 
+
+            let orderStatusMessage = "";
+            if (order.status === "Pending") {
+                orderStatusMessage = "Order is being processed...";
+            } else if (order.status === "Preparing") {
+                orderStatusMessage = "Kitchen is preparing...";
+            } else if (order.status === "Completed") {
+                orderStatusMessage = "Order has been completed.";
+            } 
+
             const trackingContent = `
                 <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
-                <h2 style="font-size: 20px; margin-bottom: 5px;"><span class="label">Order ID:</span> ${order.order_id}</h2>
+                <h2 style="font-size: 20px; margin-bottom: 5px; display: flex; justify-content: space-between;">
+                    <span><span class="label">Order ID:</span> ${order.order_id}</span>
+                    <span><span class="label">Date:</span> ${order.created_at.split(" ")[0]}</span>
+                </h2>
 
                 <div class="orderTracking-section">
-                    <h2>Kitchen Is ${order.status}...</h2>
+                    <h2>${orderStatusMessage}</h2>
                     ${stepsHTML}
                     <h2>Shipping Address</h2>
-                    <h2 style="color: gray; font-weight: 100; font-size: 15px;"><i class="fa-solid fa-location-dot"></i> ${order.address}</h2>
+                    <h2 style="color: gray; font-weight: 100; font-size: 15px;"><i class="fa-solid fa-location-dot"></i> ${order.address_line}, ${order.city}, ${order.postal_code}</h2>
                 </div>
 
                 <div class="orderTracking-section">
@@ -182,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 18px;"><span class="label">Order ID:</span> ${order.order_id}</p>
                     <p style="font-size: 18px;"><span class="label">Delivery Type:</span> ${order.delivery_type}</p>
                     <p style="font-size: 18px;"><span class="label">Payment Method:</span> ${order.payment_method}</p>
-                    <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total}</p>
+                    <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_amount}</p>
                 </div>
             `;
 
