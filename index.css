@@ -1199,6 +1199,51 @@ button:hover, button:active {
       font-size: 15px;
     }
 
+.progressBar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.progressStep {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  position: relative;
+  color: #bbb;
+}
+
+.progressStep::before {
+  content: '●';
+  display: block;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.progressStep.active {
+  color: #E26C05;
+  font-weight: bold;
+}
+
+.shippingAddress {
+  margin-top: 20px;
+  padding: 12px 18px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  max-width: 300px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+}
+
+.shippingAddress h4 {
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
 .orderHistory>div {
     display: flex;
     gap: 20px;
@@ -1212,6 +1257,7 @@ button:hover, button:active {
     text-align: center;
     color: #e9d36c;
 }
+
 
 hr {
     display: block;

@@ -109,3 +109,65 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
         alert("Missing username or user ID.");
     }
 });
+
+function fetchCurrentOrder() {
+  fetch('get_current_order.php')
+    .then(res => res.json())
+    .then(data => {
+      const orderTrackingSection = document.querySelector('.orderTracking-section');
+      const orderIdSpan = document.getElementById('order_id');
+      const itemsTable = document.getElementById('itemsTableBody');
+      const totalAmount = document.getElementById('totalAmount');
+
+      if (!data.success || !data.order) {
+        orderTrackingSection.innerHTML = `<h2>No current orders :(</h2>`;
+        return;
+      }
+
+      const order = data.order;
+      orderIdSpan.textContent = order.order_id;
+      totalAmount.textContent = order.total_price;
+
+      itemsTable.innerHTML = '';
+      order.items.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td><img src="${item.image_url}" style="width: 50px; height: 50px;"></td>
+          <td>${item.quantity}</td>
+          <td>₱${item.price}</td>
+          <td>₱${(item.price * item.quantity).toFixed(2)}</td>
+        `;
+        itemsTable.appendChild(row);
+      });
+
+      const statusBar = document.createElement('div');
+      statusBar.classList.add('progressBar');
+      const stages = ['Pending', 'Preparing', 'Completed'];
+      const currentIndex = stages.indexOf(order.status);
+
+      stages.forEach((stage, i) => {
+        const step = document.createElement('div');
+        step.className = 'progressStep';
+        step.textContent = stage;
+        if (i <= currentIndex) step.classList.add('active');
+        statusBar.appendChild(step);
+      });
+
+      const shippingBlock = document.createElement('div');
+      shippingBlock.className = 'shippingAddress';
+      shippingBlock.innerHTML = `
+        <h4>Shipping Address</h4>
+        <p>${order.full_name}</p>
+        <p>${order.address_line}</p>
+        <p>${order.city}, ${order.postal_code}</p>
+        <p>${order.phone_number}</p>
+      `;
+
+      orderTrackingSection.innerHTML = `<h2>Status: ${order.status}</h2>`;
+      orderTrackingSection.appendChild(statusBar);
+      orderTrackingSection.appendChild(shippingBlock);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', fetchCurrentOrder);
