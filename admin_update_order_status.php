@@ -1,5 +1,6 @@
 <?php
 require 'db_connection.php';
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo "Invalid request";
@@ -14,8 +15,10 @@ if (!$order_id || !$status) {
     exit;
 }
 
-if (!in_array($status, ['Pending', 'Preparing', 'Completed'])) {
-    echo "Invalid status value";
+$valid_statuses = ['Pending', 'Preparing', 'Completed', 'Cancelled'];
+
+if (!in_array($status, $valid_statuses)) {
+    echo json_encode(["success" => false, "message" => "Invalid status value"]);
     exit;
 }
 
