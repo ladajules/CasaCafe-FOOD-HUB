@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(data => {
         const historyContainer = document.getElementById("orderHistoryList");
 
-        if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
+        if (!data.orders || !Array.isArray(data.orders) || data.orders.length === 0) {
             historyContainer = `
                 <h2 style="font-size: 18px;">You have no past orders :(</h2>
             `;
@@ -255,6 +255,12 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             historyContainer.appendChild(orderCard);
         })
+        .catch(err => {
+            console.error("Error fetching order history:", err);
+            document.getElementById("orderHistoryList").innerHTML = `
+            <p style="text-align:center;">Something went wrong.</p>
+            `;
+        });
     })
 });
 
