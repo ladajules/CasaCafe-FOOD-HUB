@@ -1375,11 +1375,11 @@ button:hover, button:active {
 .cancel-btn { background-color: #f44336; color: white; }
 
 .cancelbtn {
+    display: flex;
     width: 100%;
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
-    justify-content: right;
-    text-align: right;
+    justify-content: flex-end;
 }
 
 .cancelbtn button {
@@ -1403,7 +1403,9 @@ button:hover, button:active {
 .cancel-order-btn:hover {
     background-color: white;
     color: black;
+    transform: translateY(-1px);
     border: 1px solid black;
+    box-shadow: 0 4px 8px black;
 }
 
 
