@@ -1380,10 +1380,9 @@ button:hover, button:active {
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
     justify-content: flex-end;
-    line-height: 0;
 }
 
-.cancelbtn button {
+/* .cancelbtn button {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -1393,12 +1392,20 @@ button:hover, button:active {
     transition: all 0.2s;
     min-width: 100px;
     margin-bottom: 20px;
-}
+} */
 
 .cancel-order-btn {
+    padding: 12px 24px;
+    border: 1px solid white;
+    border-radius: 8px;
     background-color: black;
     color: white;
-    border: 1px solid white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    box-sizing: border-box;
 }
 
 .cancel-order-btn:hover {
