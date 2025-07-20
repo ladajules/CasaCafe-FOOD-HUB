@@ -1396,7 +1396,6 @@ button:hover, button:active {
 .cancel-order-btn {
     background-color: black;
     color: white;
-    border: 1px solid white;
     box-shadow: 0 4px 8px black;
 }
 
