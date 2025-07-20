@@ -209,6 +209,41 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         orderTrackingSection.innerHTML = allTrackingHTML;
+
+        let selectedOrderId = null;
+        
+        document.querySelectorAll(".cancel-order-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                let selectedOrderId = button.getAttribute("data-order-id");
+                openModal("cancelModal");
+            });
+        });
+
+        document.getElementById("confirmCancelBtn").addEventListener("click", () => {
+            if (!selectedOrderId) return;
+
+            fetch("admin_update_order_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `order_id=${selectedOrderId}&status=Cancelled`
+            })
+                .then(res => res.json())
+                .then(response => {
+                if (response.success) {
+                    alert("Order cancelled successfully.");
+                    location.reload(); 
+                } else {
+                    alert("Failed to cancel order.");
+                }
+                })
+                .catch(err => {
+                console.error("Cancel error:", err);
+                alert("An error occurred.");
+                });
+
+            closeModal("cancelModal");
+        });
+
     })
     .catch(err => {
         console.error("Error fetching orders:", err);
@@ -267,37 +302,4 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
     });
 });
-
-document.querySelectorAll(".cancel-order-btn").forEach(button => {
-  button.addEventListener("click", () => {
-    let selectedOrderId = button.getAttribute("data-order-id");
-    openModal("cancelModal");
-  });
-});
-
-document.getElementById("confirmCancelBtn").addEventListener("click", () => {
-  if (!selectedOrderId) return;
-
-  fetch("admin_update_order_status.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `order_id=${selectedOrderId}&status=Cancelled`
-  })
-    .then(res => res.json())
-    .then(response => {
-      if (response.success) {
-        alert("Order cancelled successfully.");
-        location.reload(); 
-      } else {
-        alert("Failed to cancel order.");
-      }
-    })
-    .catch(err => {
-      console.error("Cancel error:", err);
-      alert("An error occurred.");
-    });
-
-  closeModal("cancelModal");
-});
-
 
