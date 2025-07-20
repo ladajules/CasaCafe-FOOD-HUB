@@ -125,10 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
                 <h2 style="font-size: 18px;">No orders yet :(</h2>
             `;
-
-            historyContainer = `
-                <h2 style="font-size: 18px;">You have no past orders :(</h2>
-            `;
             return;
         }
 
