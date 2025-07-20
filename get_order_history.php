@@ -65,6 +65,7 @@ $conn->close();
 
 echo json_encode([
     "success" => true,
-    "orders" => $orders
+    "orders" => $orders,
+    "debug_user_id" => $user_id
 ]);
 ?>
