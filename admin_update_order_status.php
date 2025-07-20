@@ -27,8 +27,10 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("si", $status, $order_id);
 
 if ($stmt->execute()) {
-    echo "Status updated";
+    echo json_encode(["success" => true, "message" => "Status updated"]);
+    exit;
 } else {
-    echo "Failed to update status";
+    echo json_encode(["success" => false, "message" => "Invalid request"]);
+    exit;
 }
 ?>
