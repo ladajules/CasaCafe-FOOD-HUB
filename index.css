@@ -1374,13 +1374,13 @@ button:hover, button:active {
 .confirm-btn { background-color: #4CAF50; color: white; }
 .cancel-btn { background-color: #f44336; color: white; }
 
-.btn {
+.cancelbtn {
     width: 100%;
     border-bottom: 1px solid #ddd;
     margin-bottom: 20px;
 }
 
-.btn button {
+.cancelbtn button {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
