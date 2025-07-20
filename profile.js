@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const historyContainer = document.getElementById("orderHistoryList");
 
         if (!data.orders || !Array.isArray(data.orders) || data.orders.length === 0) {
-            historyContainer = `
+            historyContainer.innerHTML = `
                 <h2 style="font-size: 18px;">You have no past orders :(</h2>
             `;
             return;
