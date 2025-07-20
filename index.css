@@ -1396,6 +1396,7 @@ button:hover, button:active {
 .cancel-order-btn {
     background-color: black;
     color: white;
+    border: 1px solid white;
     box-shadow: 0 4px 8px black;
 }
 
@@ -1403,7 +1404,6 @@ button:hover, button:active {
     background-color: white;
     color: black;
     border: 1px solid black;
-    transform: translateY(-1px);
     box-shadow: 0 4px 8px black;
 }
 
