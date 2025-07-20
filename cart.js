@@ -522,7 +522,6 @@ function renderCart() {
                 }
             }
 
-
             cart.forEach((product, index) => {
                 const container = document.createElement("div");
                 container.classList = "productContainer";
@@ -541,6 +540,18 @@ function renderCart() {
                 title.textContent = product.title;
                 title.classList = "titleP";
 
+                // Create element for variant name
+                const variantName = document.createElement("p");
+                variantName.classList = "variantNameP"; // Add a class for styling if needed
+                
+                // Check if product.variant_name exists and is not null
+                if (product.variant) {
+                    variantName.textContent = `Variant: ${product.variant}`;
+                    variantName.style.display = "block"; // Ensure it's visible
+                } else {
+                    variantName.style.display = "none"; // Hide if null or undefined
+                }
+
                 const price = document.createElement("p");
                 price.textContent = `₱${product.price.toFixed(2)}`;
                 price.classList = "priceP";
@@ -550,7 +561,6 @@ function renderCart() {
                 quantity.min = 1;
                 quantity.value = product.quantity || 1;
                 quantity.classList = "qty-input";
-
 
                 quantity.addEventListener("change", (e) => {
                     const newQty = parseInt(e.target.value);
@@ -572,6 +582,7 @@ function renderCart() {
 
                 imageCont.appendChild(img);
                 cartDescription.appendChild(title);
+                cartDescription.appendChild(variantName); // Append the variant name element
                 cartDescription.appendChild(price);
                 cartDescription.appendChild(quantity);
                 container.appendChild(imageCont);
@@ -588,6 +599,7 @@ function renderCart() {
             cartSection.innerHTML = "<p>Failed to load cart.</p>";
         });
 }
+
 
 function updateCartQuantity(item_id, quantity, variant_id = null) {
     const formData = new URLSearchParams();
