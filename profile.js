@@ -201,6 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 18px;"><span class="label">Payment Method:</span> ${order.payment_method}</p>
                     <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_price}</p>
                 </div>
+
+                <button class="cancel-order-btn" data-order-id="${order.order_id}">Cancel Order</button>
             `;
         });
 
@@ -264,5 +266,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.querySelectorAll(".cancel-order-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    selectedOrderId = button.getAttribute("data-order-id");
+    openModal("cancelModal");
+  });
+});
+
+document.getElementById("confirmCancelBtn").addEventListener("click", () => {
+  if (!selectedOrderId) return;
+
+  fetch("admin_update_order_status.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `order_id=${selectedOrderId}&status=Cancelled`
+  })
+    .then(res => res.json())
+    .then(response => {
+      if (response.success) {
+        alert("Order cancelled successfully.");
+        location.reload(); 
+      } else {
+        alert("Failed to cancel order.");
+      }
+    })
+    .catch(err => {
+      console.error("Cancel error:", err);
+      alert("An error occurred.");
+    });
+
+  closeModal("cancelModal");
+});
 
 

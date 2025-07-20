@@ -374,14 +374,14 @@
       tbody.appendChild(tr);
     });
 
-    document.querySelectorAll('.edit-btn').forEach(button => {
-      button.addEventListener('click', e => {
-        selectedUserId = e.currentTarget.getAttribute('data-id');
-        const username = e.currentTarget.getAttribute('data-username');
-        editUsernameInput.value = username;
-        openModal('editModal');
-      });
-    });
+    // document.querySelectorAll('.edit-btn').forEach(button => {
+    //   button.addEventListener('click', e => {
+    //     selectedUserId = e.currentTarget.getAttribute('data-id');
+    //     const username = e.currentTarget.getAttribute('data-username');
+    //     editUsernameInput.value = username;
+    //     openModal('editModal');
+    //   });
+    // });
 
     document.querySelectorAll('.delete-btn').forEach(button => {
       button.addEventListener('click', e => {
