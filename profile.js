@@ -119,11 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(response => response.json())
     .then(data => {
         const orderTrackingSection = document.querySelector(".orderTracking");
+        const historyContainer = document.getElementById("orderHistoryList");
 
         if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
             orderTrackingSection.innerHTML = `
                 <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
                 <h2 style="font-size: 18px;">No orders yet :(</h2>
+            `;
+
+            historyContainer = `
+                <h2 style="font-size: 18px;">You have no past orders :(</h2>
             `;
             return;
         }
@@ -205,31 +210,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         orderTrackingSection.innerHTML = allTrackingHTML;
-    })
-    .catch(err => {
-        console.error("Error fetching orders:", err);
-        document.querySelector(".orderTracking").innerHTML = `
-            <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
-            <h2 style="font-size: 18px;">No orders yet :(</h2>
-        `;
-    });
 
-    const historyContainer = document.getElementById("orderHistoryList");
-
-    if (data.orders.length === 0) {
-    historyContainer.innerHTML = `<p style="text-align:center;">You have no past orders.</p>`;
-    } else {
-    data.orders.forEach(order => {
-        const itemListHTML = order.items.map(item => `
-        <div class="history-item">
-            <img src="${item.image_url}" alt="${item.item_name}">
-            <div class="item-info">
-            <strong>${item.variant_name ? `${item.variant_name} ` : ""}${item.item_name}</strong>
-            <span>Quantity: ${item.quantity}</span>
-            <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+        data.orders.forEach(order => {
+            const itemListHTML = order.items.map(item => `
+            <div class="history-item">
+                <img src="${item.image_url}" alt="${item.item_name}">
+                <div class="item-info">
+                <strong>${item.variant_name ? `${item.variant_name} ` : ""}${item.item_name}</strong>
+                <span>Quantity: ${item.quantity}</span>
+                <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
             </div>
-        </div>
-        `).join('');
+            `).join('');
 
         const orderCard = document.createElement("div");
         orderCard.className = "history-card";
@@ -246,7 +238,15 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         historyContainer.appendChild(orderCard);
     });
-    }
+
+    })
+    .catch(err => {
+        console.error("Error fetching orders:", err);
+        document.querySelector(".orderTracking").innerHTML = `
+            <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+            <h2 style="font-size: 18px;">No orders yet :(</h2>
+        `;
+    });
 });
 
 
