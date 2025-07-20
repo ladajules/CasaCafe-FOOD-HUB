@@ -1380,6 +1380,7 @@ button:hover, button:active {
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
     justify-content: flex-end;
+    line-height: 0;
 }
 
 .cancelbtn button {
