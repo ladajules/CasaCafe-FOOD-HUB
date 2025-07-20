@@ -1376,7 +1376,7 @@ button:hover, button:active {
 
 .cancelbtn {
     width: 100%;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
     justify-content: right;
 }
@@ -1397,6 +1397,7 @@ button:hover, button:active {
     background-color: black;
     color: white;
     border: 1px solid white;
+    box-shadow: 0 4px 8px black;
 }
 
 .cancel-order-btn:hover {
