@@ -255,13 +255,13 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             historyContainer.appendChild(orderCard);
         })
-        .catch(err => {
+    })
+    .catch(err => {
             console.error("Error fetching order history:", err);
             document.getElementById("orderHistoryList").innerHTML = `
             <p style="text-align:center;">Something went wrong.</p>
             `;
-        });
-    })
+    });
 });
 
 
