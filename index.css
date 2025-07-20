@@ -1295,6 +1295,10 @@ button:hover, button:active {
   font-size: 14px;
 }
 
+.item-price {
+    font-size: 15px;
+}
+
 .history-footer {
   text-align: right;
   font-size: 16px;
@@ -1525,7 +1529,8 @@ button:hover, button:active {
 }
 
 .menu-item h3 {
-    color: red
+    color: red;
+    font-size: 15px;
 }
 
 #menuContainer {
