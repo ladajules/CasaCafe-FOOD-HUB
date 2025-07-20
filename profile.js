@@ -213,5 +213,41 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2 style="font-size: 18px;">No orders yet :(</h2>
         `;
     });
+
+    const historyContainer = document.getElementById("orderHistoryList");
+
+    if (data.orders.length === 0) {
+    historyContainer.innerHTML = `<p style="text-align:center;">You have no past orders.</p>`;
+    } else {
+    data.orders.forEach(order => {
+        const itemListHTML = order.items.map(item => `
+        <div class="history-item">
+            <img src="${item.image_url}" alt="${item.item_name}">
+            <div class="item-info">
+            <strong>${item.variant_name ? `${item.variant_name} ` : ""}${item.item_name}</strong>
+            <span>Quantity: ${item.quantity}</span>
+            <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+        </div>
+        `).join('');
+
+        const orderCard = document.createElement("div");
+        orderCard.className = "history-card";
+        orderCard.innerHTML = `
+        <div class="history-header">
+            <div><strong>Order ID:</strong> ${order.order_id}</div>
+            <div><strong>Date:</strong> ${order.created_at.split(" ")[0]}</div>
+            <div><strong>Status:</strong> <span class="order-status ${order.status.toLowerCase()}">${order.status}</span></div>
+        </div>
+        <div class="history-items">${itemListHTML}</div>
+        <div class="history-footer">
+            <strong>Total:</strong> ₱${order.total_price}
+        </div>
+        `;
+        historyContainer.appendChild(orderCard);
+    });
+    }
 });
+
+
 

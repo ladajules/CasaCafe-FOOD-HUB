@@ -1242,29 +1242,92 @@ button:hover, button:active {
   font-size: 15px;
 }
 
-.orderHistory>div {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    display: block;
-    text-align: center;
+#orderHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 20px;
 }
 
-#purchasedSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
+.history-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fffdfc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-#purchasedItemsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    width: 100%;
-    align-items: center;
+.history-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 16px;
 }
+
+.history-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.history-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.history-footer {
+  text-align: right;
+  font-size: 16px;
+  font-weight: bold;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.order-status {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.order-status.pending {
+  background-color: #f0c674;
+  color: #5c4a00;
+}
+
+.order-status.preparing {
+  background-color: #6ec1e4;
+  color: #003b5c;
+}
+
+.order-status.completed {
+  background-color: #a2dd91;
+  color: #205d00;
+}
+
+.order-status.cancelled {
+  background-color: #f5a3a3;
+  color: #5a0000;
+}
+
 
 .product-item {
     display: flex;
