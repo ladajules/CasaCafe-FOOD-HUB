@@ -1382,6 +1382,7 @@ button:hover, button:active {
 }
 
 .cancelbtn button {
+    float: right;
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -1397,13 +1398,13 @@ button:hover, button:active {
     background-color: black;
     color: white;
     border: 1px solid white;
-    box-shadow: 0 4px 8px black;
 }
 
 .cancel-order-btn:hover {
     background-color: white;
     color: black;
     border: 1px solid black;
+    transform: translateY(-1px);
     box-shadow: 0 4px 8px black;
 }
 
