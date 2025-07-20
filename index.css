@@ -1375,6 +1375,12 @@ button:hover, button:active {
 .cancel-btn { background-color: #f44336; color: white; }
 
 .btn {
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.btn button {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -1384,7 +1390,6 @@ button:hover, button:active {
     transition: all 0.2s;
     min-width: 100px;
     float: right;
-    border-bottom: 1px solid #ddd;
     margin-bottom: 20px;
 }
 
