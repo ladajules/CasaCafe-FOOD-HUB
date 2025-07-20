@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(response => response.json())
     .then(data => {
         const orderTrackingSection = document.querySelector(".orderTracking");
-        const historyContainer = document.getElementById("orderHistoryList");
 
         if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
             orderTrackingSection.innerHTML = `
@@ -210,6 +209,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         orderTrackingSection.innerHTML = allTrackingHTML;
+    })
+    .catch(err => {
+        console.error("Error fetching orders:", err);
+        document.querySelector(".orderTracking").innerHTML = `
+            <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
+            <h2 style="font-size: 18px;">No orders yet :(</h2>
+        `;
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetch('get_order_history.php')
+    .then(res => res.json())
+    .then(data => {
+        const historyContainer = document.getElementById("orderHistoryList");
+
+        if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
+            historyContainer = `
+                <h2 style="font-size: 18px;">You have no past orders :(</h2>
+            `;
+            return;
+        }
 
         data.orders.forEach(order => {
             const itemListHTML = order.items.map(item => `
@@ -223,30 +244,22 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             `).join('');
 
-        const orderCard = document.createElement("div");
-        orderCard.className = "history-card";
-        orderCard.innerHTML = `
-        <div class="history-header">
-            <div><strong>Order ID:</strong> ${order.order_id}</div>
-            <div><strong>Date:</strong> ${order.created_at.split(" ")[0]}</div>
-            <div><strong>Status:</strong> <span class="order-status ${order.status.toLowerCase()}">${order.status}</span></div>
-        </div>
-        <div class="history-items">${itemListHTML}</div>
-        <div class="history-footer">
-            <strong>Total:</strong> ₱${order.total_price}
-        </div>
-        `;
-        historyContainer.appendChild(orderCard);
-    });
-
+            const orderCard = document.createElement("div");
+            orderCard.className = "history-card";
+            orderCard.innerHTML = `
+            <div class="history-header">
+                <div><strong>Order ID:</strong> ${order.order_id}</div>
+                <div><strong>Date:</strong> ${order.created_at.split(" ")[0]}</div>
+                <div><strong>Status:</strong> <span class="order-status ${order.status.toLowerCase()}">${order.status}</span></div>
+            </div>
+            <div class="history-items">${itemListHTML}</div>
+            <div class="history-footer">
+                <strong>Total:</strong> ₱${order.total_price}
+            </div>
+            `;
+            historyContainer.appendChild(orderCard);
+        })
     })
-    .catch(err => {
-        console.error("Error fetching orders:", err);
-        document.querySelector(".orderTracking").innerHTML = `
-            <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
-            <h2 style="font-size: 18px;">No orders yet :(</h2>
-        `;
-    });
 });
 
 

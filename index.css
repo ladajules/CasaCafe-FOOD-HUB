@@ -1329,15 +1329,14 @@ button:hover, button:active {
 }
 
 
-.product-item {
+/* .product-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 
     width: 520px;
-    /* fixed width for consistent container */
-    /* Removed fixed height so it adjusts based on image */
+
     overflow: hidden;
 
     border: 1px solid #ddd;
@@ -1348,12 +1347,12 @@ button:hover, button:active {
 }
 
 .product-image {
-    /* Keep original photo width & height */
+
     max-height: 23rem;
     max-width: 25rem;
-    /* limit max width to container */
+
     height: auto;
-    /* keep natural height */
+
     margin-bottom: 15px;
     object-fit: contain;
 }
@@ -1373,7 +1372,7 @@ button:hover, button:active {
 .product-quantity {
     font-size: 14px;
     color: #555;
-}
+} */
 
 
 

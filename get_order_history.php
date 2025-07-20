@@ -1,45 +1,70 @@
 <?php
-require 'db_connection.php';
-session_start();
-header("Content-Type: application/json");
+require_once 'db_connection.php';
+header('Content-Type: application/json');
 
-$user_id = $_SESSION['user_id'] ?? $_COOKIE['user_id'] ?? null;
+session_start();
+$user_id = $_SESSION['user_id'] ?? null;
 
 if (!$user_id) {
-    echo json_encode(['success' => false]);
+    echo json_encode(["success" => false, "message" => "User not logged in"]);
     exit;
 }
 
-$orderQuery = $conn->prepare("SELECT o.*, ua.full_name, ua.address_line, ua.city, ua.postal_code, ua.phone_number
-                            FROM orders o
-                            JOIN user_addresses ua ON o.address_id = ua.address_id
-                            WHERE o.user_id = ? AND o.status IN ('Pending', 'Preparing', 'Completed')
-                            ORDER BY FIELD (o.status, 'Pending', 'Preparing', 'Completed'), o.created_at DESC");
-$orderQuery->bind_param("i", $user_id);
-$orderQuery->execute();
-$orderResult = $orderQuery->get_result();
+$order_sql = "
+    SELECT 
+        o.order_id, o.user_id, o.address_id, o.total_price, o.status,
+        o.delivery_type, o.payment_method, o.created_at,
+        a.full_name, a.phone_number, a.address_line, a.city, a.postal_code
+    FROM orders o
+    JOIN user_addresses a ON o.address_id = a.address_id
+    WHERE o.user_id = ? AND o.status IN ('Completed', 'Cancelled')
+    ORDER BY o.created_at DESC
+";
 
-if ($orderResult->num_rows === 0) {
-    echo json_encode(['success' => false]);
-    exit;
+$order_stmt = $conn->prepare($order_sql);
+$order_stmt->bind_param("i", $user_id);
+$order_stmt->execute();
+$order_result = $order_stmt->get_result();
+
+$orders = [];
+
+while ($order = $order_result->fetch_assoc()) {
+    $order_id = $order['order_id'];
+
+    $items_sql = "
+        SELECT 
+            i.name AS item_name,
+            v.name AS variant_name,
+            i.image_url,
+            oi.quantity,
+            oi.price
+        FROM order_items oi
+        JOIN items i ON oi.item_id = i.item_id
+        LEFT JOIN item_variants v ON oi.variant_id = v.variant_id
+        WHERE oi.order_id = ?
+    ";
+
+    $items_stmt = $conn->prepare($items_sql);
+    $items_stmt->bind_param("i", $order_id);
+    $items_stmt->execute();
+    $items_result = $items_stmt->get_result();
+
+    $items = [];
+    while ($item = $items_result->fetch_assoc()) {
+        $items[] = $item;
+    }
+
+    $items_stmt->close();
+
+    $order['items'] = $items;
+    $orders[] = $order;
 }
 
-$order = $orderResult->fetch_assoc();
+$order_stmt->close();
+$conn->close();
 
-$itemQuery = $conn->prepare("SELECT oi.quantity, oi.price, i.name, i.image_url
-                            FROM order_items oi
-                            JOIN items i ON oi.item_id = i.item_id
-                            WHERE oi.order_id = ?");
-$itemQuery->bind_param("i", $order['order_id']);
-$itemQuery->execute();
-$itemsResult = $itemQuery->get_result();
-
-$items = [];
-while ($row = $itemsResult->fetch_assoc()) {
-    $items[] = $row;
-}
-
-$order['items'] = $items;
-
-echo json_encode(['success' => true, 'order' => $order]);
+echo json_encode([
+    "success" => true,
+    "orders" => $orders
+]);
 ?>
