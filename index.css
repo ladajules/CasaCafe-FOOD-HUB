@@ -1383,6 +1383,9 @@ button:hover, button:active {
     font-weight: 500;
     transition: all 0.2s;
     min-width: 100px;
+    float: right;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
 }
 
 .cancel-order-btn {

@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.querySelectorAll(".cancel-order-btn").forEach(button => {
   button.addEventListener("click", () => {
-    selectedOrderId = button.getAttribute("data-order-id");
+    let selectedOrderId = button.getAttribute("data-order-id");
     openModal("cancelModal");
   });
 });
