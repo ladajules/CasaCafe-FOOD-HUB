@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱${order.total_price}</p>
                 </div>
 
-                <div class="btn">
+                <div class="cancelbtn">
                     <button class="cancel-order-btn" data-order-id="${order.order_id}">Cancel Order</button>
                 </div>
             `;
