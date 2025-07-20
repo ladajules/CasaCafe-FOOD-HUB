@@ -49,18 +49,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("popupCloseBtn").addEventListener("click", closePopup);
 
     function showGcashQrPopup() {
-        showPopup(`
-        <div id="qrPopupContent">
-        <h2 id="totalPriceDisplay"></h2>
-            <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
-            <img src="gcash_qr.png" alt="GCash QR Code"
-                style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
-            <button id="nextToConfirmBtn"
-                style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
-                Next
-            </button>
-        </div>
-    `);
+       const total = calculateTotalPrice();
+       showPopup(`
+       <div id="qrPopupContent">
+           <h2>Total: ₱${total.toFixed(2)}</h2>
+           <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
+           <img src="gcash_qr.png" alt="GCash QR Code"
+               style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
+           <button id="nextToConfirmBtn"
+               style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+               Next
+           </button>
+       </div>
+       `);
 
         setTimeout(() => {
             const nextBtn = document.getElementById("nextToConfirmBtn");
@@ -70,6 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 50);
     }
 
+
+    function calculateTotalPrice() {
+       const cart = JSON.parse(localStorage.getItem("cart")) || [];
+       return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+   }
 
     function showOrderConfirmationPopup() {
         const cartItems = checkoutPayload.cart.map(item =>
@@ -313,10 +319,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (checkoutBtn) {
-        checkoutBtn.addEventListener("click", () => {
-            addressModal.classList.remove("hidden");
-        });
-    }
+    checkoutBtn.addEventListener("click", function(e) {
+        // Check if all required variants are selected
+        const invalid = Array.from(document.querySelectorAll('.variant-dropdown')).some(select => !select.value);
+        if (invalid) {
+            e.preventDefault(); // Prevent the default action
+            showPopup("Please select variants for all items");
+            return; // Exit the function if validation fails
+        }
+
+        // If all variants are selected, show the address modal
+        addressModal.classList.remove("hidden");
+    });
+}
+
+   
 
     if (closeModalBtn) {
         closeModalBtn.addEventListener("click", () => {
