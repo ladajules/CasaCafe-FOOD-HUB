@@ -25,6 +25,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        // Determine the price based on variant or base item
+        $itemPrice = 0;
+        if ($variantID !== null) {
+            $stmt = $pdo->prepare("SELECT price FROM item_variants WHERE variant_id = ?");
+            $stmt->execute([$variantID]);
+            $variantData = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($variantData) {
+                $itemPrice = $variantData['price'];
+            } else {
+                echo "Variant not found.";
+                exit;
+            }
+        } else {
+            $stmt = $pdo->prepare("SELECT price FROM items WHERE item_id = ?");
+            $stmt->execute([$itemID]);
+            $itemData = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($itemData) {
+                $itemPrice = $itemData['price'];
+            } else {
+                echo "Item not found.";
+                exit;
+            }
+        }
+
+
         // Check if item already exists in cart with same variant
         $stmt = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND item_id = ? AND variant_id " . ($variantID !== null ? "= ?" : "IS NULL"));
         $params = $variantID !== null ? [$userID, $itemID, $variantID] : [$userID, $itemID];
@@ -35,15 +60,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($existing) {
             $newQty = $existing['quantity'] + $quantity;
             $updateStmt = $pdo->prepare(
-                "UPDATE cart SET quantity = ? WHERE user_id = ? AND item_id = ? AND variant_id " . ($variantID !== null ? "= ?" : "IS NULL")
+                "UPDATE cart SET quantity = ?, price = ? WHERE user_id = ? AND item_id = ? AND variant_id " . ($variantID !== null ? "= ?" : "IS NULL")
             );
-            $updateParams = $variantID !== null ? [$newQty, $userID, $itemID, $variantID] : [$newQty, $userID, $itemID];
+            $updateParams = $variantID !== null ? [$newQty, $itemPrice, $userID, $itemID, $variantID] : [$newQty, $itemPrice, $userID, $itemID];
             $updateStmt->execute($updateParams);
 
             echo "Cart updated successfully.";
         } else {
-            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, item_id, variant_id, quantity) VALUES (?, ?, ?, ?)");
-            $insertStmt->execute([$userID, $itemID, $variantID, $quantity]);
+            $insertStmt = $pdo->prepare("INSERT INTO cart (user_id, item_id, variant_id, quantity, price) VALUES (?, ?, ?, ?, ?)");
+            $insertStmt->execute([$userID, $itemID, $variantID, $quantity, $itemPrice]);
 
             echo "Item added to cart successfully.";
         }

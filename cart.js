@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showGcashQrPopup() {
         showPopup(`
         <div id="qrPopupContent">
+        <h2 id="totalPriceDisplay"></h2>
             <h3 style="margin-top: 0;">Scan to Pay with GCash</h3>
             <img src="gcash_qr.png" alt="GCash QR Code"
                 style="max-width: 300px; width: 100%; display: block; margin: 20px auto;">
@@ -196,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(checkoutPayload) 
+            body: JSON.stringify(checkoutPayload)
         })
         .then(async res => {
             if (!res.ok) {
@@ -217,9 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Order created successfully with ID (GCash flow):", order_id);
                 const orderItemsPayload = {
                     order_id: order_id,
-                    cart: checkoutPayload.cart 
+                    cart: checkoutPayload.cart
                 };
-    
+
                 return fetch("add_order_items.php", {
                     method: "POST",
                     credentials: "include",
@@ -252,10 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 totalPriceDisplay.textContent = "";
                 addressModal.classList.add("hidden");
                 checkoutBtn.classList.add("hidden");
-    
+
                 // Close the popup
                 closePopup();
-    
+
                 if (thankYouMessage) {
                     thankYouMessage.classList.add("show");
                     thankYouMessage.innerHTML = `
@@ -277,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
             showPopup("Something went wrong during checkout: " + err.message);
         });
     }
-    
+
     if (savedAddressesSelect) {
         fetch('get_addresses.php', { credentials: 'include' })
             .then(res => res.json())
@@ -332,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addressForm) {
         addressForm.addEventListener("submit", function (e) {
             e.preventDefault();
-    
+
             const fullName = document.getElementById("fullName").value;
             const addressLine = document.getElementById("addressLine").value;
             const city = document.getElementById("city").value;
@@ -341,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const saveAddress = document.getElementById("saveAddress").checked;
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-    
+
             const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
             const cartForCheckout = cartFromStorage.map(item => ({
                 item_id: item.item_id,
@@ -351,13 +352,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 price: item.price,
                 img: item.img
             }));
-            
+
             const payload = {
                 cart: cartForCheckout,
                 deliveryType,
                 paymentMethod
             };
-    
+
             if (deliveryType === "Pickup") {
                 // No specific address details needed for pickup in the payload for create_order.php
             } else if (savedAddressesSelect && savedAddressesSelect.value) {
@@ -372,21 +373,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     saveAddress
                 };
             }
-    
+
             // Show confirmation popup for Cash on Delivery
             if (paymentMethod === "Cash on Delivery") {
                 checkoutPayload = payload; // Store payload for later use
                 showOrderConfirmationPopup(); // Show the confirmation popup directly
                 return;
             }
-    
+
             // Handle GCash payment
             if (paymentMethod === "Gcash") {
                 checkoutPayload = payload; // Store payload for later use after QR scan
                 showGcashQrPopup();
                 return;
             }
-    
+
             // Create order for other payment methods
             fetch("create_order.php", {
                 method: "POST",
@@ -413,12 +414,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.success && data.order_id) {
                     const order_id = data.order_id;
                     console.log("Order created successfully with ID:", order_id);
-    
+
                     const orderItemsPayload = {
                         order_id: order_id,
-                        cart: cartForCheckout 
+                        cart: cartForCheckout
                     };
-    
+
                     return fetch("add_order_items.php", {
                         method: "POST",
                         credentials: "include",
@@ -451,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     totalPriceDisplay.textContent = "";
                     addressModal.classList.add("hidden");
                     checkoutBtn.classList.add("hidden");
-    
+
                     if (thankYouMessage) {
                         thankYouMessage.classList.add("show");
                         thankYouMessage.innerHTML = `
@@ -476,7 +477,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-    
 
 
 
@@ -540,18 +540,6 @@ function renderCart() {
                 title.textContent = product.title;
                 title.classList = "titleP";
 
-                // Create element for variant name
-                const variantName = document.createElement("p");
-                variantName.classList = "variantNameP"; // Add a class for styling if needed
-                
-                // Check if product.variant_name exists and is not null
-                if (product.variant) {
-                    variantName.textContent = `Variant: ${product.variant}`;
-                    variantName.style.display = "block"; // Ensure it's visible
-                } else {
-                    variantName.style.display = "none"; // Hide if null or undefined
-                }
-
                 const price = document.createElement("p");
                 price.textContent = `₱${product.price.toFixed(2)}`;
                 price.classList = "priceP";
@@ -582,7 +570,53 @@ function renderCart() {
 
                 imageCont.appendChild(img);
                 cartDescription.appendChild(title);
-                cartDescription.appendChild(variantName); // Append the variant name element
+
+                // Add variant dropdown if product has variants
+                if (product.all_variants && product.all_variants.length > 0) {
+                    const variantSelect = document.createElement('select');
+                    variantSelect.classList.add('variant-dropdown');
+                    variantSelect.setAttribute('data-item-id', product.item_id);
+                    variantSelect.setAttribute('data-old-variant-id', product.variant_id || ''); // Store old variant ID
+
+                    // Add a default option if no variant is selected or if it's a base item
+                    if (product.variant_id === null) {
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Select an option';
+                        variantSelect.appendChild(defaultOption);
+                    }
+
+
+                    product.all_variants.forEach(variant => {
+                        const option = document.createElement('option');
+                        option.value = variant.variant_id;
+                        option.textContent = variant.name;
+                        option.setAttribute('data-price', variant.price);
+                        if (variant.variant_id === product.variant_id) {
+                            option.selected = true;
+                        }
+                        variantSelect.appendChild(option);
+                    });
+
+                    variantSelect.addEventListener('change', function () {
+                        const newVariantId = this.value === '' ? null : parseInt(this.value);
+                        const oldVariantId = this.getAttribute('data-old-variant-id') === '' ? null : parseInt(this.getAttribute('data-old-variant-id'));
+                        const selectedOption = this.options[this.selectedIndex];
+                        const newPrice = parseFloat(selectedOption.getAttribute('data-price'));
+
+                        // Update the displayed price immediately
+                        price.textContent = `₱${newPrice.toFixed(2)}`;
+
+                        // Update the cart in the database
+                        updateCartVariant(product.item_id, oldVariantId, newVariantId, product.quantity);
+
+                        // Update the data-old-variant-id for future changes
+                        this.setAttribute('data-old-variant-id', newVariantId || '');
+                    });
+                    cartDescription.appendChild(variantSelect);
+                }
+
+
                 cartDescription.appendChild(price);
                 cartDescription.appendChild(quantity);
                 container.appendChild(imageCont);
@@ -619,18 +653,55 @@ function updateCartQuantity(item_id, quantity, variant_id = null) {
                 console.error("Update failed:", data.message);
                 throw new Error(data.message);
             }
+            // Re-fetch and re-render cart to ensure all data (including prices) is consistent
             return fetch('get_cart.php', { credentials: 'include' });
         })
         .then(res => res.json())
         .then(cart => {
             localStorage.setItem("cart", JSON.stringify(cart));
-            updateTotalPrice(cart);
+            renderCart(); // Re-render the entire cart to reflect changes
         })
         .catch(error => {
             console.error("Error updating quantity or syncing cart:", error);
         });
 
 }
+
+// New function to update item variant in cart
+function updateCartVariant(item_id, old_variant_id, new_variant_id, quantity) {
+    const formData = new URLSearchParams();
+    formData.append("item_id", item_id);
+    formData.append("old_variant_id", old_variant_id !== null ? old_variant_id : '');
+    formData.append("new_variant_id", new_variant_id !== null ? new_variant_id : '');
+    formData.append("quantity", quantity); // Pass the current quantity of the item
+
+    fetch('update_cart_variant.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'include',
+        body: formData.toString()
+    })
+    .then(async response => {
+        const data = await response.json();
+        if (!data.success) {
+            console.error("Variant update failed:", data.message);
+            throw new Error(data.message);
+        }
+        // Re-fetch and re-render cart to ensure all data (including prices) is consistent
+        return fetch('get_cart.php', { credentials: 'include' });
+    })
+    .then(res => res.json())
+    .then(cart => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart(); // Re-render the entire cart to reflect changes
+    })
+    .catch(error => {
+        console.error("Error updating variant or syncing cart:", error);
+        // Optionally, revert the dropdown selection or show an error message
+    });
+}
+
+
 function closePopup() {
     const popup = document.getElementById("popupNotification");
     popup.style.display = "none";
