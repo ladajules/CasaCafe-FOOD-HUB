@@ -393,7 +393,6 @@
     tbody.innerHTML = '';
 
     users.forEach(user => {
-      const isActive = parseInt(user.isActive);
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
@@ -403,8 +402,8 @@
         <td>${user.updated_at}</td>
         <td>
           <select class="status-select" data-id="${user.user_id}">
-            <option value="1" ${isActive === 1 ? 'selected' : ''}>Active</option>
-            <option value="0" ${isActive === 0 ? 'selected' : ''}>Inactive</option>
+            <option value="1" ${user.isActive === 1 ? 'selected' : ''}>Active</option>
+            <option value="0" ${user.isActive === 0 ? 'selected' : ''}>Inactive</option>
           </select>
         </td>
       `;
