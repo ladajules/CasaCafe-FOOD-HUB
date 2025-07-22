@@ -395,7 +395,10 @@
         <td>${user.created_at}</td>
         <td>${user.updated_at}</td>
         <td>
-          <button class="delete-btn" data-id="${user.user_id}"><i class="fas fa-trash"></i></button>
+          <select class="status-select" data-id="${user.user_id}">
+            <option value="1" ${user.isActive == 1 ? 'selected' : ''}>Active</option>
+            <option value="0" ${user.isActive == 0 ? 'selected' : ''}>Inactive</option>
+          </select>
         </td>
       `;
       tbody.appendChild(tr);
@@ -410,12 +413,12 @@
     //   });
     // });
 
-    document.querySelectorAll('.delete-btn').forEach(button => {
-      button.addEventListener('click', e => {
-        selectedUserId = e.currentTarget.getAttribute('data-id');
-        openModal('deleteModal');
-      });
-    });
+    // document.querySelectorAll('.delete-btn').forEach(button => {
+    //   button.addEventListener('click', e => {
+    //     selectedUserId = e.currentTarget.getAttribute('data-id');
+    //     openModal('deleteModal');
+    //   });
+    // });
   };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -497,6 +500,28 @@
     backToTopBtn.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    document.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', e => {
+        const userId = e.target.getAttribute('data-id');
+        const newStatus = e.target.value;
+
+        fetch('admin_deactive_users.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `user_id=${userId}&isActive=${newStatus}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Failed to update status: ' + data.error);
+          }
+        });
+      });
+    });
+
     </script>
 </body>
 </html>
