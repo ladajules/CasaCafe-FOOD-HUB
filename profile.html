@@ -26,8 +26,8 @@
             <a href="index copy.html">home</a>
             <a href="index copy#about-shop.html">About Us</a>
             <a href="product.html">Menu</a>
-            <a href="index.html">log out</a>
-            <a href="profile.html" id="profileBtn">
+            <a href="index.html">Log Out</a>
+            <a href="#" id="profileBtn">
                 <img src="profile.png">
             </a>
         </nav>
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <div class="addressModal" id="addressModal">
+    <div class="addressModal active" id="addressModal">
         <div class="addressModal-content">
             <div class="addressModal-header">
                 <h3 class="addressModal-title">Manage Addresses</h3>
@@ -83,29 +83,41 @@
                 </button>
             </div>
 
-            <label for="addressSelect">Choose Address:</label>
-            <select id="addressSelect">
-              <option value="new">+ Add New Address</option>
-              <!-- js here -->
-            </select>
+            <div class="form-group full-width">
+              <label for="addressSelect">Choose Address:</label>
+              <select id="addressSelect">
+                <option value="new">+ Add New Address</option>
+              </select>
+            </div>
+
             
             <form id="addressForm">
               <input type="hidden" id="address_id" name="address_id" value="">
-              
-              <label>Full Name:</label>
-              <input type="text" id="full_name" name="full_name" required>
 
-              <label>Address Line:</label>
-              <input type="text" id="address_line" name="address_line" required>
+              <div class="form-group full-width">
+                <label for="full_name">Full Name:</label>
+                <input type="text" id="full_name" name="full_name" required>
+              </div>
 
-              <label>City:</label>
-              <input type="text" id="city" name="city" required>
+              <div class="form-group full-width">
+                <label for="address_line">Address Line:</label>
+                <input type="text" id="address_line" name="address_line" required>
+              </div>
 
-              <label>Postal Code:</label>
-              <input type="text" id="postal_code" name="postal_code" required>
+              <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+              </div>
 
-              <label>Phone Number:</label>
-              <input type="text" id="phone_number" name="phone_number" required>
+              <div class="form-group">
+                <label for="postal_code">Postal Code:</label>
+                <input type="text" id="postal_code" name="postal_code" required>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" id="phone_number" name="phone_number" required>
+              </div>
 
               <button type="submit">Save Address</button>
             </form>
