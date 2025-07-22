@@ -463,7 +463,7 @@
     document.getElementById('searchInput').addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase();
     const filtered = allUsers.filter(user =>
-      user.user_id.toString().includes(keyword) ||
+      user.user_id.includes(keyword) ||
       user.username.toLowerCase().includes(keyword)
     );
     renderUsers(filtered);
