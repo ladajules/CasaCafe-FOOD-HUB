@@ -62,7 +62,7 @@
 
 <div id="errorModal" style="display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
     background-color: white; padding: 20px; border: 2px solid #f00; z-index: 1000;">
-    <p style="color: red;">Invalid username or password.</p>
+    <p id="errorMessage" style="color: red;"></p>
     <button onclick="document.getElementById('errorModal').style.display='none'">Close</button>
 </div>
 
@@ -76,12 +76,23 @@
 <script>
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
+    const errorModal = document.getElementById('errorModal');
+    const errorMessage = document.getElementById('errorMessage');
+
     if (urlParams.has('error')) {
-        document.getElementById('errorModal').style.display = 'block';
-    } else if (urlParams.has('success')) {
+        const type = urlParams.get('error');
+        if (type === 'inactive') {
+            errorMessage.textContent = 'This account has been deactivated.';
+        } else {
+            errorMessage.textContent = 'Invalid username or password.';
+        }
+        errorModal.style.display = 'block';
+    }
+
+    if (urlParams.has('success')) {
         document.getElementById('successModal').style.display = 'block';
     }
-}
+};
 </script>
 </body>
 </html>
