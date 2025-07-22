@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
      $user = $result->fetch_assoc();
 
      if ($user && password_verify($password, $user['password'])) {
-         if (!user['isActive']) {
+         if (!$user['isActive']) {
             header("Location: login.html?error=inactive");
             exit;
          }
