@@ -2,7 +2,7 @@
 session_start();
 require 'db_connection.php'; 
 
-$sql = "SELECT user_id, username, created_at, updated_at FROM users WHERE role = 'Customer' ORDER BY user_id ASC";
+$sql = "SELECT user_id, username, created_at, updated_at, isActive FROM users WHERE role = 'Customer' ORDER BY user_id ASC";
 $result = $conn->query($sql);
 
 $users = [];

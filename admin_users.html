@@ -395,6 +395,7 @@
     users.forEach(user => {
       const isActive = parseInt(user.isActive);
       const tr = document.createElement('tr');
+
       tr.innerHTML = `
         <td>${user.user_id}</td>
         <td style="text-transform: none;">${user.username}</td>
