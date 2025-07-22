@@ -318,3 +318,63 @@ window.addEventListener("scroll", () => {
 backToTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+function fetchAddresses() {
+  fetch('get_user_addresses.php')
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById('addressSelect');
+      select.innerHTML = `<option value="new">+ Add New Address</option>`;
+
+      if (data.success && data.addresses.length > 0) {
+        data.addresses.forEach(addr => {
+          const opt = document.createElement('option');
+          opt.value = addr.id;
+          opt.textContent = `${addr.full_name} (${addr.address_line})`;
+          opt.dataset.details = JSON.stringify(addr);
+          select.appendChild(opt);
+        });
+      }
+    });
+}
+
+document.getElementById('addressSelect').addEventListener('change', function () {
+  const value = this.value;
+  const form = document.getElementById('addressForm');
+
+  if (value === "new") {
+    form.reset();
+    document.getElementById("address_id").value = "";
+  } else {
+    const option = this.options[this.selectedIndex];
+    const details = JSON.parse(option.dataset.details);
+
+    document.getElementById("address_id").value = details.id;
+    document.getElementById("full_name").value = details.full_name;
+    document.getElementById("address_line").value = details.address_line;
+    document.getElementById("city").value = details.city;
+    document.getElementById("postal_code").value = details.postal_code;
+    document.getElementById("phone_number").value = details.phone_number;
+  }
+});
+
+document.getElementById('addressForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  fetch('save_address.php', {
+    method: 'POST',
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Address saved!");
+        closeAddressModal();
+      } else {
+        alert("Error: " + data.error);
+      }
+    });
+});
+

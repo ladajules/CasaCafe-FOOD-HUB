@@ -56,6 +56,9 @@
             <div class="profileOptionItem">
                 <a href="#orderHistory"><i class="fa-solid fa-clock-rotate-left"></i> View Order History</a>
             </div>
+            <div class="profileOptionItem">
+                <a href="#" onclick="openModal('addressModal')"><i class="fa-solid fa-location-dot"></i> Manage Addresses</a>
+            </div>
         </div>
     </section>
     <!--a href="cart.html">My Purchase</a-->
@@ -68,6 +71,44 @@
             <button class="confirm-btn" id="saveEditBtn">Save</button>
             <button class="cancel-btn" onclick="closeModal('editModal')">Cancel</button>
           </div>
+        </div>
+    </div>
+
+    <div class="modal active" id="addressModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Addresses</h3>
+                <button class="close-btn" onclick="closeModal('editItemModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label for="addressSelect">Choose Address:</label>
+            <select id="addressSelect">
+              <option value="new">+ Add New Address</option>
+              <!-- js here -->
+            </select>
+            
+            <form id="addressForm">
+              <input type="hidden" id="address_id" name="address_id" value="">
+              
+              <label>Full Name:</label>
+              <input type="text" id="full_name" name="full_name" required>
+
+              <label>Address Line:</label>
+              <input type="text" id="address_line" name="address_line" required>
+
+              <label>City:</label>
+              <input type="text" id="city" name="city" required>
+
+              <label>Postal Code:</label>
+              <input type="text" id="postal_code" name="postal_code" required>
+
+              <label>Phone Number:</label>
+              <input type="text" id="phone_number" name="phone_number" required>
+
+              <button type="submit">Save Address</button>
+            </form>
         </div>
     </div>
 
