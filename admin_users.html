@@ -409,6 +409,27 @@
       tbody.appendChild(tr);
     });
 
+    document.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', e => {
+        const userId = e.target.getAttribute('data-id');
+        const newStatus = e.target.value;
+
+        fetch('admin_deactive_users.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `user_id=${userId}&isActive=${newStatus}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Failed to update status: ' + data.error);
+          }
+        });
+      });
+    });
+
     // document.querySelectorAll('.edit-btn').forEach(button => {
     //   button.addEventListener('click', e => {
     //     selectedUserId = e.currentTarget.getAttribute('data-id');
@@ -504,27 +525,6 @@
 
     backToTopBtn.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    document.querySelectorAll('.status-select').forEach(select => {
-      select.addEventListener('change', e => {
-        const userId = e.target.getAttribute('data-id');
-        const newStatus = e.target.value;
-
-        fetch('admin_deactive_users.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: `user_id=${userId}&isActive=${newStatus}`
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) {
-            alert('Failed to update status: ' + data.error);
-          }
-        });
-      });
     });
 
     </script>
