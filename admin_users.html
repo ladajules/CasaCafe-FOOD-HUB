@@ -401,8 +401,8 @@
         <td>${user.updated_at}</td>
         <td>
           <select class="status-select" data-id="${user.user_id}">
-            <option value="1" ${user.isActive == "1" ? 'selected' : ''}>Active</option>
-            <option value="0" ${user.isActive == "0" ? 'selected' : ''}>Inactive</option>
+            <option value="1" ${user.isActive ? 'selected' : ''}>Active</option>
+            <option value="0" ${!user.isActive ? 'selected' : ''}>Inactive</option>
           </select>
         </td>
       `;
