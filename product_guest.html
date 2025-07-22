@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASACAFE</title>
+    <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="cscript.js" defer></script>
+
+</head>
+
+<body style="margin-top: 88px;">
+
+    <header>
+
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index copy.html" class="logo"><img src="temp casaLogo.png"><span></span></a>
+
+        <form id="searchForm">
+            <input type="search" id="searchBar" placeholder="Search by title, description, category...">
+            <button type="submit" class="srchButton">🔍</button>
+        </form>
+
+
+        <nav class="nav-bar">
+            <a href="login.html" id="navWish">
+                <i class="fa-regular fa-heart wishlist-icon"></i>
+            </a>    
+            <a href="login.html" id="navCart">Cart</a>
+            <a href="index.html">home</a>
+            <a href="index.html#about-shop">about us</a>
+            <a href="#Menu">Menu</a>
+            <a href="login.html" id="navLog">login</a>
+            <a href="register.html" id="navReg">Sign Up</a>
+        </nav>
+
+    </header>
+
+    <section class="product-dis" id="products">
+
+        <h1 class="heading1"><span>Menu</span></h1>
+        <div id="sortControls">
+            <label for="sortSelect">Sort by:</label>
+            <select id="sortSelect">
+                <option value="">Default</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+            </select>
+        </div>
+
+        <div id="filterControls" style="margin-bottom: 10px;">
+            <label for="categoryFilter">Filter by category:</label>
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+
+        <div class="box-container">
+            <div id="menuContainer"></div>
+        </div>
+
+        <!-- this is js hereeeeeeee -->
+
+    </section>
+    <section class="footer">
+
+        <div class="box-container">
+            <div class="box">
+                <h3>quick links</h3>
+                <a href="index copy.html">home</a>
+                <a href="index copy.html#about-shop">About Us</a>
+                <a href="product.html">Menu</a>
+                <a href="cart.html">Cart</a>
+            </div>
+            <div class="box">
+                <h3>location</h3>
+                <a href="https://maps.app.goo.gl/pHYDhTVSVu65ZY137">Barangay Bankal, Lapu-Lapu City</a>
+            </div>
+
+            <div class="box">
+                <h3>contact info</h3>
+                <a href="#">+63 9177787609</a>
+                <a href="#">CasaCafe@gmail.com</a>
+                <a href="#">cebu, philippines - 6015</a>
+            </div>
+        </div>
+        <div class="credit"> created by <span> Althea Telmo, Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir
+                Ballesteros</span></div>
+    </section>
+
+    <div id="productModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImg" src="" alt="" />
+            <h1 id="modalTitle"></h1>
+            <span id="modalRate"></span><span id="modalStar">⭐</span>
+            <p id="modalDesc"></p>
+            <p id="modalPrice"></p>
+            <div id="modalButtons">
+                <button id="modalCartBtn">Add to cart</button>
+                <button id="modalWishlistBtn"><img src="heart outline.jpg"></button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Popup Container -->
+    <div id="popupNotification" class="popup">
+        <div class="popup-content">
+            <span id="popupCloseBtn" class="close-btn">&times;</span>
+            <p id="popupMessage">Message goes here</p>
+        </div>
+    </div>
+
+
+
+</body>
+<style>
+    #popupCloseBtn:hover {
+    cursor: pointer;
+    color:black;
+}
+</style>
+<script src="dropdown.js"></script>
+
+</html>
+
