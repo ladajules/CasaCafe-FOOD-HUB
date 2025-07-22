@@ -77,6 +77,17 @@ function closeModal(id) {
     document.getElementById(id).classList.remove("active");
 }
 
+function openAddressModal(id) {
+    document.getElementById("addressModal").classList.add("active");
+    fetchAddresses();
+}
+
+function closeAddressModal(id) {
+    document.getElementById("addressModal").classList.remove("active");
+    document.getElementById("addressForm").reset(); 
+    document.getElementById("address_id").value = '';
+}
+
 document.getElementById('saveEditBtn').addEventListener('click', () => {
     const newUsername = editUsernameInput.value.trim();
     if (newUsername && currentUserID) {
