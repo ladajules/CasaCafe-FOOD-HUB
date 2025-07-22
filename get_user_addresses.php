@@ -1,6 +1,7 @@
 <?php
 require 'db_connection.php';
 session_start();
+header('Content-Type: application/json');
 
 $user_id = $_SESSION['user_id'] ?? null;
 
