@@ -25,7 +25,7 @@ if (!$full_name || !$address_line || !$city || !$postal_code || !$phone_number) 
 if ($address_id !== '') {
     $stmt = $conn->prepare("UPDATE user_addresses 
         SET full_name = ?, address_line = ?, city = ?, postal_code = ?, phone_number = ?, updated_at = NOW() 
-        WHERE id = ? AND user_id = ?");
+        WHERE address_id = ? AND user_id = ?");
     $stmt->bind_param("ssssssi", $full_name, $address_line, $city, $postal_code, $phone_number, $address_id, $user_id);
 } else {
     $stmt = $conn->prepare("INSERT INTO user_addresses 
