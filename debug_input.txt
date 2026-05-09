@@ -1,0 +1,1 @@
+{"item_id":"1","item_name":"SkinSilog1","item_category":"Silog","item_description":"Skinless + Rice + Fried Egg","item_price":"68.00","item_image":"http://casacafe.dcism.org/IMAGES/skinsilog.jpg"}

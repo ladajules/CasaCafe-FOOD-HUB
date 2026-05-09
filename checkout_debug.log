@@ -1,0 +1,14 @@
+{
+    "cart": [
+        {
+            "item_id": 27,
+            "variant_id": 6,
+            "product_name": "Pancit Canton",
+            "quantity": 2,
+            "price": 25,
+            "img": "http:\/\/casacafe.dcism.org\/IMAGES\/pancit_canton.jpg"
+        }
+    ],
+    "deliveryType": "Pickup",
+    "paymentMethod": "Gcash"
+}
