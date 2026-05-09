@@ -1,0 +1,526 @@
+<?php
+include 'check_admin.php'
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - CasaCafe</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    #dropdownIcon {
+      font-size: 2.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    #dropdownToggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    #dropdownToggle i {
+      margin-left: 8px;
+      font-size: 2.3rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    #dropdownToggle.open #dropdownArrow {
+      transform: rotate(180deg);
+    }
+
+    .sidebar {
+      margin-top: 88px;
+      width: 220px;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      font-family: sans-serif;
+    }
+
+    .sidebar-section {
+      font-size: 12px;
+      color: #999;
+      margin: 20px 0 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-link,
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      color: #444;
+      text-decoration: none;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .menu-toggle:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sidebar-link.active {
+      background-color: black;
+      color: white;
+      border-radius: 10px;
+    }
+
+    .sidebar-link i,
+    .menu-toggle i {
+      margin-right: 10px;
+      min-width: 20px;
+    }
+
+    .submenu {
+      padding-left: 30px;
+    }
+
+    .submenu-link {
+      display: block;
+      color: #444;
+      text-decoration: none;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+
+    .submenu-link:hover {
+      text-decoration: underline;
+    }
+
+    .dropdown-icon {
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    .main-content {
+      margin: 45px;
+      width: 100%;
+      margin-top: 120px;
+      border-radius: 20px;
+    }
+
+    .menu-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-table thead {
+      background-color: #212121;
+      color: white;
+      text-align: left;
+    }
+
+    .menu-table th,
+    .menu-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+      text-transform: none;
+    }
+
+    .menu-table tbody tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 5px;
+    }
+
+    .edit-btn i {
+      color: #1e88e5;
+    }
+
+    .delete-btn i {
+      color: #e53935;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      animation: modalSlideIn 0.3s ease-out;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #212121;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: inherit;
+      box-sizing: border-box;
+      text-transform: none;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      box-sizing: border-box;
+      text-transform: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      padding-top: 10px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      min-width: 100px;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-1px);
+    }
+
+    .modal-content button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <?php
+  include 'header_admin.php'
+  ?>
+
+  <div class="sidebar">
+    <h3 class="sidebar-section">HOME</h3>
+    <a href="admin_dashboard.php" class="sidebar-link">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+
+    <h3 class="sidebar-section">LOG</h3>
+    <a href="admin_users.php" class="sidebar-link">
+      <i class="fas fa-user"></i> Users
+    </a>
+
+    <div class="dropdown-toggle">
+      <div class="sidebar-link menu-toggle active">
+        <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+      </div>
+      <div class="submenu" style="display: none;">
+        <a href="admin_view_menu.php" class="submenu-link">View Menu</a>
+        <a href="#" class="submenu-link">Add To Menu</a>
+      </div>
+
+      <a href="admin_orders.php" class="sidebar-link">
+        <i class="fas fa-shopping-cart"></i> Orders
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Add Menu Item</h3>
+    </div>
+
+    <form id="editItemForm">
+      <input type="hidden" id="edit_item_id">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Item Name</label>
+          <input type="text" id="edit_item_name" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="edit_item_category" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Image File Path</label>
+          <input type="text" id="edit_item_image" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Price</label>
+          <input type="text" id="edit_item_price" class="form-input" required>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">Description</label>
+          <textarea id="edit_item_description" class="form-textarea" required></textarea>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary">Clear All</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div id="successPopup" class="modal">
+    <div class="modal-content">
+      <h3>Item added successfully!</h3>
+      <button onclick="closeModal('successPopup')" class="confirm-btn">OK</button>
+    </div>
+  </div>
+
+
+  <script>
+    const toggle = document.getElementById("dropdownToggle");
+    const menu = document.getElementById("dropdownMenu");
+    const arrow = document.getElementById("dropdownArrow");
+
+    toggle.addEventListener("click", () => {
+      const isVisible = menu.style.display === "block";
+      menu.style.display = isVisible ? "none" : "block";
+      toggle.classList.toggle("open", !isVisible);
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!document.getElementById("profileDropdown").contains(e.target)) {
+        menu.style.display = "none";
+        toggle.classList.remove("open");
+      }
+    });
+
+    document.querySelector('.menu-toggle').addEventListener('click', () => {
+      const submenu = document.querySelector('.submenu');
+      submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("editItemForm");
+      const clearBtn = document.querySelector(".btn.btn-secondary");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const data = {
+          name: document.getElementById("edit_item_name").value.trim(),
+          category: document.getElementById("edit_item_category").value.trim(),
+          image_url: document.getElementById("edit_item_image").value.trim(),
+          price: document.getElementById("edit_item_price").value.trim(),
+          description: document.getElementById("edit_item_description").value.trim()
+        };
+
+        fetch("admin_add_menu_item.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          })
+          .then(res => res.json())
+          .then(response => {
+            if (response.success) {
+              openModal("successPopup");
+              form.reset();
+            } else {
+              alert("Failed to add item: " + response.error);
+            }
+          })
+          .catch(err => {
+            console.error("Error:", err);
+            alert("An error occurred while adding the item.");
+          });
+      });
+
+      clearBtn.addEventListener("click", () => {
+        form.reset();
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -4,14 +4,6 @@ require 'db_connection.php';
 
 $debug = [];
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode([
-        "success" => false,
-        "error" => "Guest users are not allowed to access this page"
-    ]);
-    exit();
-}
-
 $userID = $_SESSION['user_id'];
 $debug['session'] = $_SESSION;
 

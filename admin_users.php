@@ -1,0 +1,573 @@
+<?php
+include 'check_admin.php'
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - CasaCafe</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    #dropdownIcon {
+      font-size: 2.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    #dropdownToggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    #dropdownToggle i {
+      margin-left: 8px;
+      font-size: 2.3rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    #dropdownToggle.open #dropdownArrow {
+      transform: rotate(180deg);
+    }
+
+    .sidebar {
+      margin-top: 88px;
+      width: 220px;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      font-family: sans-serif;
+    }
+
+    .sidebar-section {
+      font-size: 12px;
+      color: #999;
+      margin: 20px 0 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-link,
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      color: #444;
+      text-decoration: none;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .menu-toggle:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sidebar-link.active {
+      background-color: black;
+      color: white;
+      border-radius: 10px;
+    }
+
+    .sidebar-link i,
+    .menu-toggle i {
+      margin-right: 10px;
+      min-width: 20px;
+    }
+
+    .submenu {
+      padding-left: 30px;
+    }
+
+    .submenu-link {
+      display: block;
+      color: #444;
+      padding: 8px 0;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .submenu-link:hover {
+      text-decoration: underline;
+    }
+
+    .dropdown-icon {
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    .main-content {
+      margin: 45px;
+      width: 100%;
+      margin-top: 120px;
+      border-radius: 20px;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-table thead {
+      background-color: #212121;
+      color: white;
+      text-align: left;
+    }
+
+    .user-table th,
+    .user-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .user-table tbody tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 5px;
+    }
+
+    .edit-btn i {
+      color: #1e88e5;
+    }
+
+    .delete-btn i {
+      color: #e53935;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .modal-content input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    .modal-content button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #backToTopBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 999;
+      font-size: 18px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #backToTopBtn:hover {
+      background-color: white;
+      color: black;
+      border: 1px solid black;
+    }
+
+    .status-select {
+      border: 1px solid black;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+  <?php
+  include 'header_admin.php'
+  ?>
+
+
+  <div class="sidebar">
+    <h3 class="sidebar-section">HOME</h3>
+    <a href="admin_dashboard.php" class="sidebar-link">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+
+    <h3 class="sidebar-section">LOG</h3>
+    <a href="#" class="sidebar-link active">
+      <i class="fas fa-user"></i> Users
+    </a>
+
+    <div class="dropdown-toggle">
+      <div class="sidebar-link menu-toggle">
+        <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+      </div>
+      <div class="submenu" style="display: none;">
+        <a href="admin_view_menu.php" class="submenu-link">View Menu</a>
+        <a href="admin_add_menu.php" class="submenu-link">Add To Menu</a>
+      </div>
+
+      <a href="admin_orders.php" class="sidebar-link">
+        <i class="fas fa-shopping-cart"></i> Orders
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="search-container" style="padding: 20px 20px 20px 0; margin-top: 30px;">
+      <input type="text" id="searchInput" placeholder="Search by UserID or Username..." style="width: 300px; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
+
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>UserID</th>
+          <th>Username</th>
+          <th>Created At</th>
+          <th>Updated At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <!-- js goes here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- add this above delete button
+    <button class="edit-btn" data-id="${user.UserID}" data-username="${user.Username}"><i class="fas fa-pen"></i></button> -->
+
+  <!-- Edit -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h3>Edit Username</h3>
+      <input type="text" id="editUsernameInput" />
+      <div>
+        <button class="confirm-btn" id="saveEditBtn">Save</button>
+        <button class="cancel-btn" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <h3 id="deleteMessage">Are you sure you want to delete this user?</h3>
+      <div>
+        <button class="confirm-btn" id="confirmDeleteBtn">Yes</button>
+        <button class="cancel-btn" onclick="closeModal('deleteModal')">No</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="backToTopBtn" title="Back to Top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script>
+    const toggle = document.getElementById("dropdownToggle");
+    const menu = document.getElementById("dropdownMenu");
+    const arrow = document.getElementById("dropdownArrow");
+
+    toggle.addEventListener("click", () => {
+      const isVisible = menu.style.display === "block";
+      menu.style.display = isVisible ? "none" : "block";
+      toggle.classList.toggle("open", !isVisible);
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!document.getElementById("profileDropdown").contains(e.target)) {
+        menu.style.display = "none";
+        toggle.classList.remove("open");
+      }
+    });
+
+    document.querySelector('.menu-toggle').addEventListener('click', () => {
+      const submenu = document.querySelector('.submenu');
+      submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
+
+    const editModal = document.getElementById("editModal");
+    const deleteModal = document.getElementById("deleteModal");
+    const editUsernameInput = document.getElementById("editUsernameInput");
+    let selectedUserId = null;
+    let allUsers = [];
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function renderUsers(users) {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+      <td>${user.user_id}</td>
+      <td style="text-transform: none;">${user.username}</td>
+      <td>${user.created_at}</td>
+      <td>${user.updated_at}</td>
+      <td style="display: flex; gap: 8px; align-items: center;">
+        <select class="status-select" data-id="${user.user_id}">
+          <option value="1" ${user.isActive === "1" ? 'selected' : ''}>Active</option>
+          <option value="0" ${user.isActive === "0" ? 'selected' : ''}>Inactive</option>
+        </select>
+
+        <button
+          type="button"
+          class="forget-password-btn"
+          data-id="${user.user_id}">
+          Forget Password
+        </button>
+      </td>
+    `;
+
+        tbody.appendChild(tr);
+      });
+
+      // Handle Active/Inactive dropdown changes
+      document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', e => {
+          const userId = e.target.getAttribute('data-id');
+          const newStatus = e.target.value;
+
+          fetch('admin_deactive_users.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: `user_id=${userId}&isActive=${newStatus}`
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.success) {
+                alert('Failed to update status: ' + data.error);
+              }
+            });
+        });
+      });
+
+      document.querySelectorAll('.forget-password-btn').forEach(button => {
+        button.addEventListener('click', e => {
+          const userId = e.target.getAttribute('data-id');
+
+          if (!confirm('Reset this user\'s password?')) return;
+
+          fetch('admin_forget_password.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: `user_id=${encodeURIComponent(userId)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                // Copy link to clipboard automatically
+                navigator.clipboard.writeText(data.reset_link)
+                  .then(() => {
+                    alert(
+                      'Password reset link copied to clipboard.\n\n' +
+                      data.reset_link +
+                      '\n\nExpires at: ' +
+                      data.expires_at
+                    );
+                  })
+                  .catch(() => {
+                    prompt(
+                      'Copy this password reset link:',
+                      data.reset_link
+                    );
+                  });
+              } else {
+                alert('Failed to reset password: ' + data.error);
+              }
+            })
+            .catch(err => {
+              console.error('Reset failed:', err);
+              alert('An error occurred while generating the reset link.');
+            });
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('admin_get_users.php')
+        .then(res => res.json())
+        .then(users => {
+          allUsers = users;
+          renderUsers(users);
+        })
+        .catch(error => {
+          console.error('Error loading users:', error);
+        });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const filtered = allUsers.filter(user =>
+        user.user_id.includes(keyword) ||
+        user.username.toLowerCase().includes(keyword)
+      );
+      renderUsers(filtered);
+    });
+
+    document.getElementById('saveEditBtn').addEventListener('click', () => {
+      const newUsername = editUsernameInput.value.trim();
+      if (newUsername && selectedUserId) {
+        fetch('admin_edit_users.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `user_id=${selectedUserId}&username=${encodeURIComponent(newUsername)}`
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              closeModal('editModal');
+              location.reload();
+            } else {
+              alert('Edit failed: ' + data.error);
+            }
+          });
+      }
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+      if (selectedUserId) {
+        fetch('admin_delete_users.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `user_id=${selectedUserId}`
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              closeModal('deleteModal');
+              location.reload();
+            } else {
+              alert('Delete failed: ' + data.error);
+            }
+          });
+      }
+    });
+
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.style.opacity = "1";
+        backToTopBtn.style.visibility = "visible";
+      } else {
+        backToTopBtn.style.opacity = "0";
+        backToTopBtn.style.visibility = "hidden";
+      }
+    });
+
+    backToTopBtn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+</body>
+
+</html>

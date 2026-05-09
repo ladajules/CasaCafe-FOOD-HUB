@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASACAFE</title>
+    <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <?php include 'header.php'; ?>
+
+<!-- home section -->
+
+ <section class="carousel" id="carousel">
+        <div class="slideshow-container" id="home">
+            <!-- Full-width images with number and caption text -->
+            <div class="mySlides fade">
+                <img src="1.png" style="width:100%">
+            </div>
+
+            <div class="mySlides fade">
+                <img src="2.png" style="width:100%">
+            </div>
+
+            <div class="mySlides fade">
+                <img src="3.png" style="width:100%">
+            </div>
+
+            <div class="mySlides fade">
+                <img src="4.png" style="width:100%">
+            </div>
+
+            <div class="mySlides fade">
+                <img src="5.png" style="width:100%">
+            </div>
+
+            <div class="mySlides fade">
+                <img src="6.png" style="width:100%">
+            </div>
+
+            <!-- Next and previous buttons -->
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        </div>
+        <br>
+    </section>
+
+
+ <!-- abt shop section -->
+  <section class="about-shop" id="about-shop">
+
+    <h1 class="heading"> <span> about </span> us </h1>
+
+    <div class="row">
+        <div class="video-container">
+            <video src="about us.mp4" loop autoplay muted></video>
+        </div>
+
+        <div class="content">
+            <h3 style="color: #e9d36c">At CASACAFE FOOD HUB</h3>
+            <p style="text-transform: none;">We are committed to delivering only the best service to our customers. 
+                From the moment you visit our site to the time your order arrives at your doorstep, 
+                we strive to make every step smooth, reliable, and enjoyable</p>
+            <p style="text-transform: none;">Our dedicated team works tirelessly to ensure fast shipping, secure payments, and responsive customer support. 
+                We listen to your feedback and continuously improve to meet and exceed your expectations. 
+                Your satisfaction is our top priority, and we take pride in offering a shopping experience that is trustworthy, convenient, and tailored just for you.</p>
+            <!-- <a href="#" class="btn">learn more</a> -->
+        </div>
+    </div>
+
+  </section>
+ <!-- abt shop section -->
+
+  <section class="footer">
+
+    <div class="credit"> created by <span> Althea Telmo, Jules Niño Adrian Lada, Francisco Jubelag Jr XX, Casmir Ballesteros</span></div>
+  </section>
+  <script src="script.js"></script>
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex - 1].style.display = "block";
+        }
+
+        setInterval(() => {
+            plusSlides(1);
+        }, 3000);
+    </script>
+
+</body>
+
+</html>

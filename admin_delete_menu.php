@@ -1,5 +1,6 @@
 <?php
 require 'db_connection.php';
+require 'check_admin.php';
 
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "error" => "Database connection failed"]);

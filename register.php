@@ -1,49 +1,66 @@
-<?php
-session_start();
-require 'db_connection.php';
+<!DOCTYPE html>
+<html>
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="login.css">
+</head>
 
-    if (!$username || !$password) {
-        header("Location: register.html?error=Please+fill+in+both+fields");
-        exit;
-    }
+<header>
+    <input type="checkbox" name="" id="toggler">
+    <label for="toggler" class="fas fa-bars"></label>
+    <a href="index.php" class="logo"><img src="temp casaLogo.png"><span></span></a>
 
-    $check = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
-    $check->bind_param("s", $username);
-    $check->execute();
-    $result = $check->get_result();
+    <nav class="nav-bar">
+        <a href="index.php">home</a>
+    </nav>
 
-    if ($result->fetch_assoc()) {
-        header("Location: register.html?error=Username+already+taken");
-        exit;
-    }
 
-    $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $username, $hashed);
-    $success = $stmt->execute();
+</header>
 
-    if ($success) {
-        $newUserId = $conn->insert_id;
+<body style="background-color: white">
 
-        $roleStmt = $conn->prepare("SELECT role FROM users WHERE user_id = ?");
-        $roleStmt->bind_param("i", $newUserId);
-        $roleStmt->execute();
-        $roleResult = $roleStmt->get_result();
-        $roleRow = $roleResult->fetch_assoc();
+    <div id="loginContainer">
+        <form action="register_user.php" class="form" method="POST">
+            <h2 id="title">Sign Up</h2>
+            <div>
+                <label for="username" id="details">Username:</label>
+                <input type="text" id="username" name="username" required><br><br>
+            </div>
 
-        $_SESSION['user_id'] = $newUserId;
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = $roleRow['role'] ?? 'Customer';
+            <div>
+                <label for="password" id="details">Password:</label>
+                <input type="password" id="password" name="password" required><br><br>
+            </div>
+            <input type="submit" value="Register" id="rg">
+            <p id="register">Do you have an account? <a href="login.php">Log in</a></p>
+        </form>
+    </div>
 
-        header("Location: login.html?success=Account+successfully+created!+Please+log+in.");
-        exit;
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Registration failed']);
-    }
-}
-?>
+    <div id="errorModal" style="display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    background-color: white; padding: 20px; border: 2px solid #f00; z-index: 1000;">
+        <p id="errorText" style="color: red;"></p>
+        <button onclick="document.getElementById('errorModal').style.display='none'">Close</button>
+    </div>
+
+
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                const error = urlParams.get('error');
+                document.getElementById('errorText').textContent = decodeURIComponent(error.replace(/\+/g, ' '));
+                document.getElementById('errorModal').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

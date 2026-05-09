@@ -1,5 +1,6 @@
 <?php
 require_once 'db_connection.php';
+require 'check_admin.php';
 header('Content-Type: application/json');
 
 $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : (isset($_POST['order_id']) ? $_POST['order_id'] : null);

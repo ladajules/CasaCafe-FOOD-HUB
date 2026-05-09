@@ -1,39 +1,98 @@
-<?php
-session_start();
-require 'db_connection.php';
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="login.css">
+</head>
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-     $username = $_POST['username'] ?? '';
-     $password = $_POST['password'] ?? '';
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        <a href="index.php" class="logo"><img src="temp casaLogo.png"><span></span></a>
 
-     $stmt = $conn->prepare("SELECT user_id, username, password, role, isActive FROM users WHERE username = ?");
-     $stmt->bind_param("s", $username);
-     $stmt->execute();
-     $result = $stmt->get_result();
-     $user = $result->fetch_assoc();
+        <nav class="nav-bar">
+            <a href="index.php">home</a>
+        </nav>
 
-     if ($user && password_verify($password, $user['password'])) {
-         if (!$user['isActive']) {
-            header("Location: login.html?error=inactive");
-            exit;
-         }
+ 
 
-         $_SESSION['user_id'] = $user['user_id'];
-         $_SESSION['username'] = $user['username'];
-         $_SESSION['role'] = $user['role']; 
+    </header>
+<body style="background-color: white">
 
-         setcookie("user_id", $user['user_id'], time() + 3600, "/");
-         setcookie("username", $user['username'], time() + 3600, "/");
-         setcookie("role", $user['role'], time() + 3600, "/");
+    <div id="loginContainer">
+        
+    <form action="login_user.php" class="form" method="POST">
+        <h2 id="title">Login</h2>
+        <div>
+            <label for="username" class="details" id="usernameLabel" style="margin-right: 6px;">Username:</label>
+            <input type="text" id="username" name="username" autocapitalize="none" autocorrect="off" required><br><br>
+        </div>
+        
+        <div>
+            <label for="password" class="details">Password:</label>
+            <input type="password" id="password" name="password" required autocapitalize="none"><br><br>
+        </div>  
+        <a href="forgot.php" style="color:rgb(72, 72, 233)">Forgot Password?</a>
+        <input type="submit" value="Login" id="login">
+        
+        
+        <p id="register">Don't have an account? <a href="register.php">Register here</a></p>
+        
+        <!-- to integrate google and other sign up options in the future -->
+        <!-- <div class="divider">
+            <span>or continue with</span>
+        </div>
+        
+        <div class="social-login">
+            <button class="google-btn">
+                <i class="fab fa-google"></i> Google
+            </button>
+        </div> -->
 
-         if ($user['role'] === 'Admin') {
-            header("Location: admin_dashboard.html");
-         } else {
-            header("Location: index copy.html");
-         }
-         exit;
-    } else {
-      header("Location: login.html?error=1");
+        
+    </form>
+    </div>
+
+
+<div id="errorModal" style="display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    background-color: white; padding: 20px; border: 2px solid #f00; z-index: 1000;">
+    <p id="errorMessage" style="color: red;"></p>
+    <button onclick="document.getElementById('errorModal').style.display='none'">Close</button>
+</div>
+
+<div id="successModal" style="display: none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    background-color: white; padding: 20px; border: 2px solid green; z-index: 1000;">
+    <p style="color: green;">Account successfully created! Please log in.</p>
+    <button onclick="document.getElementById('successModal').style.display='none'">Close</button>
+</div>
+    
+
+<script>
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorModal = document.getElementById('errorModal');
+    const errorMessage = document.getElementById('errorMessage');
+
+    if (urlParams.has('error')) {
+        const type = urlParams.get('error');
+        if (type === 'inactive') {
+            errorMessage.textContent = 'This account has been deactivated.';
+        } else {
+            errorMessage.textContent = 'Invalid username or password.';
+        }
+        errorModal.style.display = 'block';
     }
-}
-?>
+
+    if (urlParams.has('success')) {
+        document.getElementById('successModal').style.display = 'block';
+    }
+};
+</script>
+</body>
+</html>

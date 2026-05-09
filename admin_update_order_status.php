@@ -1,5 +1,6 @@
 <?php
 require 'db_connection.php';
+require 'check_admin.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -1,5 +1,6 @@
 <?php
 require 'db_connection.php';
+require 'check_admin';
 header('Content-Type: application/json');
 
 $user_id = $_POST['user_id'] ?? null;

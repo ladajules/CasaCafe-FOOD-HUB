@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'db_connection.php'; 
+require 'check_admin.php';
 
 $sql = "SELECT item_id, name, category, description, price, image_url FROM items ORDER BY item_id ASC";
 $result = $conn->query($sql);

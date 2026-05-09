@@ -1,0 +1,396 @@
+<?php
+include 'check_admin.php'
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - CasaCafe</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="icon" href="temp casaLogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    #dropdownIcon {
+      font-size: 2.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    #dropdownToggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    #dropdownToggle i {
+      margin-left: 8px;
+      font-size: 2.3rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    #dropdownToggle.open #dropdownArrow {
+      transform: rotate(180deg);
+    }
+
+    .sidebar {
+      margin-top: 88px;
+      width: 220px;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      font-family: sans-serif;
+    }
+
+    .sidebar-section {
+      font-size: 12px;
+      color: #999;
+      margin: 20px 0 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-link,
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      color: #444;
+      text-decoration: none;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .menu-toggle:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sidebar-link.active {
+      background-color: black;
+      color: white;
+      border-radius: 10px;
+    }
+
+    .sidebar-link i,
+    .menu-toggle i {
+      margin-right: 10px;
+      min-width: 20px;
+    }
+
+    .submenu {
+      padding-left: 30px;
+    }
+
+    .submenu-link {
+      display: block;
+      color: #444;
+      text-decoration: none;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+
+    .submenu-link:hover {
+      text-decoration: underline;
+    }
+
+    .dropdown-icon {
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    .main-content {
+      margin: 45px;
+      width: 100%;
+      margin-top: 120px;
+      border-radius: 20px;
+    }
+
+    .section {
+      background: white;
+      padding: 50px 50px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 25px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      font-size: 15px;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 250px;
+      margin-right: 20px;
+      font-size: 18px;
+    }
+
+    .status-select {
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-left: 15px;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <?php
+  include 'header_admin.php'
+  ?>
+
+  <div class="sidebar">
+    <h3 class="sidebar-section">HOME</h3>
+    <a href="admin_dashboard.php" class="sidebar-link">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+
+    <h3 class="sidebar-section">LOG</h3>
+    <a href="admin_users.php" class="sidebar-link">
+      <i class="fas fa-user"></i> Users
+    </a>
+
+    <div class="dropdown-toggle">
+      <div class="sidebar-link menu-toggle">
+        <i class="fas fa-utensils"></i> Menu <i class="fas fa-chevron-down dropdown-icon"></i>
+      </div>
+      <div class="submenu" style="display: none;">
+        <a href="admin_view_menu.php" class="submenu-link">View Menu</a>
+        <a href="admin_add_menu.php" class="submenu-link">Add To Menu</a>
+      </div>
+
+      <a href="#" class="sidebar-link active">
+        <i class="fas fa-shopping-cart"></i> Orders
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_orders.php">
+      <button class="back-btn">&lt; Back</button>
+    </a>
+    <h1 style="margin-bottom: 20px; font-size: 29px;">Order Details</h1>
+
+    <div class="section" id="customerInfo">
+      <h2>Customer & Order Info</h2>
+      <div class="row">
+        <div class="col"><span class="label">Order ID:</span> <span id="order_id"></span></div>
+        <div class="col"><span class="label">User ID:</span> <span id="user_id"></span></div>
+        <div class="col"><span class="label">Date:</span> <span id="date"></span></div>
+      </div>
+      <div class="row">
+        <div class="col"><span class="label">Full Name:</span> <span id="fullName"></span></div>
+        <div class="col"><span class="label">Phone:</span> <span id="phoneNumber"></span></div>
+        <div class="col"><span class="label">Delivery Type:</span> <span id="deliveryType"></span></div>
+      </div>
+      <div class="row">
+        <div class="col" style="margin-right: 517px;"><span class="label">Address:</span> <span id="fullAddress"></span></div>
+        <div class="col"><span class="label">Payment Method:</span> <span id="paymentMethod"></span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Order Items</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="itemsTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Update Order Status</h2>
+      <select id="statusSelect" class="status-select">
+        <option value="Pending">Pending</option>
+        <option value="Preparing">Preparing</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <button class="btn" onclick="updateStatus()">Update Status</button>
+    </div>
+
+    <div class="section">
+      <h2>Payment Summary</h2>
+      <p style="font-size: 18px;"><span class="label">Total Amount:</span> ₱<span id="totalAmount"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById("dropdownToggle");
+    const menu = document.getElementById("dropdownMenu");
+    const arrow = document.getElementById("dropdownArrow");
+
+    toggle.addEventListener("click", () => {
+      const isVisible = menu.style.display === "block";
+      menu.style.display = isVisible ? "none" : "block";
+      toggle.classList.toggle("open", !isVisible);
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!document.getElementById("profileDropdown").contains(e.target)) {
+        menu.style.display = "none";
+        toggle.classList.remove("open");
+      }
+    });
+
+    document.querySelector('.menu-toggle').addEventListener('click', () => {
+      const submenu = document.querySelector('.submenu');
+      submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const order_id = params.get("order_id");
+
+    fetch(`admin_get_order_details.php?order_id=${order_id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const order = data.order;
+          const items = data.items;
+
+          document.getElementById("order_id").textContent = order.order_id;
+          document.getElementById("user_id").textContent = order.user_id;
+          document.getElementById("date").textContent = order.created_at;
+          document.getElementById("fullName").textContent = order.full_name;
+          document.getElementById("phoneNumber").textContent = order.phone_number;
+          document.getElementById("deliveryType").textContent = order.delivery_type;
+          document.getElementById("paymentMethod").textContent = order.payment_method;
+          document.getElementById("fullAddress").textContent =
+            `${order.address_line}, ${order.city}, ${order.postal_code}`;
+
+          document.getElementById("statusSelect").value = order.status;
+
+          let total = 0;
+          const tbody = document.getElementById("itemsTableBody");
+          items.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
+                    <td><img src="${item.image_url}" alt="" style="width: 50px;"></td>
+                    <td>${item.quantity}</td>
+                    <td>₱${parseFloat(item.price).toFixed(2)}</td>
+                    <td>₱${(item.price * item.quantity).toFixed(2)}</td>
+                    `;
+            tbody.appendChild(row);
+            total += item.price * item.quantity;
+          });
+
+          document.getElementById("totalAmount").textContent = total.toFixed(2);
+        } else {
+          alert("Order not found.");
+        }
+      });
+
+    function updateStatus() {
+      const newStatus = document.getElementById("statusSelect").value;
+
+      fetch("admin_update_order_status.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: `order_id=${order_id}&status=${newStatus}`
+        })
+        .then(res => res.text())
+        .then(msg => alert("Status updated."))
+        .catch(err => alert("Failed to update status."));
+    }
+  </script>
+</body>
+
+</html>

@@ -48,6 +48,23 @@ let editModal;
 document.addEventListener('DOMContentLoaded', () => {
     editUsernameInput = document.getElementById("editUsernameInput");
     editModal = document.getElementById("editModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        fetch("logout.php", {
+            method: "GET",
+            credentials: "include"
+        })
+            .then(() => {
+                localStorage.clear();
+                window.location.href = "index.php";
+            })
+            .catch(err => {
+                console.error("Logout failed:", err);
+            });
+    });
 
     fetch("getUser.php")
         .then(res => res.json())
@@ -84,7 +101,7 @@ function openAddressModal(id) {
 
 function closeAddressModal(id) {
     document.getElementById("addressModal").classList.remove("active");
-    document.getElementById("addressForm").reset(); 
+    document.getElementById("addressForm").reset();
     document.getElementById("address_id").value = '';
 }
 
@@ -103,19 +120,19 @@ document.getElementById('saveEditBtn').addEventListener('click', () => {
             },
             body: bodyData
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                closeModal('editModal');
-                location.reload();
-            } else {
-                alert('Edit failed: ' + data.error);
-            }
-        })
-        .catch(err => {
-            alert("An error occurred during update.");
-            console.error(err);
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal('editModal');
+                    location.reload();
+                } else {
+                    alert('Edit failed: ' + data.error);
+                }
+            })
+            .catch(err => {
+                alert("An error occurred during update.");
+                console.error(err);
+            });
     } else {
         alert("Missing username or user ID.");
     }
@@ -127,35 +144,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const orderDetailsHTML = orderTrackingSection.innerHTML;
 
     fetch('get_current_orders.php')
-    .then(response => response.json())
-    .then(data => {
-        const orderTrackingSection = document.querySelector(".orderTracking");
+        .then(response => response.json())
+        .then(data => {
+            const orderTrackingSection = document.querySelector(".orderTracking");
 
-        if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
-            orderTrackingSection.innerHTML = `
+            if (!data.success || !Array.isArray(data.orders) || data.orders.length === 0) {
+                orderTrackingSection.innerHTML = `
                 <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
                 <h2 style="font-size: 18px;">No orders yet :(</h2>
             `;
-            return;
-        }
+                return;
+            }
 
-        let allTrackingHTML = `<h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>`;
+            let allTrackingHTML = `<h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>`;
 
-        data.orders.forEach(order => {
-            const progressSteps = {
-                "Pending": [true, false, false],
-                "Preparing": [true, true, false],
-                "Completed": [true, true, true],
-            }[order.status] || [false, false, false];
+            data.orders.forEach(order => {
+                const progressSteps = {
+                    "Pending": [true, false, false],
+                    "Preparing": [true, true, false],
+                    "Completed": [true, true, true],
+                }[order.status] || [false, false, false];
 
-            const stepsHTML = `
+                const stepsHTML = `
                 <div class="progressBar">
                     <div class="progressStep ${progressSteps[0] ? "active" : ""}"><i class="fa-solid fa-clipboard-list"></i> Order Processed</div>
                     <div class="progressStep ${progressSteps[1] ? "active" : ""}"><i class="fa-solid fa-utensils"></i> Kitchen Is Preparing</div>
                     <div class="progressStep ${progressSteps[2] ? "active" : ""}"><i class="fa-solid fa-check"></i> Order Completed</div>
                 </div>`;
 
-            const itemsHTML = order.items.map(item => `
+                const itemsHTML = order.items.map(item => `
                 <tr>
                     <td>${item.variant_name ? `${item.variant_name} ${item.item_name}` : item.item_name}</td>
                     <td><img src="${item.image_url}" alt="${item.item_name}" style="max-width: 60px;"></td>
@@ -165,16 +182,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tr>
             `).join('');
 
-            let orderStatusMessage = "";
-            if (order.status === "Pending") {
-                orderStatusMessage = "Order is being processed...";
-            } else if (order.status === "Preparing") {
-                orderStatusMessage = "Kitchen is preparing...";
-            } else if (order.status === "Completed") {
-                orderStatusMessage = "Order has been completed.";
-            }
+                let orderStatusMessage = "";
+                if (order.status === "Pending") {
+                    orderStatusMessage = "Order is being processed...";
+                } else if (order.status === "Preparing") {
+                    orderStatusMessage = "Kitchen is preparing...";
+                } else if (order.status === "Completed") {
+                    orderStatusMessage = "Order has been completed.";
+                }
 
-            allTrackingHTML += `
+                allTrackingHTML += `
                 <h2 style="font-size: 20px; margin-bottom: 5px; display: flex; justify-content: space-between;">
                     <span><span class="label">Order ID:</span> ${order.order_id}</span>
                     <span><span class="label">Date:</span> ${order.created_at.split(" ")[0]}</span>
@@ -217,69 +234,69 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="cancel-order-btn" data-order-id="${order.order_id}">Cancel Order</button>
                 </div>
             `;
-        });
-
-        orderTrackingSection.innerHTML = allTrackingHTML;
-
-        let selectedOrderId = null;
-        
-        document.querySelectorAll(".cancel-order-btn").forEach(button => {
-            button.addEventListener("click", () => {
-                selectedOrderId = button.getAttribute("data-order-id");
-                openModal("cancelModal");
             });
-        });
 
-        document.getElementById("confirmCancelBtn").addEventListener("click", () => {
-            if (!selectedOrderId) return;
+            orderTrackingSection.innerHTML = allTrackingHTML;
 
-            fetch("admin_update_order_status.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `order_id=${selectedOrderId}&status=Cancelled`
-            })
-                .then(res => res.json())
-                .then(response => {
-                if (response.success) {
-                    alert("Order cancelled successfully.");
-                    location.reload(); 
-                } else {
-                    alert("Failed to cancel order.");
-                }
-                })
-                .catch(err => {
-                console.error("Cancel error:", err);
-                alert("An error occurred.");
+            let selectedOrderId = null;
+
+            document.querySelectorAll(".cancel-order-btn").forEach(button => {
+                button.addEventListener("click", () => {
+                    selectedOrderId = button.getAttribute("data-order-id");
+                    openModal("cancelModal");
                 });
+            });
 
-            closeModal("cancelModal");
-        });
+            document.getElementById("confirmCancelBtn").addEventListener("click", () => {
+                if (!selectedOrderId) return;
 
-    })
-    .catch(err => {
-        console.error("Error fetching orders:", err);
-        document.querySelector(".orderTracking").innerHTML = `
+                fetch("admin_update_order_status.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `order_id=${selectedOrderId}&status=Cancelled`
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        if (response.success) {
+                            alert("Order cancelled successfully.");
+                            location.reload();
+                        } else {
+                            alert("Failed to cancel order.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Cancel error:", err);
+                        alert("An error occurred.");
+                    });
+
+                closeModal("cancelModal");
+            });
+
+        })
+        .catch(err => {
+            console.error("Error fetching orders:", err);
+            document.querySelector(".orderTracking").innerHTML = `
             <h2 style="border-bottom: 1px solid #ddd; font-size: 35px; margin-bottom: 19px;">Order Tracking</h2>
             <h2 style="font-size: 18px;">No orders yet :(</h2>
         `;
-    });
+        });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch('get_order_history.php')
-    .then(res => res.json())
-    .then(data => {
-        const historyContainer = document.getElementById("orderHistoryList");
+        .then(res => res.json())
+        .then(data => {
+            const historyContainer = document.getElementById("orderHistoryList");
 
-        if (!data.orders || !Array.isArray(data.orders) || data.orders.length === 0) {
-            historyContainer.innerHTML = `
+            if (!data.orders || !Array.isArray(data.orders) || data.orders.length === 0) {
+                historyContainer.innerHTML = `
                 <h2 style="font-size: 18px;">You have no past orders :(</h2>
             `;
-            return;
-        }
+                return;
+            }
 
-        data.orders.forEach(order => {
-            const itemListHTML = order.items.map(item => `
+            data.orders.forEach(order => {
+                const itemListHTML = order.items.map(item => `
             <div class="history-item">
                 <img src="${item.image_url}" alt="${item.item_name}">
                 <div class="item-info">
@@ -290,9 +307,9 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             `).join('');
 
-            const orderCard = document.createElement("div");
-            orderCard.className = "history-card";
-            orderCard.innerHTML = `
+                const orderCard = document.createElement("div");
+                orderCard.className = "history-card";
+                orderCard.innerHTML = `
             <div class="history-header">
                 <div><strong>Order ID:</strong> ${order.order_id}</div>
                 <div><strong>Date:</strong> ${order.created_at.split(" ")[0]}</div>
@@ -303,89 +320,89 @@ document.addEventListener("DOMContentLoaded", () => {
                 <strong>Total:</strong> ₱${order.total_price}
             </div>
             `;
-            historyContainer.appendChild(orderCard);
+                historyContainer.appendChild(orderCard);
+            })
         })
-    })
-    .catch(err => {
+        .catch(err => {
             console.error("Error fetching order history:", err);
             document.getElementById("orderHistoryList").innerHTML = `
             <p style="text-align:center;">Something went wrong.</p>
             `;
-    });
+        });
 });
 
 const backToTopBtn = document.getElementById("backToTopBtn");
 
 window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.style.opacity = "1";
-    backToTopBtn.style.visibility = "visible";
-  } else {
-    backToTopBtn.style.opacity = "0";
-    backToTopBtn.style.visibility = "hidden";
-  }
+    if (window.scrollY > 300) {
+        backToTopBtn.style.opacity = "1";
+        backToTopBtn.style.visibility = "visible";
+    } else {
+        backToTopBtn.style.opacity = "0";
+        backToTopBtn.style.visibility = "hidden";
+    }
 });
 
 backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 function fetchAddresses() {
-  fetch('get_user_addresses.php')
-    .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById('addressSelect');
-      select.innerHTML = `<option value="new">+ Add New Address</option>`;
+    fetch('get_user_addresses.php')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('addressSelect');
+            select.innerHTML = `<option value="new">+ Add New Address</option>`;
 
-      if (data.success && data.addresses.length > 0) {
-        data.addresses.forEach(addr => {
-          const opt = document.createElement('option');
-          opt.value = addr.id;
-          opt.textContent = `${addr.full_name} (${addr.address_line})`;
-          opt.dataset.details = JSON.stringify(addr);
-          select.appendChild(opt);
+            if (data.success && data.addresses.length > 0) {
+                data.addresses.forEach(addr => {
+                    const opt = document.createElement('option');
+                    opt.value = addr.id;
+                    opt.textContent = `${addr.full_name} (${addr.address_line})`;
+                    opt.dataset.details = JSON.stringify(addr);
+                    select.appendChild(opt);
+                });
+            }
         });
-      }
-    });
 }
 
 document.getElementById('addressSelect').addEventListener('change', function () {
-  const value = this.value;
-  const form = document.getElementById('addressForm');
+    const value = this.value;
+    const form = document.getElementById('addressForm');
 
-  if (value === "new") {
-    form.reset();
-    document.getElementById("address_id").value = "";
-  } else {
-    const option = this.options[this.selectedIndex];
-    const details = JSON.parse(option.dataset.details);
+    if (value === "new") {
+        form.reset();
+        document.getElementById("address_id").value = "";
+    } else {
+        const option = this.options[this.selectedIndex];
+        const details = JSON.parse(option.dataset.details);
 
-    document.getElementById("address_id").value = details.id;
-    document.getElementById("full_name").value = details.full_name;
-    document.getElementById("address_line").value = details.address_line;
-    document.getElementById("city").value = details.city;
-    document.getElementById("postal_code").value = details.postal_code;
-    document.getElementById("phone_number").value = details.phone_number;
-  }
+        document.getElementById("address_id").value = details.id;
+        document.getElementById("full_name").value = details.full_name;
+        document.getElementById("address_line").value = details.address_line;
+        document.getElementById("city").value = details.city;
+        document.getElementById("postal_code").value = details.postal_code;
+        document.getElementById("phone_number").value = details.phone_number;
+    }
 });
 
 document.getElementById('addressForm').addEventListener('submit', function (e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formData = new FormData(this);
+    const formData = new FormData(this);
 
-  fetch('save_address.php', {
-    method: 'POST',
-    body: formData
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("Address saved!");
-        closeAddressModal();
-      } else {
-        alert("Error: " + data.error);
-      }
-    });
+    fetch('save_address.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Address saved!");
+                closeAddressModal();
+            } else {
+                alert("Error: " + data.error);
+            }
+        });
 });
 

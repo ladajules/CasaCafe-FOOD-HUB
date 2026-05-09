@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <h3>Thank you for your order!</h3>
                             <p>Your order has been placed successfully.</p>
                             <p><strong>Status:</strong> ${paymentMethod === "Gcash" ? "Pending Payment" : "Paid"}</p>
-                            <a href="profile.html"><button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
+                            <a href="profile.php"><button style="padding: 10px 20px; font-weight: bold; margin-top: 10px;">
                                 Go to Orders
                             </button></a>
                         `;
@@ -748,20 +748,3 @@ function removeFromCart(item_id, variant_id = null) {
             console.error("Error removing item or syncing cart:", error);
         });
 }
-
-const toggle = document.getElementById("dropdownToggle");
-const menu = document.getElementById("dropdownMenu");
-const arrow = document.getElementById("dropdownArrow");
-
-toggle.addEventListener("click", () => {
-    const isVisible = menu.style.display === "block";
-    menu.style.display = isVisible ? "none" : "block";
-    toggle.classList.toggle("open", !isVisible);
-});
-
-window.addEventListener("click", (e) => {
-    if (!document.getElementById("profileDropdown").contains(e.target)) {
-        menu.style.display = "none";
-        toggle.classList.remove("open");
-    }
-});

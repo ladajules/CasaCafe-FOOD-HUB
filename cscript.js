@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function () {
       variantContainer.classList.add('variant-container');
 
       let variantSelect = null;
-      if (item.variants && item.variants.length > 0) {
 
+      if (item.variants && item.variants.length > 0) {
         variantSelect = document.createElement('select');
         variantSelect.classList.add('variant-dropdown');
         variantSelect.setAttribute('data-item-id', item.item_id);
@@ -102,14 +102,22 @@ document.addEventListener('DOMContentLoaded', function () {
         variantSelect.addEventListener('change', function () {
           const selectedOption = this.options[this.selectedIndex];
           const variantPrice = selectedOption.getAttribute('data-price');
+
           if (variantPrice) {
             price.textContent = `₱${parseFloat(variantPrice).toFixed(2)}`;
           } else {
             price.textContent = `₱${parseFloat(item.item_price).toFixed(2)}`;
           }
         });
+
         variantContainer.appendChild(variantSelect);
       }
+
+      const quantity = document.createElement("input");
+      quantity.type = "number";
+      quantity.min = 1;
+      quantity.value = 1;
+      quantity.classList.add("qty-input");
 
       const buttonContainer = document.createElement('div');
       buttonContainer.classList.add('button-container');
@@ -119,13 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
       cartBtn.classList.add('cartBtn');
 
       const wishlistBtn = document.createElement('button');
-      wishlistBtn.textContent = '♡';
+      wishlistBtn.textContent = item.is_favorite ? '♥︎' : '♡';
       wishlistBtn.classList.add('wishlistBtn');
 
       cartBtn.addEventListener('click', () => {
         const selectedVariantId = variantSelect ? variantSelect.value : null;
         const selectedVariantText = getSelectedText(variantSelect);
-
 
         if (variantSelect && selectedVariantId === "") {
           showPopup("Please select a variant before adding to cart.");
@@ -133,8 +140,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const variantPrice = variantSelect
-          ? variantSelect.options[variantSelect.selectedIndex].getAttribute("data-price") || item.price
-          : item.price;
+          ? variantSelect.options[variantSelect.selectedIndex].getAttribute("data-price") || item.item_price
+          : item.item_price;
+
+        const qty = parseInt(quantity.value) || 1;
 
         const product = {
           item_id: item.item_id,
@@ -142,7 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
           price: parseFloat(variantPrice).toFixed(2),
           img: item.item_image || 'fallback.png',
           variant_id: selectedVariantId !== '' ? selectedVariantId : null,
-          variantText: selectedVariantText
+          variantText: selectedVariantText,
+          quantity: qty
         };
 
         fetch('add_to_cart.php', {
@@ -151,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
           credentials: 'include',
           body: new URLSearchParams({
             item_id: product.item_id,
-            quantity: 1,
+            quantity: product.quantity,
             variant_id: product.variant_id ?? ''
           })
         })
@@ -159,20 +169,26 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(text => {
             if (text.includes('successfully')) {
               showPopup(`${product.title} ${product.variantText} added to cart`);
-              
-              let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-              const exists = cart.some(p => p.item_id === product.item_id && p.variant_id == product.variant_id);
+              let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+              if (!Array.isArray(cart)) cart = [];
+
+              const exists = cart.some(
+                p => p.item_id === product.item_id &&
+                  p.variant_id == product.variant_id
+              );
+
               if (!exists) {
                 cart.push({
                   item_id: product.item_id,
                   title: product.title,
                   price: product.price,
                   img: product.img,
-                  quantity: 1,
+                  quantity: product.quantity,
                   variant: product.variantText,
                   variant_id: product.variant_id
                 });
+
                 localStorage.setItem('cart', JSON.stringify(cart));
               }
             } else {
@@ -187,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       wishlistBtn.addEventListener('click', () => {
         const selectedVariantText = getSelectedText(variantSelect);
+
         const product = {
           item_id: item.item_id,
           title: item.item_name,
@@ -195,17 +212,20 @@ document.addEventListener('DOMContentLoaded', function () {
           variantText: selectedVariantText
         };
 
-        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        if (!Array.isArray(wishlist)) wishlist = [];
+
         const exists = wishlist.some(p => p.title === product.title);
+
         if (!exists) {
           wishlist.push(product);
           localStorage.setItem('wishlist', JSON.stringify(wishlist));
+          wishlistBtn.textContent = '♥︎';
           addToFavorites(product.item_id, product.title, product.variantText);
         } else {
           showPopup('Already in Favorites.');
         }
       });
-
 
       buttonContainer.appendChild(cartBtn);
       buttonContainer.appendChild(wishlistBtn);
@@ -215,16 +235,21 @@ document.addEventListener('DOMContentLoaded', function () {
       card.appendChild(desc);
       card.appendChild(price);
       card.appendChild(variantContainer);
+      card.appendChild(quantity);
       card.appendChild(buttonContainer);
 
       container.appendChild(card);
     });
   }
 
-  document.getElementById("searchForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    applyAllFilters();
-  });
+  const searchForm = document.getElementById("searchForm");
+
+  if (searchForm) {
+    searchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      applyAllFilters();
+    });
+  }
 
 
   function getSelectedText(select) {
