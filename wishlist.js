@@ -6,15 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(data => {
       if (data.loggedIn) {
         fetchWishlistFromDB();
-         console.log('nah');
       } else {
         loadFromLocalStorage();
-         console.log('yup');
       }
     })
     .catch(() => {
       loadFromLocalStorage();
-     console.log('error');
     });
 
   function fetchWishlistFromDB() {
