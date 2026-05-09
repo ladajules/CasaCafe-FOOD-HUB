@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedVariantId = variantSelect ? variantSelect.value : null;
         const selectedVariantText = getSelectedText(variantSelect);
 
-        
+
         if (variantSelect && selectedVariantId === "") {
           showPopup("Please select a variant before adding to cart.");
           return;
@@ -159,12 +159,13 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(text => {
             if (text.includes('successfully')) {
               showPopup(`${product.title} ${product.variantText} added to cart`);
-              let cart = JSON.parse(localStorage.getItem('cart')) || [];
+              
+              let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
               const exists = cart.some(p => p.item_id === product.item_id && p.variant_id == product.variant_id);
               if (!exists) {
                 cart.push({
-                  item_id: product.item_id,    
+                  item_id: product.item_id,
                   title: product.title,
                   price: product.price,
                   img: product.img,
