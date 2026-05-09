@@ -74,6 +74,7 @@
         <div class="box-container">
             <div id="menuContainer"></div>
         </div>
+        <div id="paginationControls" class="pagination-controls"></div>
 
         <!-- this is js hereeeeeeee -->
 
@@ -133,10 +134,44 @@
 
 </body>
 <style>
+    .pagination-controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 16px 0;
+    }
+
+    .pagination-controls button {
+        border: none;
+        background: #333;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .pagination-controls button.active,
+    .pagination-controls button:hover:not(:disabled) {
+        background: #f7941d;
+    }
+
+    .pagination-controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .error-message {
+        text-align: center;
+        font-size: 1rem;
+        color: #444;
+        width: 100%;
+    }
+
     #popupCloseBtn:hover {
-    cursor: pointer;
-    color:black;
-}
+        cursor: pointer;
+        color: black;
+    }
 </style>
 <script src="dropdown.js"></script>
 

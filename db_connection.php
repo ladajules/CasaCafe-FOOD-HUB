@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
-$dbname = "s24100966_LadaMart";
-$user = "s24100966_LadaMart";
-$password = "ciscocisco";
+$dbname = "s24100966_ladamart";
+$user = "root";
+$password = "";
 
 // Create connection
 $conn = new mysqli($host, $user, $password, $dbname);

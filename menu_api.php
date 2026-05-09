@@ -1,6 +1,13 @@
 <?php
 
-$pdo = new PDO("mysql:host=localhost;dbname=s24100966_LadaMart", "s24100966_LadaMart", "ciscocisco");
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=s24100966_ladamart", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    header('Content-Type: application/json');
+    echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
+    exit;
+}
 
 $sql = "SELECT 
             i.item_id,

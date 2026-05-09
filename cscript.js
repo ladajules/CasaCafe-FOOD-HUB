@@ -3,6 +3,8 @@ const wishlistItems = [];
 let currentModalProduct = null;
 let allProducts = [];
 let currentProducts = [];
+let currentPage = 1;
+const itemsPerPage = 10;
 
 function showPopup(message) {
   const popup = document.getElementById("popupNotification");
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const container = document.getElementById('menuContainer');
   const categoryFilter = document.getElementById('categoryFilter');
   const sortSelect = document.getElementById('sortSelect');
+  const paginationControls = document.getElementById('paginationControls');
 
   const categories = ['Silog', 'Foods', 'Iced Coffee', 'Fruit Yogurt', 'MilkTea', 'Drinks'];
   categories.forEach(cat => {
@@ -38,13 +41,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('menu_api.php')
     .then(response => {
+      console.log('Fetch response status:', response.status);
       if (!response.ok) {
-        throw new Error('API error');
+        throw new Error('API error: ' + response.status);
       }
       return response.json();
     })
     .then(data => {
+      console.log('Fetched data:', data);
       allProducts = data;
+      currentProducts = data;
+      currentPage = 1;
       renderProducts(allProducts);
     })
     .catch(error => {
@@ -53,9 +60,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
   function renderProducts(products) {
+    const totalProducts = products.length;
+    const totalPages = Math.max(1, Math.ceil(totalProducts / itemsPerPage));
+
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const visibleProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
     container.innerHTML = '';
 
-    products.forEach(item => {
+    if (visibleProducts.length === 0) {
+      container.innerHTML = '<p class="error-message">No items match your search.</p>';
+      if (paginationControls) {
+        paginationControls.style.display = 'none';
+      }
+      return;
+    }
+
+    visibleProducts.forEach(item => {
       const card = document.createElement('div');
       card.classList.add('menu-item');
 
@@ -218,6 +243,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
       container.appendChild(card);
     });
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    const paginationControls = document.getElementById('paginationControls');
+    if (!paginationControls) return;
+
+    paginationControls.innerHTML = '';
+    if (totalPages <= 1) {
+      paginationControls.style.display = 'none';
+      return;
+    }
+
+    paginationControls.style.display = 'flex';
+
+    const prevButton = document.createElement('button');
+    prevButton.textContent = 'Previous';
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        renderProducts(currentProducts);
+      }
+    });
+    paginationControls.appendChild(prevButton);
+
+    for (let page = 1; page <= totalPages; page += 1) {
+      const pageButton = document.createElement('button');
+      pageButton.textContent = page;
+      pageButton.classList.toggle('active', page === currentPage);
+      pageButton.disabled = page === currentPage;
+      pageButton.addEventListener('click', () => {
+        currentPage = page;
+        renderProducts(currentProducts);
+      });
+      paginationControls.appendChild(pageButton);
+    }
+
+    const nextButton = document.createElement('button');
+    nextButton.textContent = 'Next';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage += 1;
+        renderProducts(currentProducts);
+      }
+    });
+    paginationControls.appendChild(nextButton);
   }
 
   document.getElementById("searchForm").addEventListener("submit", function (e) {
@@ -288,7 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
         break;
     }
 
-    renderProducts(filtered);
+    currentProducts = filtered;
+    currentPage = 1;
+    renderProducts(currentProducts);
   }
 
 
