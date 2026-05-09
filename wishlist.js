@@ -6,12 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(data => {
       if (data.loggedIn) {
         fetchWishlistFromDB();
+         console.log('nah');
       } else {
         loadFromLocalStorage();
+         console.log('yup');
       }
     })
     .catch(() => {
       loadFromLocalStorage();
+     console.log('error');
     });
 
   function fetchWishlistFromDB() {
@@ -20,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(data => {
          if (!data.success || !Array.isArray(data.wishlist)) {
           wishlistSection.innerHTML = "<p>Failed to load wishlist.</p>";
+          console.log(data);
           return;
         }
         localStorage.setItem("wishlist", JSON.stringify(data.wishlist));
